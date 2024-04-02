@@ -8,7 +8,7 @@
 
 <meta name="author" content="Yuqiao Yang">
 
-<title>Macroeconometrics Research Report - An Evidence-based Forecast on Investment: Gold as a Safe-haven Asset</title>
+<title>Macroeconometrics Research Report - An Evidence-based Forecast: Gold as a Traditional Safe-Haven Investment</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -91,10 +91,8 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"></a></li>
-  <li><a href="#introduction-1" id="toc-introduction-1" class="nav-link" data-scroll-target="#introduction-1">Introduction</a></li>
-  <li><a href="#introduction-2" id="toc-introduction-2" class="nav-link" data-scroll-target="#introduction-2">Introduction</a></li>
-  <li><a href="#introduction-3" id="toc-introduction-3" class="nav-link" data-scroll-target="#introduction-3">Introduction</a>
+  <li><a href="#data-and-data-properties" id="toc-data-and-data-properties" class="nav-link" data-scroll-target="#data-and-data-properties">Data and Data Properties</a></li>
+  <li><a href="#model-and-hypothesis" id="toc-model-and-hypothesis" class="nav-link" data-scroll-target="#model-and-hypothesis">Model and Hypothesis</a>
   <ul class="collapse">
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul></li>
@@ -106,7 +104,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">An Evidence-based Forecast on Investment: Gold as a Safe-haven Asset</h1>
+<h1 class="title">An Evidence-based Forecast: Gold as a Traditional Safe-Haven Investment</h1>
 </div>
 
 
@@ -128,23 +126,25 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 <blockquote class="blockquote">
-<p><strong>Abstract.</strong> This study aim to explore future trends in Gold prices using a Bayesian VAR model, examining whether Gold remains a high-quality safe-haven asset in the future. In the wake of the 2008 financial crisis and especially the 2019 global Covid-19 pandemic, the world economy appears to be on the brink of a looming risk: a global economic recession. The concern over the risk of investment returns has become a primary focus for global investors and financial institutions. This unease has been further exacerbated by geopolitical conflicts such as the Russia-Ukraine war(2022) and the Israeli-Palestinian conflict (2023). Consequently, this research aims to provide a briefly discussion and data-driven forecast of traditional safe-haven assets: Gold under current circumstances. Factors considered include demand and supply dynamics, emerging safe-haven investments, risk-free investment assets, comparable investments, market returns, inflation on both demand and supply sides, broad money supply (M2), interest rates, unemployment rates and market volatility.</p>
-<p><strong>Keywords.</strong> Bayesian VARS, Gold price, R, Inflation, Interset rate, Unemployments, US Bond Yeild, Safe-haven Assets, Forecasting, Investment Risk.</p>
+<p><strong>Abstract.</strong> This research aims to explore future trends in Gold prices as a traditonal safe-haven investment using a Bayesian VARs model. In the wake of the 2008 financial crisis and especially the 2019 global Covid-19 pandemic, the world economy appears to be on the brink of a looming risk: a world-wide economic recession. The concern over the risk of investment returns has become a primary focus for global investors and financial institutions. This unease has been further exacerbated by geopolitical conflicts such as the Russia-Ukraine war(2022) and the Israeli-Palestinian conflict (2023). Consequently, this research aims to provide a briefly discussion and data-driven forecast of traditional safe-haven assets: Gold, under current circumstances. Factors considered include demand and supply dynamics, emerging safe-haven investments, risk-free investment assets, comparable investments, market returns, inflation on both demand and supply sides, broad money supply (M2), interest rates, unemployment rates and market volatility.</p>
+<p><strong>Keywords.</strong> Bayesian VARs, Gold price, Inflation, Interset rate, Unemployments, US Bond Yeild, Safe-haven Assets, Forecasting, Volatility, R, Quarto.</p>
 </blockquote>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
+<p><strong>Objective:</strong></p>
+<p>This research project aims to provide a monthly based, data-driven forecast of Gold price(USD) in two years, utilizing a Bayesian VARs model.</p>
+<p><strong>Question:</strong></p>
+<p>Gold as a traditional safe-haven asset, what are the anticipated price movements for the next year or beyond within the current environment?</p>
+<p><strong>Introduction:</strong></p>
+<p>Ulrich Beck introduced the concept of the risk society in the late 20th century, highlighting how humans confront entirely different systemic risks and face challenges in risk allocation under industrial society. Concurrently, globalization has reshaped the world and transformed human perceptions and experiences. Increasingly, evidence suggests that humanity is entering the risk society as described by Beck. Globalization encompasses not only economic, finance, technologe, and culture, but also risks. A China’s financial exchange restriction might influence Australia’s housing prices, while decisions made by the U.S. Central Bank regarding interest rates can prompt Western central banks to follow suit simultaneously. Following the 2008 financial crisis, major economies mitigated its aftermath significantly through quantitative easing monetary policies. This injection of substantial liquidity propelled economic growth steadily, leading to unprecedented prosperity in specific industries. However, the limitations of quantitative easing became apparent as the Covid-19 pandemic drew to a close. The United States and Western countries experienced unprecedented hyperinflation, coupled with indicators such as rising unemployment rates inversely correlated with inflation, conflicting long-term government bond yields with short-term treasuries, and record-breaking composite indices, signaling an impending global recession.</p>
+<p>Geopolitical conflicts, such as the Russia-Ukraine war and the Israeli-Palestinian conflict, have intensified various risks. Disruptions in oil supply, blockages in key waterways, and logistical challenges in transporting goods and agricultural products have further exacerbated commodity price hikes and inflationary pressures. Consequently, mitigating or hedging investment risks has become the primary focus for global investors and financial institutions.</p>
+<p>Among various safe-haven investments, gold has regained popularity as a hedge against uncertainty. This research aims to provide investors with a data-supported prediction of gold price trends over the next two years using Bayesian VAR models. The study incorporates information on gold supply and demand, as well as analysis of comparable and emerging hedging products, market risks, returns, unemployment rates, inflation, interest rates, and other relevant parameters to construct a robust Bayesian VAR model. Ultimately, this research aids investors in identifying gold price trends and confidence intervals under different uncertainties within the current environment, thereby mitigating investment risks effectively.</p>
 </section>
-<section id="section" class="level1">
-<h1></h1>
+<section id="data-and-data-properties" class="level1">
+<h1>Data and Data Properties</h1>
 </section>
-<section id="introduction-1" class="level1">
-<h1>Introduction</h1>
-</section>
-<section id="introduction-2" class="level1">
-<h1>Introduction</h1>
-</section>
-<section id="introduction-3" class="level1">
-<h1>Introduction</h1>
+<section id="model-and-hypothesis" class="level1">
+<h1>Model and Hypothesis</h1>
 <section id="references" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
 
