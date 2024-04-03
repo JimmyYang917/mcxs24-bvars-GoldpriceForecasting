@@ -71,6 +71,7 @@ library(fUnitRoots)   # ADF test - adfTest
 library(tidyverse)    # for table
 library(kableExtra)   # for print table
 library(dplyr)
+library(corrplot)
 ```
 
 #Data Downloading
@@ -258,13 +259,17 @@ for (i in 1:17) {
 
 As above, we could have all 17 variables in visualization format individually. As a quick overlook, 13 weeks bond has a similar trend with federal funds effective rates; other 3 treasury bonds move quite same; gold and its' future, Nasdaq, Bit coin, crude oil price and US dollars Index have upper ward trends; Unemployment rates seems like opposite to federal rates; M2 and other 3 time series seems like stationary on mean but variance change over time.
 
+
+
+
+
+
 **Correlation Table**
 
 ```{r}
 #| echo: false
 #| message: false
 #| warning: false
-library(corrplot)
 
 correlation_matrix <- cor(data1)
 
@@ -273,6 +278,10 @@ corrplot(correlation_matrix, method = "color", type = "upper", tl.srt = 45,tl.co
 A simple correlation provide us a basic understanding of those 17 variables. Gold as safe-haven is highly positive correlated with Gold future and Nasdaq Index. Seems like its also a strong bond between Bit coin and Gold, however other factors not shown as strong correlation with Gold price.
 
 Therefore, we could use ACF and PACF test to indicate whether there is autocorrelations.
+
+
+
+
 
 ```{r}
 #| echo: false
