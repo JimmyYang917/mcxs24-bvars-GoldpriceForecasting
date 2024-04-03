@@ -234,5 +234,10 @@ For time $t$ = 1,2,.....,$T$：
  * $Y_{t-1}$ is the information set collecting observations on y up to time $t-1$
  * $\Sigma$ is a $N(17)\times N(17)$ covariance matrix of the error term
 
-Base on the model above, we could first turn B Vars(p) model into B Vars(1) model and easily regress to have the parameter matrix. Then we could have a $t+h$ period forward forecasting with increase of variance.
+Base on the model above, we could first turn B Vars(p) model into B Vars(1) model and easily regress to have the parameter matrix. Then we could have a $t+h$ period forward forecasting with increase of variance, in this case: $h$ = 24.
+
+The main focus of estimate output is the conditional mean of Gold price, which base on current information set $Y_{t-1}$. It provide the average mean prediction of Gold price which investors and financial institutions interested in. Moreover, 1 standard deviation and 2 standard deviation will also produced in forecasting process to provide a 68% and 95% of confidence intervals of future Gold price movements in $h$ periods base on current information set.
+
+Furthermore, different prior distribution might be used to provide different level of uncertainty of current environment(information set). Compare the difference of Gold price under different priors could help to prove the Gold as a high quality safe-haven investment and increase investors and financial institutions confidence and further expectations. ( Competitors for golds might also be used under different priors, such as BIT-USD, Nasdaq Index and short to mid-term treasury bills. )
+
 ## References {.unnumbered}
