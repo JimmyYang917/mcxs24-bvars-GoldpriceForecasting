@@ -94,6 +94,7 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
   <li><a href="#data-and-data-properties" id="toc-data-and-data-properties" class="nav-link" data-scroll-target="#data-and-data-properties">Data and Data Properties</a></li>
+  <li><a href="#plot-of-all-variables" id="toc-plot-of-all-variables" class="nav-link" data-scroll-target="#plot-of-all-variables">Plot of all variables</a></li>
   <li><a href="#model-and-hypothesis" id="toc-model-and-hypothesis" class="nav-link" data-scroll-target="#model-and-hypothesis">Model and Hypothesis</a>
   <ul class="collapse">
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
@@ -176,59 +177,92 @@ ul.task-list li input[type="checkbox"] {
 <li><span class="math inline">\(VolatilityIndex_{t}\)</span> : to present the risk cross whole market and expectations of further coming events.</li>
 </ul></li>
 </ul>
+<p>#Data Downloading</p>
+<p><strong>Use links to directly download data set from Source</strong> For the variable this research mainly focus on:</p>
+<p>After download all variables as designed, merge all data sets into a new frame and change the column names. The date of data used in this research will start at 2014-10-01 as at 2024-04-01.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>         date gold_ETF_data gold_future_data BIT_USD_data
+10 2014-10-01        112.66           1171.1      338.321
+11 2014-11-01        112.11           1175.2      378.047
+12 2014-12-01        113.58           1183.9      320.193
+13 2015-01-01        123.45           1278.5      217.464
+16 2015-04-01        113.47           1182.4      236.145
+17 2015-05-01        114.10           1189.4      230.190
+   bond_yield_13weeks_data bond_yield_5years_data bond_yield_10_years_data
+10                   0.003                  1.613                    2.335
+11                   0.005                  1.511                    2.194
+12                   0.037                  1.653                    2.170
+13                   0.005                  1.187                    1.675
+16                   0.005                  1.442                    2.046
+17                   0.003                  1.467                    2.095
+   bond_yield_30years_data Nasdaq_IXIC_data M2_rate_data Inflation_rate_data
+10                   3.060          4630.74      0.65640            -0.01979
+11                   2.910          4791.63      0.47585            -0.18827
+12                   2.749          4736.05      1.88919            -0.30846
+13                   2.251          4635.24     -0.95253            -0.63703
+16                   2.753          4941.42     -0.90378             0.10425
+17                   2.847          5070.03      0.17380             0.32977
+   unemployment_rate_data Crude_oil_price_data PPI_industry_rate_data
+10                    5.7                84.17               -1.01626
+11                    5.8                71.89               -1.07803
+12                    5.6                55.27               -1.86819
+13                    5.7                47.52               -2.16816
+16                    5.4                63.90               -0.26853
+17                    5.6                63.16                1.34626
+   PPI_commodity_rate_data Federal_funds_rate_data US_dollars_Index_data
+10                -1.45349                    0.09                 86.88
+11                -1.22911                    0.09                 88.36
+12                -1.94126                    0.12                 90.27
+13                -2.53807                    0.11                 94.80
+16                -0.31332                    0.12                 94.60
+17                 1.30959                    0.12                 96.91
+   Volatility_Index_data
+10                 14.03
+11                 13.33
+12                 19.20
+13                 20.97
+16                 14.55
+17                 13.84</code></pre>
+</div>
+</div>
+</section>
+<section id="plot-of-all-variables" class="level1">
+<h1>Plot of all variables</h1>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-2.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>As above, we could have all 17 variables in visualization format individually.</p>
+<p><strong>Correlation Table</strong></p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>A simple correlation provide us a basic understanding of those 17 variables. Gold as safe-haven is highly positive correlated with Gold future and Nasdaq Index. Seems like its also a strong bond between Bit coin and Gold, however other factors not shown as strong correlation with Gold price.</p>
+<p>Therefore, we could use ACF and PACF test to indicate whether there is autocorrelations.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-3.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-4.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-5.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-6.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-7.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-8.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-9.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-10.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-11.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-12.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-13.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-14.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-15.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-16.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-1-17.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-8-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>Both ACF and PACF suggest that variables are highly autocorrelated except M2: Board money change rate. That might because the policy has changed in earlier 2020 and 2022. Therefore, we further need ADF test(unit root test) to feed our time series are stationary or not.</p>
 </section>
 <section id="model-and-hypothesis" class="level1">
 <h1>Model and Hypothesis</h1>
