@@ -260,7 +260,15 @@ VolatilityIndex_{t}\\
 \end{pmatrix}
 
 \end{aligned}\]</span>
-<p>For time <span class="math inline">\(t\)</span> = 1,2,…..,<span class="math inline">\(T\)</span> * <span class="math inline">\(y_t\)</span> is a <span class="math inline">\(N(17)\times 1\)</span> vector of observations at time <span class="math inline">\(t\)</span> * <span class="math inline">\(\mu_0\)</span> is a <span class="math inline">\(N(17)\times 1\)</span> vector of constant terms * <span class="math inline">\(A_i\)</span> is a <span class="math inline">\(N(17)\times N(17)\)</span> matrix of autoregressive slope parameters * <span class="math inline">\(\epsilon_t\)</span> is a <span class="math inline">\(N(17)\times 1\)</span> vector of error terms which is a multivariate white nose process(time invariant) * <span class="math inline">\(Y_{t-1}\)</span> is the information set collecting observations on y up to time <span class="math inline">\(t-1\)</span> * <span class="math inline">\(\Sigma\)</span> is a <span class="math inline">\(N(17)\times N(17)\)</span> covariance matrix of the error term</p>
+<p>For time <span class="math inline">\(t\)</span> = 1,2,…..,<span class="math inline">\(T\)</span>：</p>
+<ul>
+<li><span class="math inline">\(y_t\)</span> is a <span class="math inline">\(N(17)\times 1\)</span> vector of observations at time <span class="math inline">\(t\)</span></li>
+<li><span class="math inline">\(\mu_0\)</span> is a <span class="math inline">\(N(17)\times 1\)</span> vector of constant terms</li>
+<li><span class="math inline">\(A_i\)</span> is a <span class="math inline">\(N(17)\times N(17)\)</span> matrix of autoregressive slope parameters</li>
+<li><span class="math inline">\(\epsilon_t\)</span> is a <span class="math inline">\(N(17)\times 1\)</span> vector of error terms which is a multivariate white nose process(time invariant)</li>
+<li><span class="math inline">\(Y_{t-1}\)</span> is the information set collecting observations on y up to time <span class="math inline">\(t-1\)</span></li>
+<li><span class="math inline">\(\Sigma\)</span> is a <span class="math inline">\(N(17)\times N(17)\)</span> covariance matrix of the error term</li>
+</ul>
 <p>Base on the model above, we could first turn B Vars(p) model into B Vars(1) model and easily regress to have the parameter matrix. Then we could have a <span class="math inline">\(t+h\)</span> period forward forecasting with increase of variance. ## References {.unnumbered}</p>
 
 
