@@ -70,6 +70,20 @@ library(xts)
 library(fUnitRoots)   # ADF test - adfTest
 library(tidyverse)    # for table
 library(kableExtra)   # for print table
+library(dplyr)
+```
+
+#Data Downloading
+
+**Use links to directly download data set from Source**
+For the variable this research mainly focus on:
+```{r}
+# 1.Gold current price in USD per 0.1 ounce, present by SPDR Gold Shares (GLD)
+goldETF_link = "https://query1.finance.yahoo.com/v7/finance/download/GLD?period1=1199232000&period2=1712016000&interval=1mo&events=history&includeAdjustedClose=true"
+goldETF_download = read.csv(goldETF_link)
+names(goldETF_download) <- tolower(names(goldETF_download))
+gold_ETF_data <- goldETF_download %>%
+  select("date","gold_ETF_data" = "adj.close")
 ```
 
 
@@ -78,108 +92,249 @@ library(kableExtra)   # for print table
 #| message: false
 #| warning: false
 
-# 1.Gold currentprice in USD per 0.1 ounce, present by SPDR Gold Shares (GLD)
+# 1.Gold current price in USD per 0.1 ounce, present by SPDR Gold Shares (GLD)
 goldETF_link = "https://query1.finance.yahoo.com/v7/finance/download/GLD?period1=1199232000&period2=1712016000&interval=1mo&events=history&includeAdjustedClose=true"
 goldETF_download = read.csv(goldETF_link)
-gold_ETF_data = goldETF_download[,6]
-plot.ts(gold_ETF_data)
+names(goldETF_download) <- tolower(names(goldETF_download))
+gold_ETF_data <- goldETF_download %>%
+  select("date","gold_ETF_data" = "adj.close")
 
 # 2. Gold futures price in USD per ounce
 gold_link = "https://query1.finance.yahoo.com/v7/finance/download/GC%3DF?period1=1009843200&period2=1703980800&interval=1mo&filter=history&frequency=1mo&includeAdjustedClose=true"
 gold_download = read.csv(gold_link)
-gold_furture_data = gold_download[,6]
-plot.ts(gold_furture_data)
+names(gold_download) <- tolower(names(gold_download))
+gold_future_data <- gold_download %>%
+  select("date","gold_future_data" = "adj.close")
 
 # 3. BIT - USD
 BIT_USD = "https://query1.finance.yahoo.com/v7/finance/download/BTC-USD?period1=1410912000&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
 BIT_USD_file = read.csv(BIT_USD)
-BIT_USD_data = BIT_USD_file[,2]
-plot.ts(BIT_USD_data)
+names(BIT_USD_file) <- tolower(names(BIT_USD_file))
+BIT_USD_data <- BIT_USD_file %>%
+  select("date","BIT_USD_data" = "adj.close")
 
 # 4. 13 Weeks treasury bond yield
 bond_yield_13weeks = "https://query1.finance.yahoo.com/v7/finance/download/%5EIRX?period1=-315360000&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
 bond_yield_13weeks_file = read.csv(bond_yield_13weeks)
-bond_yield_13weeks_data = bond_yield_13weeks_file[,2]
-plot.ts(bond_yield_13weeks_data)
+names(bond_yield_13weeks_file) <- tolower(names(bond_yield_13weeks_file))
+bond_yield_13weeks_data <- bond_yield_13weeks_file %>%
+  select("date","bond_yield_13weeks_data" = "adj.close")
 
 # 5. 5-Year treasury bond yield
 bond_yield_5years = "https://query1.finance.yahoo.com/v7/finance/download/%5EFVX?period1=-252374400&period2=1712016000&interval=1mo&events=history&includeAdjustedClose=true"
 bond_yield_5years_file = read.csv(bond_yield_5years)
-bond_yield_5years_data = bond_yield_5years_file[,2]
-plot.ts(bond_yield_5years_data)
+names(bond_yield_5years_file) <- tolower(names(bond_yield_5years_file))
+bond_yield_5years_data <- bond_yield_5years_file %>%
+  select("date","bond_yield_5years_data" = "adj.close")
 
 # 6. 10-Year treasury bond yield
 bond_yield_10years = "https://query1.finance.yahoo.com/v7/finance/download/%5ETNX?period1=-252374400&period2=1712016000&interval=1mo&events=history&includeAdjustedClose=true"
 bond_yield_10_years = read.csv(bond_yield_10years)
-bond_yield_10_years_data = bond_yield_10_years[,6]
-plot.ts(bond_yield_10_years_data)
+names(bond_yield_10_years) <- tolower(names(bond_yield_10_years))
+bond_yield_10_years_data <- bond_yield_10_years %>%
+  select("date","bond_yield_10_years_data" = "adj.close")
 
 # 7. 30-Year treasury bond yield
 bond_yield_30years = "https://query1.finance.yahoo.com/v7/finance/download/%5ETYX?period1=224812800&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
 bond_yield_30years_file = read.csv(bond_yield_30years)
-bond_yield_30years_data = bond_yield_30years_file[,2]
-plot.ts(bond_yield_30years_data)
+names(bond_yield_30years_file) <- tolower(names(bond_yield_30years_file))
+bond_yield_30years_data <- bond_yield_30years_file %>%
+  select("date","bond_yield_30years_data" = "adj.close")
 
 # 8. Nasdaq Index
 Nasdaq_IXIC = "https://query1.finance.yahoo.com/v7/finance/download/%5EIXIC?period1=34646400&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
 Nasdaq_IXIC_file = read.csv(Nasdaq_IXIC)
-Nasdaq_IXIC_data = Nasdaq_IXIC_file[,2]
-plot.ts(Nasdaq_IXIC_data)
+names(Nasdaq_IXIC_file) <- tolower(names(Nasdaq_IXIC_file))
+Nasdaq_IXIC_data <- Nasdaq_IXIC_file %>%
+  select("date","Nasdaq_IXIC_data" = "adj.close")
 
 # 9. M2 level
 M2_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=WM2NS&scale=left&cosd=1980-11-03&coed=2024-03-04&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=pch&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1980-11-03"
 M2_rate_file = read.csv(M2_rate)
-M2_rate_data = M2_rate_file[,2]
-plot.ts(M2_rate_data)
+names(M2_rate_file) <- tolower(names(M2_rate_file))
+M2_rate_data <- M2_rate_file %>%
+  select("date","M2_rate_data" = "wm2ns_pch")
 
 # 10. Inflation rate
 Inflation_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=CPIAUCSL&scale=left&cosd=1947-01-01&coed=2024-02-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=pch&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1947-01-01"
 Inflation_rate_file = read.csv(Inflation_rate)
-Inflation_rate_data = Inflation_rate_file[,2]
-plot.ts(Inflation_rate_data)
+names(Inflation_rate_file) <- tolower(names(Inflation_rate_file))
+Inflation_rate_data <- Inflation_rate_file %>%
+  select("date","Inflation_rate_data" = "cpiaucsl_pch")
 
 # 11. Unemployment rate
 unemployment_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=UNRATE&scale=left&cosd=1948-01-01&coed=2024-02-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-04-02&revision_date=2024-04-02&nd=1948-01-01"
 unemployment_rate_file = read.csv(unemployment_rate)
-unemployment_rate_data = unemployment_rate_file[,2]
-plot.ts(unemployment_rate_data)
+names(unemployment_rate_file) <- tolower(names(unemployment_rate_file))
+unemployment_rate_data <- unemployment_rate_file %>%
+  select("date","unemployment_rate_data" = "unrate")
 
 # 12. Crude oil price
 Crude_oil_price = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=off&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=DCOILBRENTEU&scale=left&cosd=1990-01-01&coed=2024-03-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1987-05-20"
 Crude_oil_price_file = read.csv(Crude_oil_price)
-Crude_oil_price_data = Crude_oil_price_file[,2]
-plot.ts(Crude_oil_price_data)
+names(Crude_oil_price_file) <- tolower(names(Crude_oil_price_file))
+Crude_oil_price_data <- Crude_oil_price_file %>%
+  select("date","Crude_oil_price_data" = "dcoilbrenteu")
 
 # 13. PPI - Industry
 PPI_industry_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=PCUOMFGOMFG&scale=left&cosd=1984-12-01&coed=2024-02-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=pch&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1984-12-01"
 PPI_industry_rate_file = read.csv(PPI_industry_rate)
-PPI_industry_rate_data = PPI_industry_rate_file[,2]
-plot.ts(PPI_industry_rate_data)
+names(PPI_industry_rate_file) <- tolower(names(PPI_industry_rate_file))
+PPI_industry_rate_data <- PPI_industry_rate_file %>%
+  select("date","PPI_industry_rate_data" = "pcuomfgomfg_pch")
 
-# 14. PPI - Commondity
-PPI_commodity_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=WM2NS&scale=left&cosd=1980-11-03&coed=2024-03-04&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=pch&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1980-11-03"
+# 14. PPI - Commodity
+PPI_commodity_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=PPIACO&scale=left&cosd=1913-01-01&coed=2024-02-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=pch&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1913-01-01"
 PPI_commodity_rate_file = read.csv(PPI_commodity_rate)
-PPI_commodity_rate_data = PPI_commodity_rate_file[,2]
-plot.ts(PPI_commodity_rate_data)
+names(PPI_commodity_rate_file) <- tolower(names(PPI_commodity_rate_file))
+PPI_commodity_rate_data <- PPI_commodity_rate_file %>%
+  select("date","PPI_commodity_rate_data" = "ppiaco_pch")
 
 # 15. Federal Funds Effective Rates
 Federal_funds_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=FEDFUNDS&scale=left&cosd=1990-01-01&coed=2024-03-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1954-07-01"
 Federal_funds_rate_file = read.csv(Federal_funds_rate)
-Federal_funds_rate_data = Federal_funds_rate_file[,2]
-plot.ts(Federal_funds_rate_data)
+names(Federal_funds_rate_file) <- tolower(names(Federal_funds_rate_file))
+Federal_funds_rate_data <- Federal_funds_rate_file %>%
+  select("date","Federal_funds_rate_data" = "fedfunds")
 
 # 16. US dollars Index
 US_dollars_Index = "https://query1.finance.yahoo.com/v7/finance/download/DX-Y.NYB?period1=31795200&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
 US_dollars_Index_file = read.csv(US_dollars_Index)
-US_dollars_Index_data = US_dollars_Index_file[,2]
-plot.ts(US_dollars_Index_data)
+names(US_dollars_Index_file) <- tolower(names(US_dollars_Index_file))
+US_dollars_Index_data <- US_dollars_Index_file %>%
+  select("date","US_dollars_Index_data" = "adj.close")
 
 # 17. Volatility Index
 Volatility_Index = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=VIXCLS&scale=left&cosd=1990-01-02&coed=2024-03-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1990-01-02"
 Volatility_Index_file = read.csv(Volatility_Index)
-Volatility_Index_data = Volatility_Index_file[,2]
-plot.ts(Volatility_Index_data)
+names(Volatility_Index_file) <- tolower(names(Volatility_Index_file))
+Volatility_Index_data <- Volatility_Index_file %>%
+  select("date","Volatility_Index_data" = "vixcls")
 
+```
+
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+data_list <-    list(gold_ETF_data,           gold_future_data, 
+                     BIT_USD_data,            bond_yield_13weeks_data, 
+                     bond_yield_5years_data,  bond_yield_10_years_data,  
+                     bond_yield_30years_data, Nasdaq_IXIC_data, 
+                     M2_rate_data,            Inflation_rate_data,
+                     unemployment_rate_data,  Crude_oil_price_data,
+                     PPI_industry_rate_data,  PPI_commodity_rate_data,
+                     Federal_funds_rate_data, US_dollars_Index_data,
+                     Volatility_Index_data)  
+
+
+merged_data <- Reduce(function(x, y) merge(x, y, by = "date", all = TRUE), data_list)
+
+
+start_date <- as.Date("2014-01-01")
+end_date <- as.Date("2024-04-01")
+filtered_data <- merged_data %>%
+  filter(date >= start_date & date <= end_date)
+
+filtered_data <- na.omit(filtered_data)
+
+```
+
+After download all variables as designed, merge all data sets into a new frame and change the column names. The date of data used in this research will start at 2014-10-01 as at 2024-04-01. 
+
+```{r}
+head(filtered_data,6)
+```
+
+# Plot of all variables 
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+data1 <- subset(filtered_data, select = -c(date))
+
+data1 <- mutate_all(data1, as.numeric)
+
+par(mfrow = c(4, 4), mar=c(2,2,2,2))
+for (i in 1:17) { 
+  ts.plot(data1[, i], main = colnames(data1)[i], 
+          ylab = "", xlab = "")
+}
+
+
+```
+As above, we could have all 17 variables in visualization format individually.
+
+**Correlation Table**
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+library(corrplot)
+data1 <- subset(filtered_data, select = -c(date))
+
+data1 <- mutate_all(data1, as.numeric)
+
+correlation_matrix <- cor(data1)
+
+corrplot(correlation_matrix, method = "color", type = "upper", tl.srt = 45,tl.col = "black",tl.cex = 0.5)
+```
+A simple correlation provide us a basic understanding of those 17 variables. Gold as safe-haven is highly positive correlated with Gold future and Nasdaq Index. Seems like its also a strong bond between Bit coin and Gold, however other factors not shown as strong correlation with Gold price.
+
+Therefore, we could use ACF and PACF test to indicate whether there is autocorrelations.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+par(mfrow = c(4, 4), mar=c(2,2,2,2))
+for (i in 1:17){
+acf = acf(data1[,i], plot = FALSE)[1:20]
+plot(acf, main = "")
+title(main = paste(colnames(data1)[i]), line = 0.5)
+}
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+par(mfrow = c(4, 4), mar=c(2,2,2,2))
+for (i in 1:17){
+pacf = pacf(data1[,i], plot = FALSE)[1:20]
+plot(pacf, main = "")
+title(main = paste(colnames(data1)[i]), line = 0.5)
+}
+```
+Both ACF and PACF suggest that variables are highly autocorrelated except M2: Board money change rate. That might because the policy has changed in earlier 2020 and 2022. Therefore, we further need ADF test(unit root test) to feed our time series are stationary or not.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| results: hide
+
+library(tseries)
+# ADF Test
+
+adf_hicp <- adf.test(data1[,1], k=12, alternative = "stationary")
+adf_ip <- adf.test(data1[,2], k=12, alternative = "stationary")
+adf_ciss <- adf.test(data1[,3], k=12, alternative = "stationary")
+adf_un <- adf.test(data1[,4], k=12, alternative = "stationary")
+
+adf_results <- data.frame(
+  Variable = c("HICP", "IP", "CISS", "UN"),
+  ADF_Statistic = c(adf_hicp$statistic, adf_ip$statistic, adf_ciss$statistic, adf_un$statistic),
+  P_Value = c(adf_hicp$p.value, adf_ip$p.value, adf_ciss$p.value, adf_un$p.value),
+  lags = rep(12, 4)
+)
+
+#knitr::kable(adf_results, digits = 3, align = 'c')
 ```
 
 
