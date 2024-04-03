@@ -93,21 +93,18 @@ plot.ts(gold_furture_data)
 # 3. BIT - USD
 BIT_USD = "https://query1.finance.yahoo.com/v7/finance/download/BTC-USD?period1=1410912000&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
 BIT_USD_file = read.csv(BIT_USD)
-head(BIT_USD_file)
 BIT_USD_data = BIT_USD_file[,2]
 plot.ts(BIT_USD_data)
 
 # 4. 13 Weeks treasury bond yield
 bond_yield_13weeks = "https://query1.finance.yahoo.com/v7/finance/download/%5EIRX?period1=-315360000&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
 bond_yield_13weeks_file = read.csv(bond_yield_13weeks)
-head(bond_yield_13weeks_file)
 bond_yield_13weeks_data = bond_yield_13weeks_file[,2]
 plot.ts(bond_yield_13weeks_data)
 
 # 5. 5-Year treasury bond yield
 bond_yield_5years = "https://query1.finance.yahoo.com/v7/finance/download/%5EFVX?period1=-252374400&period2=1712016000&interval=1mo&events=history&includeAdjustedClose=true"
 bond_yield_5years_file = read.csv(bond_yield_5years)
-head(bond_yield_5years_file)
 bond_yield_5years_data = bond_yield_5years_file[,2]
 plot.ts(bond_yield_5years_data)
 
@@ -120,7 +117,6 @@ plot.ts(bond_yield_10_years_data)
 # 7. 30-Year treasury bond yield
 bond_yield_30years = "https://query1.finance.yahoo.com/v7/finance/download/%5ETYX?period1=224812800&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
 bond_yield_30years_file = read.csv(bond_yield_30years)
-head(bond_yield_30years_file)
 bond_yield_30years_data = bond_yield_30years_file[,2]
 plot.ts(bond_yield_30years_data)
 
@@ -154,42 +150,36 @@ plot.ts(unemployment_rate_data)
 # 12. Crude oil price
 Crude_oil_price = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=off&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=DCOILBRENTEU&scale=left&cosd=1990-01-01&coed=2024-03-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1987-05-20"
 Crude_oil_price_file = read.csv(Crude_oil_price)
-head(Crude_oil_price_file)
 Crude_oil_price_data = Crude_oil_price_file[,2]
 plot.ts(Crude_oil_price_data)
 
 # 13. PPI - Industry
 PPI_industry_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=PCUOMFGOMFG&scale=left&cosd=1984-12-01&coed=2024-02-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=pch&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1984-12-01"
 PPI_industry_rate_file = read.csv(PPI_industry_rate)
-head(PPI_industry_rate_file)
 PPI_industry_rate_data = PPI_industry_rate_file[,2]
 plot.ts(PPI_industry_rate_data)
 
 # 14. PPI - Commondity
 PPI_commodity_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=WM2NS&scale=left&cosd=1980-11-03&coed=2024-03-04&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=pch&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1980-11-03"
 PPI_commodity_rate_file = read.csv(PPI_commodity_rate)
-head(PPI_commodity_rate_file)
 PPI_commodity_rate_data = PPI_commodity_rate_file[,2]
 plot.ts(PPI_commodity_rate_data)
 
 # 15. Federal Funds Effective Rates
 Federal_funds_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=FEDFUNDS&scale=left&cosd=1990-01-01&coed=2024-03-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1954-07-01"
 Federal_funds_rate_file = read.csv(Federal_funds_rate)
-head(Federal_funds_rate_file)
 Federal_funds_rate_data = Federal_funds_rate_file[,2]
 plot.ts(Federal_funds_rate_data)
 
 # 16. US dollars Index
 US_dollars_Index = "https://query1.finance.yahoo.com/v7/finance/download/DX-Y.NYB?period1=31795200&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
 US_dollars_Index_file = read.csv(US_dollars_Index)
-head(US_dollars_Index_file)
 US_dollars_Index_data = US_dollars_Index_file[,2]
 plot.ts(US_dollars_Index_data)
 
 # 17. Volatility Index
 Volatility_Index = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=VIXCLS&scale=left&cosd=1990-01-02&coed=2024-03-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1990-01-02"
 Volatility_Index_file = read.csv(Volatility_Index)
-head(Volatility_Index_file)
 Volatility_Index_data = Volatility_Index_file[,2]
 plot.ts(Volatility_Index_data)
 
@@ -199,16 +189,22 @@ plot.ts(Volatility_Index_data)
 
 # Model and Hypothesis
 
-This research project based on **Bayesian VARs(p) model** to forecast the Gold price in next two years. For $$\text{t} = {1,2,3,...,T-1,T}$$ :
+This research project based on **Bayesian VARs(p) model** to forecast the Gold price in next two years. For $$\text{t} = {1,2,3,...,T-1,T}$$ 
 
-$$y_t &= \mu_0 + A_1y_{t-1} + A_2y_{t-2}...+A_py_{t-p} +\epsilon_t\\
+$$
+\begin{aligned}
+y_t &= \mu_0 + A_1y_{t-1} + A_2y_{t-2}...+A_py_{t-p} +\epsilon_t\\
 
-\epsilon_t|y_{t-1} &\sim iid \mathcal{N}_{17}(0_{17}, \Sigma)$$
+\epsilon_t|y_{t-1} &\sim iid \mathcal{N}_{17}(0_{17}, \Sigma)
+\end{aligned}
+$$
 
 **In Matrix notation**
 $$
+\begin{aligned}
 Y &= XA+E\\
 E|X &\sim \mathcal{MN}_{T\times 17}(0,\Sigma,I_T)
+\end{aligned}
 $$
 
 
