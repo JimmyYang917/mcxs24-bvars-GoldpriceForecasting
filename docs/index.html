@@ -232,20 +232,42 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="model-and-hypothesis" class="level1">
 <h1>Model and Hypothesis</h1>
-<p>This research project based on <strong>Bayesian VARs(p) model</strong> to forecast the Gold price in next two years. For t = {1,2,3,…,T-1,T} :</p>
-$$
+<p>This research project based on <strong>Bayesian VARs(p) model</strong> to forecast the Gold price in next two years. For <span class="math inline">\(t\)</span> = {1,2,3,…,<span class="math inline">\(t-1\)</span>,<span class="math inline">\(t\)</span>} :</p>
 <span class="math display">\[\begin{aligned}
 y_t &amp;= \mu_0 + A_1y_{t-1} + A_2y_{t-2}...+A_py_{t-p} +\epsilon_t\\
 
 \epsilon_t|y_{t-1} &amp;\sim iid \mathcal{N}_{17}(0_{17}, \Sigma)
 \end{aligned}\]</span>
-<p>$$</p>
-<p><strong>In Matrix notation</strong> <span class="math display">\[
-\begin{aligned}
+<p>Where N = 17 and <span class="math inline">\(y_{t}\)</span> is a vector of 17 variables at time <span class="math inline">\(t\)</span>.</p>
+<span class="math display">\[\begin{aligned}
+
+y_{t}=\begin{pmatrix}
+GoldETF_{t} \\
+GoldFutures_{t}\\
+BITUSD_{t} \\
+13WeekNotes_{t}\\
+Treasurybill(5Year)_{t} \\
+Treasurybill(10Year)_{t} \\
+Treasurybill(30Year)_{t} \\
+NasdaqIndex_{t} \\
+M2_{t} \\
+Inflation_{t} \\
+Unemployment_{t}\\
+CrudeOil_{t}\\
+PPI(industry)_{t} \\
+PPI(commodity)_{t}\\
+FFERs_{t} \\
+USDollarIndex_{t}\\
+VolatilityIndex_{t}\\
+
+\end{pmatrix}
+
+\end{aligned}\]</span>
+<p><strong>In Matrix notation</strong></p>
+<span class="math display">\[\begin{aligned}
 Y &amp;= XA+E\\
 E|X &amp;\sim \mathcal{MN}_{T\times 17}(0,\Sigma,I_T)
-\end{aligned}
-\]</span></p>
+\end{aligned}\]</span>
 <section id="references" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
 
