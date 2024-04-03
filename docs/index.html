@@ -94,10 +94,7 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
   <li><a href="#data-and-data-properties" id="toc-data-and-data-properties" class="nav-link" data-scroll-target="#data-and-data-properties">Data and Data Properties</a></li>
-  <li><a href="#model-and-hypothesis" id="toc-model-and-hypothesis" class="nav-link" data-scroll-target="#model-and-hypothesis">Model and Hypothesis</a>
-  <ul class="collapse">
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
-  </ul></li>
+  <li><a href="#model-and-hypothesis" id="toc-model-and-hypothesis" class="nav-link" data-scroll-target="#model-and-hypothesis">Model and Hypothesis</a></li>
   </ul>
 </nav>
     </div>
@@ -232,11 +229,11 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="model-and-hypothesis" class="level1">
 <h1>Model and Hypothesis</h1>
-<p>This research project based on <strong>Bayesian VARs(p) model</strong> to forecast the Gold price in next two years. For <span class="math inline">\(t\)</span> = {1,2,3,…,<span class="math inline">\(t-1\)</span>,<span class="math inline">\(t\)</span>} :</p>
+<p>This research project based on <strong>Bayesian VARs(p) model</strong> to forecast the Gold price in next two years. For time <span class="math inline">\(t\)</span> = {1,2,3,…,<span class="math inline">\(T-1\)</span>,<span class="math inline">\(T\)</span>} :</p>
 <span class="math display">\[\begin{aligned}
 y_t &amp;= \mu_0 + A_1y_{t-1} + A_2y_{t-2}...+A_py_{t-p} +\epsilon_t\\
 
-\epsilon_t|y_{t-1} &amp;\sim iid \mathcal{N}_{17}(0_{17}, \Sigma)
+\epsilon_t|Y_{t-1} &amp;\sim iid \mathcal{N}_{17}(0_{17}, \Sigma)
 \end{aligned}\]</span>
 <p>Where N = 17 and <span class="math inline">\(y_{t}\)</span> is a vector of 17 variables at time <span class="math inline">\(t\)</span>.</p>
 <span class="math display">\[\begin{aligned}
@@ -263,16 +260,10 @@ VolatilityIndex_{t}\\
 \end{pmatrix}
 
 \end{aligned}\]</span>
-<p><strong>In Matrix notation</strong></p>
-<span class="math display">\[\begin{aligned}
-Y &amp;= XA+E\\
-E|X &amp;\sim \mathcal{MN}_{T\times 17}(0,\Sigma,I_T)
-\end{aligned}\]</span>
-<section id="references" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
+<p>For time <span class="math inline">\(t\)</span> = 1,2,…..,<span class="math inline">\(T\)</span> * <span class="math inline">\(y_t\)</span> is a <span class="math inline">\(N(17)\times 1\)</span> vector of observations at time <span class="math inline">\(t\)</span> * <span class="math inline">\(\mu_0\)</span> is a <span class="math inline">\(N(17)\times 1\)</span> vector of constant terms * <span class="math inline">\(A_i\)</span> is a <span class="math inline">\(N(17)\times N(17)\)</span> matrix of autoregressive slope parameters * <span class="math inline">\(\epsilon_t\)</span> is a <span class="math inline">\(N(17)\times 1\)</span> vector of error terms which is a multivariate white nose process(time invariant) * <span class="math inline">\(Y_{t-1}\)</span> is the information set collecting observations on y up to time <span class="math inline">\(t-1\)</span> * <span class="math inline">\(\Sigma\)</span> is a <span class="math inline">\(N(17)\times N(17)\)</span> covariance matrix of the error term</p>
+<p>Base on the model above, we could first turn B Vars(p) model into B Vars(1) model and easily regress to have the parameter matrix. Then we could have a <span class="math inline">\(t+h\)</span> period forward forecasting with increase of variance. ## References {.unnumbered}</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
