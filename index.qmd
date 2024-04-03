@@ -8,7 +8,7 @@ execute:
 bibliography: references.bib
 ---
 
-> **Abstract.** This research aims to explore future trends in Gold prices as a traditonal safe-haven investment using a Bayesian VARs model. In the wake of the 2008 financial crisis and especially the 2019 global Covid-19 pandemic, the world economy appears to be on the brink of a looming risk: a world-wide economic recession. The concern over the risk of investment returns has become a primary focus for global investors and financial institutions. This unease has been further exacerbated by geopolitical conflicts such as the Russia-Ukraine war(2022) and the Israeli-Palestinian conflict (2023). Consequently, this research aims to provide a briefly discussion and data-driven forecast of traditional safe-haven assets: Gold, under current circumstances. Factors considered include demand and supply dynamics, emerging safe-haven investments, risk-free investment assets, comparable investments, market returns, inflation on both demand and supply sides, broad money supply (M2), interest rates, unemployment rates and market volatility. 
+> **Abstract.** This research aims to explore future trends in Gold prices as a traditonal safe-haven investment using a Bayesian VARs model. In the wake of the 2008 financial crisis and especially the 2019 global Covid-19 pandemic, the world economy appears to be on the brink of a looming risk: a world-wide economic recession. The concern over the risk of investment returns has become a primary focus for global investors and financial institutions. This unease has been further exacerbated by geopolitical conflicts such as the Russia-Ukraine war(2022) and the Israeli-Palestinian conflict (2023). Consequently, this research aims to provide a briefly discussion and data-driven forecast of traditional safe-haven assets: Gold, under current circumstances. Factors considered include emerging safe-haven investments, risk-free investment assets, comparable investments, market returns, inflation on both demand and supply sides, broad money supply (M2), interest rates, unemployment rates and market volatility. 
 >
 > **Keywords.** Bayesian VARs, Gold price, Inflation, Interset rate, Unemployments, US Bond Yeild, Safe-haven Assets, Forecasting, Volatility, R, Quarto.
 
@@ -28,14 +28,188 @@ Ulrich Beck introduced the concept of the risk society in the late 20th century,
 
 Geopolitical conflicts, such as the Russia-Ukraine war and the Israeli-Palestinian conflict, have intensified various risks. Disruptions in oil supply, blockages in key waterways, and logistical challenges in transporting goods and agricultural products have further exacerbated commodity price hikes and inflationary pressures. Consequently, mitigating or hedging investment risks has become the primary focus for global investors and financial institutions.
 
-Among various safe-haven investments, gold has regained popularity as a hedge against uncertainty. This research aims to provide investors with a data-supported prediction of gold price trends over the next two years using Bayesian VAR models. The study incorporates information on gold supply and demand, as well as analysis of comparable and emerging hedging products, market risks, returns, unemployment rates, inflation, interest rates, and other relevant parameters to construct a robust Bayesian VAR model. Ultimately, this research aids investors in identifying gold price trends and confidence intervals under different uncertainties within the current environment, thereby mitigating investment risks effectively.
+Among various safe-haven investments, gold has regained popularity as a hedge against uncertainty. This research aims to provide investors with a data-supported prediction of gold price trends over the next two years using Bayesian VAR models. The study incorporates information on comparable and emerging hedging products, market risks, returns, unemployment rates, inflation, interest rates, and other relevant parameters to construct a robust Bayesian VAR model. Ultimately, this research aids investors in identifying gold price trends and confidence intervals under different uncertainties within the current environment, thereby mitigating investment risks effectively.
 
 # Data and Data Properties
+
+To enhance the accuracy of gold price predictions, a total selection of 17 variables has been chosen, encompassing gold competitors, risk-free assets, gold futures, and the Nasdaq index. From a broader macroeconomic standpoint, the variables also include inflation, the Producer Price Index (PPI), unemployment rates, crude oil prices, volatility indices, the dollar index, changes in the M2 money supply level, and federal fund effective rates.
+
+ * $GoldETF_{t}$: Gold current price in USD per 0.1 ounce, present by SPDR Gold Shares (GLD), which minus management fees.
+ * Competitors and Substitutes for Gold ：
+   + $GoldFutures_{t}$ : Gold future price in USD per ounce, as considering the expectations in further gold price movements and high liquidity safe haven currency than real product.
+   + $BITUSD_{t}$ : As an emerging investment product, with the concept of decentralization, it has become a risk-averse investment product for many investors and financial institutions. 
+   + Risk-free assets: treasury bonds
+     - $13WeekNotes_{t}$ : Considering as short-term risk free assets return. More time using in short term risk hedging in portfolio.
+     - $Treasurybill(5Year)_{t}$ : Considering as mid-term risk free assets return.
+     - $Treasurybill(10Year)_{t}$ : Considering as mid-term risk free assets return.
+     - $Treasurybill(30Year)_{t}$ : Considering as long-term risk free assets return. 
+ * Market returns as opposed to safe-haven investments：
+   + $NasdaqIndex_{t}$ ：Index that include all stocks available in NASDAQ to present the market returns. 
+ * Macro environment
+   + $M2_{t}$ : the Board money supply of United States cause price index goes up.
+   + $Inflation_{t}$ : CPI Index that present whole price level changes of all goods and services in US. Gold price are highly correlated with inflation.
+   + $Unemployment_{t}$ : unemployment rate provide by Bureau of Statistic of US to present a general environment of Labor market.
+   + $CrudeOil_{t}$ : to present as basic cost of production.
+   + $PPI(industry)_{t}$ : to present production side inflation of increase in cost in percentage.
+   + $PPI(commodity)_{t}$ : to present production side inflation of increase in cost in percentage.
+   + $FFERs_{t}$ : As the Federal Funds Effective Rates aim to lower the inflation, decrease the M2 level.
+   + $USDollarIndex_{t}$ : to present as the purchasing power of USD cross world-wide. That increase the total amount of investors and financial institutions come into US market to earn higher returns.
+   + $VolatilityIndex_{t}$ : to present the risk cross whole market and expectations of further coming events.
+   
+ 
+```{r Library}
+#| echo: false
+#| message: false
+#| warning: false
+
+library(readabs)
+library(fredr)
+library(blscrapeR)
+library(readrba)
+library(xts)
+library(fUnitRoots)   # ADF test - adfTest
+library(tidyverse)    # for table
+library(kableExtra)   # for print table
+```
+
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+# 1.Gold currentprice in USD per 0.1 ounce, present by SPDR Gold Shares (GLD)
+goldETF_link = "https://query1.finance.yahoo.com/v7/finance/download/GLD?period1=1199232000&period2=1712016000&interval=1mo&events=history&includeAdjustedClose=true"
+goldETF_download = read.csv(goldETF_link)
+gold_ETF_data = goldETF_download[,6]
+plot.ts(gold_ETF_data)
+
+# 2. Gold futures price in USD per ounce
+gold_link = "https://query1.finance.yahoo.com/v7/finance/download/GC%3DF?period1=1009843200&period2=1703980800&interval=1mo&filter=history&frequency=1mo&includeAdjustedClose=true"
+gold_download = read.csv(gold_link)
+gold_furture_data = gold_download[,6]
+plot.ts(gold_furture_data)
+
+# 3. BIT - USD
+BIT_USD = "https://query1.finance.yahoo.com/v7/finance/download/BTC-USD?period1=1410912000&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
+BIT_USD_file = read.csv(BIT_USD)
+head(BIT_USD_file)
+BIT_USD_data = BIT_USD_file[,2]
+plot.ts(BIT_USD_data)
+
+# 4. 13 Weeks treasury bond yield
+bond_yield_13weeks = "https://query1.finance.yahoo.com/v7/finance/download/%5EIRX?period1=-315360000&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
+bond_yield_13weeks_file = read.csv(bond_yield_13weeks)
+head(bond_yield_13weeks_file)
+bond_yield_13weeks_data = bond_yield_13weeks_file[,2]
+plot.ts(bond_yield_13weeks_data)
+
+# 5. 5-Year treasury bond yield
+bond_yield_5years = "https://query1.finance.yahoo.com/v7/finance/download/%5EFVX?period1=-252374400&period2=1712016000&interval=1mo&events=history&includeAdjustedClose=true"
+bond_yield_5years_file = read.csv(bond_yield_5years)
+head(bond_yield_5years_file)
+bond_yield_5years_data = bond_yield_5years_file[,2]
+plot.ts(bond_yield_5years_data)
+
+# 6. 10-Year treasury bond yield
+bond_yield_10years = "https://query1.finance.yahoo.com/v7/finance/download/%5ETNX?period1=-252374400&period2=1712016000&interval=1mo&events=history&includeAdjustedClose=true"
+bond_yield_10_years = read.csv(bond_yield_10years)
+bond_yield_10_years_data = bond_yield_10_years[,6]
+plot.ts(bond_yield_10_years_data)
+
+# 7. 30-Year treasury bond yield
+bond_yield_30years = "https://query1.finance.yahoo.com/v7/finance/download/%5ETYX?period1=224812800&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
+bond_yield_30years_file = read.csv(bond_yield_30years)
+head(bond_yield_30years_file)
+bond_yield_30years_data = bond_yield_30years_file[,2]
+plot.ts(bond_yield_30years_data)
+
+# 8. Nasdaq Index
+Nasdaq_IXIC = "https://query1.finance.yahoo.com/v7/finance/download/%5EIXIC?period1=34646400&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
+Nasdaq_IXIC_file = read.csv(Nasdaq_IXIC)
+head(Nasdaq_IXIC_file)
+Nasdaq_IXIC_data = Nasdaq_IXIC_file[,2]
+plot.ts(Nasdaq_IXIC_data)
+
+# 9. M2 level
+M2_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=WM2NS&scale=left&cosd=1980-11-03&coed=2024-03-04&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=pch&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1980-11-03"
+M2_rate_file = read.csv(M2_rate)
+head(M2_rate_file)
+M2_rate_data = M2_rate_file[,2]
+plot.ts(M2_rate_data)
+
+# 10. Inflation rate
+Inflation_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=CPIAUCSL&scale=left&cosd=1947-01-01&coed=2024-02-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=pch&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1947-01-01"
+Inflation_rate_file = read.csv(Inflation_rate)
+head(Inflation_rate_file)
+Inflation_rate_data = Inflation_rate_file[,2]
+plot.ts(Inflation_rate_data)
+
+# 11. Unemployment rate
+unemployment_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=UNRATE&scale=left&cosd=1948-01-01&coed=2024-02-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-04-02&revision_date=2024-04-02&nd=1948-01-01"
+unemployment_rate_file = read.csv(unemployment_rate)
+unemployment_rate_data = unemployment_rate_file[,2]
+plot.ts(unemployment_rate_data)
+
+# 12. Crude oil price
+Crude_oil_price = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=off&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=DCOILBRENTEU&scale=left&cosd=1990-01-01&coed=2024-03-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1987-05-20"
+Crude_oil_price_file = read.csv(Crude_oil_price)
+head(Crude_oil_price_file)
+Crude_oil_price_data = Crude_oil_price_file[,2]
+plot.ts(Crude_oil_price_data)
+
+# 13. PPI - Industry
+PPI_industry_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=PCUOMFGOMFG&scale=left&cosd=1984-12-01&coed=2024-02-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=pch&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1984-12-01"
+PPI_industry_rate_file = read.csv(PPI_industry_rate)
+head(PPI_industry_rate_file)
+PPI_industry_rate_data = PPI_industry_rate_file[,2]
+plot.ts(PPI_industry_rate_data)
+
+# 14. PPI - Commondity
+PPI_commodity_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=WM2NS&scale=left&cosd=1980-11-03&coed=2024-03-04&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=pch&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1980-11-03"
+PPI_commodity_rate_file = read.csv(PPI_commodity_rate)
+head(PPI_commodity_rate_file)
+PPI_commodity_rate_data = PPI_commodity_rate_file[,2]
+plot.ts(PPI_commodity_rate_data)
+
+# 15. Federal Funds Effective Rates
+Federal_funds_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=FEDFUNDS&scale=left&cosd=1990-01-01&coed=2024-03-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1954-07-01"
+Federal_funds_rate_file = read.csv(Federal_funds_rate)
+head(Federal_funds_rate_file)
+Federal_funds_rate_data = Federal_funds_rate_file[,2]
+plot.ts(Federal_funds_rate_data)
+
+# 16. US dollars Index
+US_dollars_Index = "https://query1.finance.yahoo.com/v7/finance/download/DX-Y.NYB?period1=31795200&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
+US_dollars_Index_file = read.csv(US_dollars_Index)
+head(US_dollars_Index_file)
+US_dollars_Index_data = US_dollars_Index_file[,2]
+plot.ts(US_dollars_Index_data)
+
+# 17. Volatility Index
+Volatility_Index = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=VIXCLS&scale=left&cosd=1990-01-02&coed=2024-03-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1990-01-02"
+Volatility_Index_file = read.csv(Volatility_Index)
+head(Volatility_Index_file)
+Volatility_Index_data = Volatility_Index_file[,2]
+plot.ts(Volatility_Index_data)
+
+```
 
 
 
 # Model and Hypothesis
 
+This research project based on **Bayesian VARs(p) model** to forecast the Gold price in next two years. For $$\text{t} = {1,2,3,...,T-1,T}$$ :
+
+$$y_t &= \mu_0 + A_1y_{t-1} + A_2y_{t-2}...+A_py_{t-p} +\epsilon_t\\
+
+\epsilon_t|y_{t-1} &\sim iid \mathcal{N}_{17}(0_{17}, \Sigma)$$
+
+**In Matrix notation**
+$$
+Y &= XA+E\\
+E|X &\sim \mathcal{MN}_{T\times 17}(0,\Sigma,I_T)
+$$
 
 
 ## References {.unnumbered}
