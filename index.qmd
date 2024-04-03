@@ -186,13 +186,13 @@ plot.ts(Volatility_Index_data)
 
 # Model and Hypothesis
 
-This research project based on **Bayesian VARs(p) model** to forecast the Gold price in next two years. For $t$ = {1,2,3,...,$t-1$,$t$} : 
+This research project based on **Bayesian VARs(p) model** to forecast the Gold price in next two years. For time $t$ = {1,2,3,...,$T-1$,$T$} : 
 
 ```{=tex}
 \begin{aligned}
 y_t &= \mu_0 + A_1y_{t-1} + A_2y_{t-2}...+A_py_{t-p} +\epsilon_t\\
 
-\epsilon_t|y_{t-1} &\sim iid \mathcal{N}_{17}(0_{17}, \Sigma)
+\epsilon_t|Y_{t-1} &\sim iid \mathcal{N}_{17}(0_{17}, \Sigma)
 \end{aligned}
 ```
 
@@ -224,14 +224,14 @@ VolatilityIndex_{t}\\
 
 \end{aligned}
 ```
-**In Matrix notation**
-```{=tex}
-\begin{aligned}
-Y &= XA+E\\
-E|X &\sim \mathcal{MN}_{T\times 17}(0,\Sigma,I_T)
-\end{aligned}
-```
 
+For time $t$ = 1,2,.....,$T$
+* $y_t$ is a $N(17)\times 1$  vector of observations at time $t$
+* $\mu_0$ is a $N(17)\times 1$ vector of constant terms
+* $A_i$ is a $N(17)\times N(17)$ matrix of autoregressive slope parameters
+* $\epsilon_t$ is a $N(17)\times 1$  vector of error terms which is a multivariate white nose process(time invariant)
+* $Y_{t-1}$ is the information set collecting observations on y up to time $t-1$
+* $\Sigma$ is a $N(17)\times N(17)$ covariance matrix of the error term
 
-
+Base on the model above, we could first turn B Vars(p) model into B Vars(1) model and easily regress to have the parameter matrix. Then we could have a $t+h$ period forward forecasting with increase of variance.
 ## References {.unnumbered}
