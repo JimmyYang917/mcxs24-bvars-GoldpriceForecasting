@@ -206,20 +206,6 @@ Volatility_Index_data <- Volatility_Index_file %>%
 
 ```
 
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-#log transformation of data apart form rate data(maybe can write a loop)
-gold_ETF_data$gold_ETF_data <-log(gold_ETF_data$gold_ETF_data)
-gold_future_data$gold_future_data <- log(gold_future_data$gold_future_data)
-BIT_USD_data$BIT_USD_data <- log(BIT_USD_data$BIT_USD_data)
-bond_yield_13weeks_data$bond_yield_13weeks_data<- log(bond_yield_13weeks_data$bond_yield_13weeks_data)
-bond_yield_5years_data$bond_yield_5years_data<- log(bond_yield_5years_data$bond_yield_5years_data)
-bond_yield_10_years_data$bond_yield_10_years_data<- log(bond_yield_10_years_data$bond_yield_10_years_data)
-Crude_oil_price_data$Crude_oil_price_data<- log(Crude_oil_price_data$Crude_oil_price_data)
-```
-
 
 ```{r}
 #| echo: false
