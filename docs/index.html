@@ -94,7 +94,7 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
   <li><a href="#data-and-data-properties" id="toc-data-and-data-properties" class="nav-link" data-scroll-target="#data-and-data-properties">Data and Data Properties</a></li>
-  <li><a href="#plot-of-all-variables" id="toc-plot-of-all-variables" class="nav-link" data-scroll-target="#plot-of-all-variables">Plot of all variables</a></li>
+  <li><a href="#plots-of-all-variables" id="toc-plots-of-all-variables" class="nav-link" data-scroll-target="#plots-of-all-variables">Plots of all variables</a></li>
   <li><a href="#model-and-hypothesis" id="toc-model-and-hypothesis" class="nav-link" data-scroll-target="#model-and-hypothesis">Model and Hypothesis</a>
   <ul class="collapse">
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
@@ -147,40 +147,40 @@ ul.task-list li input[type="checkbox"] {
 <h1>Data and Data Properties</h1>
 <p>To enhance the accuracy of gold price predictions, a total selection of 17 variables has been chosen, encompassing gold competitors, risk-free assets, gold futures, and the Nasdaq index. From a broader macroeconomic standpoint, the variables also include inflation, the Producer Price Index (PPI), unemployment rates, crude oil prices, volatility indices, the dollar index, changes in the M2 money supply level, and federal fund effective rates.</p>
 <ul>
-<li><span class="math inline">\(GoldETF_{t}\)</span>: Gold current price in USD per 0.1 ounce, present by SPDR Gold Shares (GLD), which minus management fees.</li>
-<li>Competitors and Substitutes for Gold ：
+<li><p><span class="math inline">\(GoldETF_{t}\)</span>: Gold current price in USD per 0.1 ounce, present by SPDR Gold Shares (GLD), which minus management fees.</p></li>
+<li><p>Competitors and Substitutes for Gold ：</p>
 <ul>
 <li><span class="math inline">\(GoldFutures_{t}\)</span> : Gold future price in USD per ounce, as considering the expectations in further gold price movements and high liquidity safe haven currency than real product.</li>
 <li><span class="math inline">\(BITUSD_{t}\)</span> : As an emerging investment product, with the concept of decentralization, it has become a risk-averse investment product for many investors and financial institutions.</li>
 <li>Risk-free assets: treasury bonds
 <ul>
 <li><span class="math inline">\(13WeekNotes_{t}\)</span> : Considering as short-term risk free assets return. More time using in short term risk hedging in portfolio.</li>
-<li><span class="math inline">\(Treasurybill(5Year)_{t}\)</span> : Considering as mid-term risk free assets return.</li>
-<li><span class="math inline">\(Treasurybill(10Year)_{t}\)</span> : Considering as mid-term risk free assets return.</li>
-<li><span class="math inline">\(Treasurybill(30Year)_{t}\)</span> : Considering as long-term risk free assets return.</li>
+<li><span class="math inline">\(Tbill(5Year)_{t}\)</span> : Considering as mid-term risk free assets return.</li>
+<li><span class="math inline">\(Tbill(10Year)_{t}\)</span> : Considering as mid-term risk free assets return.</li>
+<li><span class="math inline">\(Tbill(30Year)_{t}\)</span> : Considering as long-term risk free assets return.</li>
 </ul></li>
 </ul></li>
-<li>Market returns as opposed to safe-haven investments：
+<li><p>Market returns as opposed to safe-haven investments：</p>
 <ul>
 <li><span class="math inline">\(NasdaqIndex_{t}\)</span> ：Index that include all stocks available in NASDAQ to present the market returns.</li>
 </ul></li>
-<li>Macro environment
+<li><p>Macro environment：</p>
 <ul>
 <li><span class="math inline">\(M2_{t}\)</span> : the Board money supply of United States cause price index goes up.</li>
-<li><span class="math inline">\(Inflation_{t}\)</span> : CPI Index that present whole price level changes of all goods and services in US. Gold price are highly correlated with inflation.</li>
-<li><span class="math inline">\(Unemployment_{t}\)</span> : unemployment rate provide by Bureau of Statistic of US to present a general environment of Labor market.</li>
+<li><span class="math inline">\(Infla_{t}\)</span> : CPI Index that present whole price level changes of all goods and services in US. Gold price are highly correlated with inflation.</li>
+<li><span class="math inline">\(Unemp_{t}\)</span> : unemployment rate provide by Bureau of Statistic of US to present a general environment of Labor market.</li>
 <li><span class="math inline">\(CrudeOil_{t}\)</span> : to present as basic cost of production.</li>
 <li><span class="math inline">\(PPI(industry)_{t}\)</span> : to present production side inflation of increase in cost in percentage.</li>
 <li><span class="math inline">\(PPI(commodity)_{t}\)</span> : to present production side inflation of increase in cost in percentage.</li>
 <li><span class="math inline">\(FFERs_{t}\)</span> : As the Federal Funds Effective Rates aim to lower the inflation, decrease the M2 level.</li>
-<li><span class="math inline">\(USDollarIndex_{t}\)</span> : to present as the purchasing power of USD cross world-wide. That increase the total amount of investors and financial institutions come into US market to earn higher returns.</li>
+<li><span class="math inline">\(USDIndex_{t}\)</span> : to present as the purchasing power of USD cross world-wide. That increase the total amount of investors and financial institutions come into US market to earn higher returns.</li>
 <li><span class="math inline">\(VolatilityIndex_{t}\)</span> : to present the risk cross whole market and expectations of further coming events.</li>
 </ul></li>
 </ul>
 <p>After download all variables as designed, merge all data sets into a new frame and change the column names. The date of data used in this research will start at 2014-10-01 as at 2024-04-01.</p>
 </section>
-<section id="plot-of-all-variables" class="level1">
-<h1>Plot of all variables</h1>
+<section id="plots-of-all-variables" class="level1">
+<h1>Plots of all variables</h1>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
@@ -213,6 +213,28 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 <p>Both ACF and PACF suggest that variables are highly autocorrelated except M2: Board money change rate. That might because the policy has changed in earlier 2020 and 2022. Therefore, we further need ADF test(unit root test) to feed our time series are stationary or not.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                         P-value
+gold_ETF_data              0.236
+gold_future_data           0.235
+BIT_USD_data               0.460
+bond_yield_13weeks_data    0.333
+bond_yield_5years_data     0.649
+bond_yield_10_years_data   0.725
+bond_yield_30years_data    0.753
+Nasdaq_IXIC_data           0.265
+M2_rate_data               0.076
+Inflation_rate_data        0.263
+unemployment_rate_data     0.311
+Crude_oil_price_data       0.312
+PPI_industry_rate_data     0.102
+PPI_commodity_rate_data    0.163
+Federal_funds_rate_data    0.462
+US_dollars_Index_data      0.172
+Volatility_Index_data      0.517</code></pre>
+</div>
+</div>
 </section>
 <section id="model-and-hypothesis" class="level1">
 <h1>Model and Hypothesis</h1>
