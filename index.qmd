@@ -321,7 +321,6 @@ for (i in 1:17) {
 }
 adf_table <- data.frame(p_value = numeric(length(adf_test)))
 adf_table <- data.frame(p_value = numeric(length(adf_test)))
-
 for (i in 1:length(adf_test)) {adf_table[i, "p_value"] = round(adf_test[[i]]$p.value,3)
 }
 
@@ -334,7 +333,6 @@ rownames(adf_table)<- c("gold_ETF_data",           "gold_future_data",
                      "PPI_industry_rate_data",  "PPI_commodity_rate_data",
                      "Federal_funds_rate_data", "US_dollars_Index_data",
                      "Volatility_Index_data")
-
 colnames(adf_table)<- c("P-value")
 print(adf_table)
 ```
