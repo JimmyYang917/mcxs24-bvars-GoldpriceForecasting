@@ -8,7 +8,7 @@ execute:
 bibliography: references.bib
 ---
 
-> **Abstract.** This research aims to explore future trends in Gold prices as a traditonal safe-haven investment using a Bayesian VARs model. In the wake of the 2008 financial crisis and especially the 2019 global Covid-19 pandemic, the world economy appears to be on the brink of a looming risk: a world-wide economic recession. The concern over the risk of investment returns has become a primary focus for global investors and financial institutions. This unease has been further exacerbated by geopolitical conflicts such as the Russia-Ukraine war(2022) and the Israeli-Palestinian conflict (2023). Consequently, this research aims to provide a briefly discussion and data-driven forecast of traditional safe-haven assets: Gold, under current circumstances. Factors considered include emerging safe-haven investments, risk-free investment assets, comparable investments, market returns, inflation on both demand and supply sides, broad money supply (M2), interest rates, unemployment rates and market volatility. 
+> **Abstract.** This research aims to explore future trends in Gold prices as a traditonal safe-haven investment using a Bayesian VARs model. In the wake of the 2008 financial crisis and especially the 2019 global Covid-19 pandemic, the world economy appears to be on the brink of a looming risk: a world-wide economic recession. The concern over the risk of investment returns has become a primary focus for global investors and financial institutions. This unease has been further exacerbated by geopolitical conflicts such as the Russia-Ukraine war(2022) and the Israeli-Palestinian conflict (2023). Consequently, this research aims to provide a briefly discussion and data-driven forecast of traditional safe-haven assets: Gold, under current circumstances. Factors considered include emerging safe-haven investments, risk-free investment assets, comparable investments, market returns, inflation on both demand and supply sides, broad money supply (M2), interest rates, unemployment rates and market volatility.
 >
 > **Keywords.** Bayesian VARs, Gold price, Inflation, Interset rate, Unemployments, US Bond Yeild, Safe-haven Assets, Forecasting, Volatility, R, Quarto.
 
@@ -34,29 +34,34 @@ Among various safe-haven investments, gold has regained popularity as a hedge ag
 
 To enhance the accuracy of gold price predictions, a total selection of 17 variables has been chosen, encompassing gold competitors, risk-free assets, gold futures, and the Nasdaq index. From a broader macroeconomic standpoint, the variables also include inflation, the Producer Price Index (PPI), unemployment rates, crude oil prices, volatility indices, the dollar index, changes in the M2 money supply level, and federal fund effective rates.
 
- * $GoldETF_{t}$: Gold current price in USD per 0.1 ounce, present by SPDR Gold Shares (GLD), which minus management fees.
- * Competitors and Substitutes for Gold ：
-   + $GoldFutures_{t}$ : Gold future price in USD per ounce, as considering the expectations in further gold price movements and high liquidity safe haven currency than real product.
-   + $BITUSD_{t}$ : As an emerging investment product, with the concept of decentralization, it has become a risk-averse investment product for many investors and financial institutions. 
-   + Risk-free assets: treasury bonds
-     - $13WeekNotes_{t}$ : Considering as short-term risk free assets return. More time using in short term risk hedging in portfolio.
-     - $Treasurybill(5Year)_{t}$ : Considering as mid-term risk free assets return.
-     - $Treasurybill(10Year)_{t}$ : Considering as mid-term risk free assets return.
-     - $Treasurybill(30Year)_{t}$ : Considering as long-term risk free assets return. 
- * Market returns as opposed to safe-haven investments：
-   + $NasdaqIndex_{t}$ ：Index that include all stocks available in NASDAQ to present the market returns. 
- * Macro environment
-   + $M2_{t}$ : the Board money supply of United States cause price index goes up.
-   + $Inflation_{t}$ : CPI Index that present whole price level changes of all goods and services in US. Gold price are highly correlated with inflation.
-   + $Unemployment_{t}$ : unemployment rate provide by Bureau of Statistic of US to present a general environment of Labor market.
-   + $CrudeOil_{t}$ : to present as basic cost of production.
-   + $PPI(industry)_{t}$ : to present production side inflation of increase in cost in percentage.
-   + $PPI(commodity)_{t}$ : to present production side inflation of increase in cost in percentage.
-   + $FFERs_{t}$ : As the Federal Funds Effective Rates aim to lower the inflation, decrease the M2 level.
-   + $USDollarIndex_{t}$ : to present as the purchasing power of USD cross world-wide. That increase the total amount of investors and financial institutions come into US market to earn higher returns.
-   + $VolatilityIndex_{t}$ : to present the risk cross whole market and expectations of further coming events.
-   
- 
+-   $GoldETF_{t}$: Gold current price in USD per 0.1 ounce, present by SPDR Gold Shares (GLD), which minus management fees.
+
+-   Competitors and Substitutes for Gold ：
+
+    -   $GoldFutures_{t}$ : Gold future price in USD per ounce, as considering the expectations in further gold price movements and high liquidity safe haven currency than real product.
+    -   $BITUSD_{t}$ : As an emerging investment product, with the concept of decentralization, it has become a risk-averse investment product for many investors and financial institutions.
+    -   Risk-free assets: treasury bonds
+        -   $13WeekNotes_{t}$ : Considering as short-term risk free assets return. More time using in short term risk hedging in portfolio.
+        -   $Tbill(5Year)_{t}$ : Considering as mid-term risk free assets return.
+        -   $Tbill(10Year)_{t}$ : Considering as mid-term risk free assets return.
+        -   $Tbill(30Year)_{t}$ : Considering as long-term risk free assets return.
+
+-   Market returns as opposed to safe-haven investments：
+
+    -   $NasdaqIndex_{t}$ ：Index that include all stocks available in NASDAQ to present the market returns.
+
+-   Macro environment：
+
+    -   $M2_{t}$ : the Board money supply of United States cause price index goes up.
+    -   $Infla_{t}$ : CPI Index that present whole price level changes of all goods and services in US. Gold price are highly correlated with inflation.
+    -   $Unemp_{t}$ : unemployment rate provide by Bureau of Statistic of US to present a general environment of Labor market.
+    -   $CrudeOil_{t}$ : to present as basic cost of production.
+    -   $PPI(industry)_{t}$ : to present production side inflation of increase in cost in percentage.
+    -   $PPI(commodity)_{t}$ : to present production side inflation of increase in cost in percentage.
+    -   $FFERs_{t}$ : As the Federal Funds Effective Rates aim to lower the inflation, decrease the M2 level.
+    -   $USDIndex_{t}$ : to present as the purchasing power of USD cross world-wide. That increase the total amount of investors and financial institutions come into US market to earn higher returns.
+    -   $VolatilityIndex_{t}$ : to present the risk cross whole market and expectations of further coming events.
+
 ```{r Library}
 #| echo: false
 #| message: false
@@ -72,8 +77,8 @@ library(tidyverse)    # for table
 library(kableExtra)   # for print table
 library(dplyr)
 library(corrplot)
+library(tseries) # for adf test
 ```
-
 
 ```{r}
 #| echo: false
@@ -229,9 +234,9 @@ filtered_data <- na.omit(filtered_data)
 
 ```
 
-After download all variables as designed, merge all data sets into a new frame and change the column names. The date of data used in this research will start at 2014-10-01 as at 2024-04-01. 
+After download all variables as designed, merge all data sets into a new frame and change the column names. The date of data used in this research will start at 2014-10-01 as at 2024-04-01.
 
-# Plot of all variables 
+# Plots of all variables
 
 ```{r}
 #| echo: false
@@ -250,6 +255,7 @@ for (i in 1:17) {
 
 
 ```
+
 As above, we could have all 17 variables in visualization format individually. As a quick overlook, 13 weeks bond has a similar trend with federal funds effective rates; other 3 treasury bonds move quite same; gold and its' future, Nasdaq, Bit coin, crude oil price and US dollars Index have upper ward trends; Unemployment rates seems like opposite to federal rates; M2 and other 3 time series seems like stationary on mean but variance change over time.
 
 **Correlation Table**
@@ -286,35 +292,41 @@ plot(pacf, main = "")
 title(main = paste(colnames(data1)[i]), line = 0.5)
 }
 ```
+
 Both ACF and PACF suggest that variables are highly autocorrelated except M2: Board money change rate. That might because the policy has changed in earlier 2020 and 2022. Therefore, we further need ADF test(unit root test) to feed our time series are stationary or not.
 
 ```{r}
 #| echo: false
 #| message: false
 #| warning: false
-#| results: hide
 
-library(tseries)
-# ADF Test
+adf_test <- list()
+for (i in 1:17) {
+  adf_result = adf.test(data1[,i], k = 4)
+  adf_test[[i]] <- adf_result
+}
+adf_table <- data.frame(p_value = numeric(length(adf_test)))
+adf_table <- data.frame(p_value = numeric(length(adf_test)))
+for (i in 1:length(adf_test)) {adf_table[i, "p_value"] = round(adf_test[[i]]$p.value,3)
+}
 
-adf_hicp <- adf.test(data1[,1], k=12, alternative = "stationary")
-adf_ip <- adf.test(data1[,2], k=12, alternative = "stationary")
-adf_ciss <- adf.test(data1[,3], k=12, alternative = "stationary")
-adf_un <- adf.test(data1[,4], k=12, alternative = "stationary")
-
-adf_results <- data.frame(
-  Variable = c("HICP", "IP", "CISS", "UN"),
-  ADF_Statistic = c(adf_hicp$statistic, adf_ip$statistic, adf_ciss$statistic, adf_un$statistic),
-  P_Value = c(adf_hicp$p.value, adf_ip$p.value, adf_ciss$p.value, adf_un$p.value),
-  lags = rep(12, 4)
-)
-
-#knitr::kable(adf_results, digits = 3, align = 'c')
+rownames(adf_table)<- c("gold_ETF_data",           "gold_future_data", 
+                     "BIT_USD_data",            "bond_yield_13weeks_data", 
+                     "bond_yield_5years_data",  "bond_yield_10_years_data",  
+                     "bond_yield_30years_data", "Nasdaq_IXIC_data", 
+                     "M2_rate_data",            "Inflation_rate_data",
+                    "unemployment_rate_data",  "Crude_oil_price_data",
+                     "PPI_industry_rate_data",  "PPI_commodity_rate_data",
+                     "Federal_funds_rate_data", "US_dollars_Index_data",
+                     "Volatility_Index_data")
+colnames(adf_table)<- c("P-value")
+print(adf_table)
 ```
+
 
 # Model and Hypothesis
 
-This research project based on **Bayesian VARs(p) model** to forecast the Gold price in next two years. For time $t$ = {1,2,3,...,$T-1$,$T$} : 
+This research project based on **Bayesian VARs(p) model** to forecast the Gold price in next two years. For time $t$ = {1,2,3,...,$T-1$,$T$} :
 
 ```{=tex}
 \begin{aligned}
@@ -323,7 +335,6 @@ y_t &= \mu_0 + A_1y_{t-1} + A_2y_{t-2}...+A_py_{t-p} +\epsilon_t\\
 \epsilon_t|Y_{t-1} &\sim iid \mathcal{N}_{17}(0_{17}, \Sigma)
 \end{aligned}
 ```
-
 Where N = 17 and $y_{t}$ is a vector of 17 variables at time $t$.
 
 ```{=tex}
@@ -352,15 +363,14 @@ VolatilityIndex_{t}\\
 
 \end{aligned}
 ```
-
 For time $t$ = 1,2,.....,$T$：
 
- * $y_t$ is a $N(17)\times 1$  vector of observations at time $t$
- * $\mu_0$ is a $N(17)\times 1$ vector of constant terms
- * $A_i$ is a $N(17)\times N(17)$ matrix of autoregressive slope parameters
- * $\epsilon_t$ is a $N(17)\times 1$  vector of error terms which is a multivariate white nose process(time invariant)
- * $Y_{t-1}$ is the information set collecting observations on y up to time $t-1$
- * $\Sigma$ is a $N(17)\times N(17)$ covariance matrix of the error term
+-   $y_t$ is a $N(17)\times 1$ vector of observations at time $t$
+-   $\mu_0$ is a $N(17)\times 1$ vector of constant terms
+-   $A_i$ is a $N(17)\times N(17)$ matrix of autoregressive slope parameters
+-   $\epsilon_t$ is a $N(17)\times 1$ vector of error terms which is a multivariate white nose process(time invariant)
+-   $Y_{t-1}$ is the information set collecting observations on y up to time $t-1$
+-   $\Sigma$ is a $N(17)\times N(17)$ covariance matrix of the error term
 
 Base on the model above, we could first turn B Vars(p) model into B Vars(1) model and easily regress to have the parameter matrix. Then we could have a $t+h$ period forward forecasting with increase of variance, in this case: $h$ = 24.
 
