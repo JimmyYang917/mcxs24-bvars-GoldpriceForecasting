@@ -324,7 +324,7 @@ print(adf_table)
 ```
 
 
-# Model and Hypothesis
+# Basic Model and Hypothesis
 
 This research project based on **Bayesian VARs(p) model** to forecast the Gold price in next two years. For time $t$ = {1,2,3,...,$T-1$,$T$} :
 
@@ -335,6 +335,7 @@ y_t &= \mu_0 + A_1y_{t-1} + A_2y_{t-2}...+A_py_{t-p} +\epsilon_t\\
 \epsilon_t|Y_{t-1} &\sim iid \mathcal{N}_{17}(0_{17}, \Sigma)
 \end{aligned}
 ```
+
 Where N = 17 and $y_{t}$ is a vector of 17 variables at time $t$.
 
 ```{=tex}
@@ -358,7 +359,6 @@ PPI(commodity)_{t}\\
 FFERs_{t} \\
 USDollarIndex_{t}\\
 VolatilityIndex_{t}\\
-
 \end{pmatrix}
 
 \end{aligned}
@@ -372,10 +372,319 @@ For time $t$ = 1,2,.....,$T$：
 -   $Y_{t-1}$ is the information set collecting observations on y up to time $t-1$
 -   $\Sigma$ is a $N(17)\times N(17)$ covariance matrix of the error term
 
+In matrix notation:
+
+$$
+\begin{align}
+Y &= X A +E 
+\\
+E|X &\sim \mathcal{MN}_{T\times N}(\textbf{0},\Sigma,I_T)
+\\
+Y|X &\sim \mathcal{MN}_{T\times N}(XA,\Sigma,I_T)
+\end{align} 
+$$ 
+
+```{=tex}
+\begin{aligned}
+
+A=
+\begin{bmatrix}
+\mu_{0}' \\ A_{1}' \\
+A_{2} '\\.\\.\\.\\A_{p}'
+\end{bmatrix}_{K \times N}
+
+Y=
+\begin{bmatrix}
+y_{1}' \\ y_{2}' \\
+y_{3} '\\.\\.\\.\\y_{T}'
+\end{bmatrix}_{T \times N}
+
+x_t=
+\begin{bmatrix}
+1 \\ y_{t-1}' \\
+y_{t-2} '\\.\\.\\.\\y_{t-p}'
+\end{bmatrix}_{K \times 1}
+
+X=
+\begin{bmatrix}
+x_{1}' \\ x_{2}' \\
+x_{3} '\\.\\.\\.\\x_{T}'
+\end{bmatrix}_{T \times K}
+
+E=
+\begin{bmatrix}
+\epsilon_1' \\ \epsilon_2' \\
+\epsilon_3 '\\.\\.\\.\\\epsilon_T'
+\end{bmatrix}_{T \times N}
+
+\end{aligned}
+```
+
+where K = 1 + pN
+
 Base on the model above, we could first turn B Vars(p) model into B Vars(1) model and easily regress to have the parameter matrix. Then we could have a $t+h$ period forward forecasting with increase of variance, in this case: $h$ = 24.
 
 The main focus of estimate output is the conditional mean of Gold price, which base on current information set $Y_{t-1}$. It provide the average mean prediction of Gold price which investors and financial institutions interested in. Moreover, 1 standard deviation and 2 standard deviation will also produced in forecasting process to provide a 68% and 95% of confidence intervals of future Gold price movements in $h$ periods base on current information set.
 
 Furthermore, different prior distribution might be used to provide different level of uncertainty of current environment(information set). Compare the difference of Gold price under different priors could help to prove the Gold as a high quality safe-haven investment and increase investors and financial institutions confidence and further expectations. ( Competitors for golds might also be used under different priors, such as BIT-USD, Nasdaq Index and short to mid-term treasury bills. )
+
+Based on Bayes' Theorem:
+
+```{=tex}
+\begin{aligned}
+
+P(A|B) & =\frac{P(B|A)P(A)}{P(B)} \\
+P(A|B) & \propto P(B|A)\P(A)
+
+\end{aligned}
+```
+
+Therefore we have:
+
+```{=tex}
+\begin{aligned}
+
+P(A,\Sigma|Y,X) &= \frac{P(Y|X,A,\Sigma) \ P(A,\Sigma)}{P(Y)}\\
+&\propto P(Y|X,A,\Sigma) \ P(A,\Sigma)\\
+&= L(A,\Sigma | Y,X) \ P(A|\Sigma) \ P(\Sigma) \\\\
+
+A|\Sigma &\sim \mathcal{MN}_{K\times N}(\underline{A}, \Sigma,\underline{V}) 
+\\ 
+\Sigma &\sim \mathcal{IW}_{N}(\underline{S}, \underline{v})
+
+\end{aligned}
+```
+
+Which is the posterior distribution is the proportion of likelihood function and prior.
+
+where $A_{M \times N}$ follow a matrix normal distribution:
+- $\underline{A}$ is the mean of matrix normal distribution
+- $\Sigma_{N \times N}$is the row specific covariance matrix
+- $\underline{V}_{M \times M}$is the column specific covariance matrix 
+therefore, we have:
+
+```{=tex}
+\begin{aligned}
+
+vec(A)\sim N_{MN}(vec(\underline{A}),\Sigma\otimes \underline{V})
+
+\end{aligned}
+```
+
+where $/Sigma$ follow a Inverse Wishart distribution:
+- $\underline{S}$ is N × N positive definite symmetric matrix called the scale matrix 
+- $\underline{v}$ > N + 2 denotes degrees of freedom
+
+# First Benchmark Assumption: Minnesota prior
+
+In real life, macroeconomic variables are more likely being unit-root non stationary and are well-characterized by a multivariate random walk process
+
+```{=tex}
+\begin{aligned}
+
+y_{t} = y_{t-1} + \epsilon_t
+
+\end{aligned}
+```
+
+-Therefore, we first use Minnesota prior(1984) for our Bayesian forecasting:
+
+Set the prior mean $A$ to:
+```{=tex}
+\begin{aligned}
+
+\underline{A}=\left[ 0_{N\times1} \ \ \ \  I_{N} \ \ \ \ \ 0_{N\times(p-1)N} \right]'
+
+\end{aligned}
+```
+
+where the mean of first lag equal to 1 and mean of constant term and other lags are 0.
+
+Set the column specific prior covariance of $A$ (prior shrinkage)to:
+```{=tex}
+\begin{aligned}
+
+\underline{V} = diag\left[ \kappa_{2} \quad \kappa_{1}(\textbf{p} ^{-2}\otimes I^{'}_{N}) \right]
+
+\end{aligned}
+```
+
+where:
+-
+
+
+#### Function Proofing
+
+Consider Bi-variate Gaussian random walk process:
+
+$$
+y_t = 
+\begin{bmatrix}
+y_{t,1} \\
+y_{t,2}
+\end{bmatrix} = 
+\begin{bmatrix}
+y_{t-1,1} \\
+y_{t-1,2}
+\end{bmatrix} + 
+\begin{bmatrix}
+\epsilon_{t,1} \\
+\epsilon_{t,2}
+\end{bmatrix} 
+, where   \  \ 
+\epsilon_{t,1} \sim \mathcal{N}(0,1)  \ and \ 
+\epsilon_{t,2} \sim \mathcal{N}(0,1)
+$$
+
+$$ 
+Y = \begin{bmatrix}
+y_2' \\
+y_3' \\
+\vdots \\
+y_n'
+\end{bmatrix},
+\quad
+X = \begin{bmatrix}
+1 \quad y_1' \\
+1 \quad y_2' \\
+\vdots \quad \vdots \\
+1 \quad y_{n-1}'
+\end{bmatrix}
+$$
+
+
+Function below is `posterior.draws`:
+
+```{r Basic Model, fig.align='center',fig.pos='H'}
+#| echo: true
+#| message: false
+#| warning: false
+
+## Posterior sample draw function for basic model(posterior.draws)
+posterior.draws       = function (S, Y, X){
+  
+    # normal-inverse Wishard posterior parameters
+    V.bar.inv         = t(X)%*%X + diag(1/diag(V.prior))
+    V.bar             = solve(V.bar.inv)
+    A.bar             = V.bar%*%(t(X)%*%Y + diag(1/diag(V.prior))%*%A.prior)
+    nu.bar            = nrow(Y) + nu.prior
+    S.bar             = S.prior + t(Y)%*%Y + t(A.prior)%*%diag(1/diag(V.prior))%*%A.prior - t(A.bar)%*%V.bar.inv%*%A.bar
+    S.bar.inv         = solve(S.bar)
+    
+    # posterior draws 
+    Sigma.posterior   = rWishart(S, df=nu.bar, Sigma=S.bar.inv)
+    Sigma.posterior   = apply(Sigma.posterior,3,solve)
+    Sigma.posterior   = array(Sigma.posterior,c(N,N,S))
+    A.posterior       = array(rnorm(prod(c(dim(A.bar),S))),c(dim(A.bar),S))
+    L                 = t(chol(V.bar))
+    
+    for (s in 1:S){
+      A.posterior[,,s]= A.bar + L%*%A.posterior[,,s]%*%chol(Sigma.posterior[,,s])
+    }
+
+    output            = list(A.posterior=A.posterior, Sigma.posterior=Sigma.posterior)
+    return(output)
+}
+```
+
+
+```{r Basic Model Function Proof, fig.align='center',fig.pos='H'}
+#| echo: false
+#| message: false
+#| warning: false
+
+e1 = cumsum(rnorm(1000, 0, sd=1))
+e2 = cumsum(rnorm(1000, 0, sd=1))
+e  = cbind(e1,e2)
+
+## Define data X, Y 
+Y = ts(e[2:nrow(e),], frequency=1)
+X = matrix(1,nrow(Y),1)
+X = cbind(X,e[2:nrow(e)-1,])
+
+
+## Test on basic model
+N           = ncol(Y)                          # N=2
+p           = frequency(Y)
+A.hat       = solve(t(X)%*%X)%*%t(X)%*%Y
+Sigma.hat   = t(Y-X%*%A.hat)%*%(Y-X%*%A.hat)/nrow(Y)
+
+# Prior distribution (with Minnesota prior)
+kappa.1             = 1                                    # shrinkage for A1 to Ap
+kappa.2             = 100                                  # shrinkage for constant 
+A.prior             = matrix(0,nrow(A.hat),ncol(A.hat))
+A.prior[2:(N + 1),] = diag(N)
+V.prior             = diag(c(kappa.2,kappa.1*((1:p)^(-2))%x%rep(1,N)))
+S.prior             = diag(diag(Sigma.hat))
+nu.prior            = N+2
+# Applying function 
+posterior.sample.draws.p = posterior.draws(S=10000, Y=Y, X=X)
+
+```
+
+- The posterior mean of the $A$ is:
+
+```{r Basic Model Proof A, fig.align='center',fig.pos='H'}
+#| echo: false
+#| message: false
+#| warning: false
+
+basic.model.proof.A <- 
+  tibble( "A" = c("Constant term", "Y1 lag","Y2 lag"),
+          "Simulation Parameter Y1" 
+          = c(round(mean(posterior.sample.draws.p[["A.posterior"]][1,1,]),4),
+              round(mean(posterior.sample.draws.p[["A.posterior"]][2,1,]),4),
+              round(mean(posterior.sample.draws.p[["A.posterior"]][3,1,]),4)),
+           "Simulation Parameter Y2" 
+          = c(round(mean(posterior.sample.draws.p[["A.posterior"]][1,2,]),4),
+              round(mean(posterior.sample.draws.p[["A.posterior"]][2,2,]),4),
+              round(mean(posterior.sample.draws.p[["A.posterior"]][3,2,]),4))
+
+  )
+
+kable(basic.model.proof.A, align = "c") %>% 
+  kable_styling(font_size = 8, 
+                fixed_thead = TRUE, 
+                full_width = FALSE, 
+                position = "center",
+                latex_options = c("HOLD_position"),
+                bootstrap_options = c("striped", "hover", "bordered", "responsive", "dark"))
+
+```
+
+Table 2 Basic Model Proofing Simulation for $A$
+
+- The posterior mean of the $\Sigma$ is:
+
+```{r Basic Model Proof Sigma, fig.align='center',fig.pos='H'}
+#| echo: false
+#| message: false
+#| warning: false
+
+basic.model.proof.Sigma <-
+  tibble( "Sigma" = c("Y1 lag","Y2 lag"),
+          "Simulation Parameter Y1" 
+          = c(round(mean(posterior.sample.draws.p[["Sigma.posterior"]][1,1,]),4),
+              round(mean(posterior.sample.draws.p[["Sigma.posterior"]][2,1,]),4)),
+           "Simulation Parameter Y2" 
+          = c(round(mean(posterior.sample.draws.p[["Sigma.posterior"]][1,2,]),4),
+              round(mean(posterior.sample.draws.p[["Sigma.posterior"]][2,2,]),4))
+
+  )
+
+kable(basic.model.proof.Sigma, align = "c") %>% 
+  kable_styling(font_size = 8, 
+                fixed_thead = TRUE, 
+                full_width = FALSE, 
+                position = "center",
+                latex_options = c("HOLD_position"),
+                bootstrap_options = c("striped", "hover", "bordered", "responsive", "dark"))
+
+```
+
+Table 3 Basic Model Proofing Simulation for $\Sigma$
+
+Extension Model:
+
 
 ## References {.unnumbered}
