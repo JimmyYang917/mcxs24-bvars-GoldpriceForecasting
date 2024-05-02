@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -60,6 +94,9 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
@@ -95,8 +132,10 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
   <li><a href="#data-and-data-properties" id="toc-data-and-data-properties" class="nav-link" data-scroll-target="#data-and-data-properties">Data and Data Properties</a></li>
   <li><a href="#plots-of-all-variables" id="toc-plots-of-all-variables" class="nav-link" data-scroll-target="#plots-of-all-variables">Plots of all variables</a></li>
-  <li><a href="#model-and-hypothesis" id="toc-model-and-hypothesis" class="nav-link" data-scroll-target="#model-and-hypothesis">Model and Hypothesis</a>
+  <li><a href="#basic-model-and-hypothesis" id="toc-basic-model-and-hypothesis" class="nav-link" data-scroll-target="#basic-model-and-hypothesis">Basic Model and Hypothesis</a></li>
+  <li><a href="#first-benchmark-assumption-minnesota-prior" id="toc-first-benchmark-assumption-minnesota-prior" class="nav-link" data-scroll-target="#first-benchmark-assumption-minnesota-prior">First Benchmark Assumption: Minnesota prior</a>
   <ul class="collapse">
+  <li><a href="#where" id="toc-where" class="nav-link" data-scroll-target="#where">where:</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul></li>
   </ul>
@@ -224,20 +263,20 @@ bond_yield_5years_data     0.649
 bond_yield_10_years_data   0.725
 bond_yield_30years_data    0.753
 Nasdaq_IXIC_data           0.265
-M2_rate_data               0.076
+M2_rate_data               0.077
 Inflation_rate_data        0.263
 unemployment_rate_data     0.311
 Crude_oil_price_data       0.312
-PPI_industry_rate_data     0.102
-PPI_commodity_rate_data    0.163
+PPI_industry_rate_data     0.101
+PPI_commodity_rate_data    0.164
 Federal_funds_rate_data    0.462
 US_dollars_Index_data      0.172
 Volatility_Index_data      0.517</code></pre>
 </div>
 </div>
 </section>
-<section id="model-and-hypothesis" class="level1">
-<h1>Model and Hypothesis</h1>
+<section id="basic-model-and-hypothesis" class="level1">
+<h1>Basic Model and Hypothesis</h1>
 <p>This research project based on <strong>Bayesian VARs(p) model</strong> to forecast the Gold price in next two years. For time <span class="math inline">\(t\)</span> = {1,2,3,…,<span class="math inline">\(T-1\)</span>,<span class="math inline">\(T\)</span>} :</p>
 <span class="math display">\[\begin{aligned}
 y_t &amp;= \mu_0 + A_1y_{t-1} + A_2y_{t-2}...+A_py_{t-p} +\epsilon_t\\
@@ -265,7 +304,6 @@ PPI(commodity)_{t}\\
 FFERs_{t} \\
 USDollarIndex_{t}\\
 VolatilityIndex_{t}\\
-
 \end{pmatrix}
 
 \end{aligned}\]</span>
@@ -278,9 +316,243 @@ VolatilityIndex_{t}\\
 <li><span class="math inline">\(Y_{t-1}\)</span> is the information set collecting observations on y up to time <span class="math inline">\(t-1\)</span></li>
 <li><span class="math inline">\(\Sigma\)</span> is a <span class="math inline">\(N(17)\times N(17)\)</span> covariance matrix of the error term</li>
 </ul>
+<p>In matrix notation:</p>
+<p><span class="math display">\[
+\begin{align}
+Y &amp;= X A +E
+\\
+E|X &amp;\sim \mathcal{MN}_{T\times N}(\textbf{0},\Sigma,I_T)
+\\
+Y|X &amp;\sim \mathcal{MN}_{T\times N}(XA,\Sigma,I_T)
+\end{align}
+\]</span></p>
+<span class="math display">\[\begin{aligned}
+
+A=
+\begin{bmatrix}
+\mu_{0}' \\ A_{1}' \\
+A_{2} '\\.\\.\\.\\A_{p}'
+\end{bmatrix}_{K \times N}
+
+Y=
+\begin{bmatrix}
+y_{1}' \\ y_{2}' \\
+y_{3} '\\.\\.\\.\\y_{T}'
+\end{bmatrix}_{T \times N}
+
+x_t=
+\begin{bmatrix}
+1 \\ y_{t-1}' \\
+y_{t-2} '\\.\\.\\.\\y_{t-p}'
+\end{bmatrix}_{K \times 1}
+
+X=
+\begin{bmatrix}
+x_{1}' \\ x_{2}' \\
+x_{3} '\\.\\.\\.\\x_{T}'
+\end{bmatrix}_{T \times K}
+
+E=
+\begin{bmatrix}
+\epsilon_1' \\ \epsilon_2' \\
+\epsilon_3 '\\.\\.\\.\\\epsilon_T'
+\end{bmatrix}_{T \times N}
+
+\end{aligned}\]</span>
+<p>where K = 1 + pN</p>
 <p>Base on the model above, we could first turn B Vars(p) model into B Vars(1) model and easily regress to have the parameter matrix. Then we could have a <span class="math inline">\(t+h\)</span> period forward forecasting with increase of variance, in this case: <span class="math inline">\(h\)</span> = 24.</p>
 <p>The main focus of estimate output is the conditional mean of Gold price, which base on current information set <span class="math inline">\(Y_{t-1}\)</span>. It provide the average mean prediction of Gold price which investors and financial institutions interested in. Moreover, 1 standard deviation and 2 standard deviation will also produced in forecasting process to provide a 68% and 95% of confidence intervals of future Gold price movements in <span class="math inline">\(h\)</span> periods base on current information set.</p>
 <p>Furthermore, different prior distribution might be used to provide different level of uncertainty of current environment(information set). Compare the difference of Gold price under different priors could help to prove the Gold as a high quality safe-haven investment and increase investors and financial institutions confidence and further expectations. ( Competitors for golds might also be used under different priors, such as BIT-USD, Nasdaq Index and short to mid-term treasury bills. )</p>
+<p>Based on Bayes’ Theorem:</p>
+<span class="math display">\[\begin{aligned}
+
+P(A|B) &amp; =\frac{P(B|A)P(A)}{P(B)} \\
+P(A|B) &amp; \propto P(B|A)\P(A)
+
+\end{aligned}\]</span>
+<p>Therefore we have:</p>
+<span class="math display">\[\begin{aligned}
+
+P(A,\Sigma|Y,X) &amp;= \frac{P(Y|X,A,\Sigma) \ P(A,\Sigma)}{P(Y)}\\
+&amp;\propto P(Y|X,A,\Sigma) \ P(A,\Sigma)\\
+&amp;= L(A,\Sigma | Y,X) \ P(A|\Sigma) \ P(\Sigma) \\\\
+
+A|\Sigma &amp;\sim \mathcal{MN}_{K\times N}(\underline{A}, \Sigma,\underline{V})
+\\
+\Sigma &amp;\sim \mathcal{IW}_{N}(\underline{S}, \underline{v})
+
+\end{aligned}\]</span>
+<p>Which is the posterior distribution is the proportion of likelihood function and prior.</p>
+<p>where <span class="math inline">\(A_{M \times N}\)</span> follow a matrix normal distribution: - <span class="math inline">\(\underline{A}\)</span> is the mean of matrix normal distribution - <span class="math inline">\(\Sigma_{N \times N}\)</span>is the row specific covariance matrix - <span class="math inline">\(\underline{V}_{M \times M}\)</span>is the column specific covariance matrix therefore, we have:</p>
+<span class="math display">\[\begin{aligned}
+
+vec(A)\sim N_{MN}(vec(\underline{A}),\Sigma\otimes \underline{V})
+
+\end{aligned}\]</span>
+<p>where <span class="math inline">\(/Sigma\)</span> follow a Inverse Wishart distribution: - <span class="math inline">\(\underline{S}\)</span> is N × N positive definite symmetric matrix called the scale matrix - <span class="math inline">\(\underline{v}\)</span> &gt; N + 2 denotes degrees of freedom</p>
+</section>
+<section id="first-benchmark-assumption-minnesota-prior" class="level1">
+<h1>First Benchmark Assumption: Minnesota prior</h1>
+<p>In real life, macroeconomic variables are more likely being unit-root non stationary and are well-characterized by a multivariate random walk process</p>
+<span class="math display">\[\begin{aligned}
+
+y_{t} = y_{t-1} + \epsilon_t
+
+\end{aligned}\]</span>
+<p>-Therefore, we first use Minnesota prior(1984) for our Bayesian forecasting:</p>
+<p>Set the prior mean <span class="math inline">\(A\)</span> to:</p>
+<span class="math display">\[\begin{aligned}
+
+\underline{A}=\left[ 0_{N\times1} \ \ \ \  I_{N} \ \ \ \ \ 0_{N\times(p-1)N} \right]'
+
+\end{aligned}\]</span>
+<p>where the mean of first lag equal to 1 and mean of constant term and other lags are 0.</p>
+<p>Set the column specific prior covariance of <span class="math inline">\(A\)</span> (prior shrinkage)to:</p>
+<span class="math display">\[\begin{aligned}
+
+\underline{V} = diag\left[ \kappa_{2} \quad \kappa_{1}(\textbf{p} ^{-2}\otimes I^{'}_{N}) \right]
+
+\end{aligned}\]</span>
+<section id="where" class="level2">
+<h2 class="anchored" data-anchor-id="where">where:</h2>
+<section id="function-proofing" class="level4">
+<h4 class="anchored" data-anchor-id="function-proofing">Function Proofing</h4>
+<p>Consider Bi-variate Gaussian random walk process:</p>
+<p><span class="math display">\[
+y_t =
+\begin{bmatrix}
+y_{t,1} \\
+y_{t,2}
+\end{bmatrix} =
+\begin{bmatrix}
+y_{t-1,1} \\
+y_{t-1,2}
+\end{bmatrix} +
+\begin{bmatrix}
+\epsilon_{t,1} \\
+\epsilon_{t,2}
+\end{bmatrix}
+, where   \  \
+\epsilon_{t,1} \sim \mathcal{N}(0,1)  \ and \
+\epsilon_{t,2} \sim \mathcal{N}(0,1)
+\]</span></p>
+<p><span class="math display">\[
+Y = \begin{bmatrix}
+y_2' \\
+y_3' \\
+\vdots \\
+y_n'
+\end{bmatrix},
+\quad
+X = \begin{bmatrix}
+1 \quad y_1' \\
+1 \quad y_2' \\
+\vdots \quad \vdots \\
+1 \quad y_{n-1}'
+\end{bmatrix}
+\]</span></p>
+<p>Function below is <code>posterior.draws</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Posterior sample draw function for basic model(posterior.draws)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>posterior.draws       <span class="ot">=</span> <span class="cf">function</span> (S, Y, X){</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># normal-inverse Wishard posterior parameters</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    V.bar.inv         <span class="ot">=</span> <span class="fu">t</span>(X)<span class="sc">%*%</span>X <span class="sc">+</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    V.bar             <span class="ot">=</span> <span class="fu">solve</span>(V.bar.inv)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    A.bar             <span class="ot">=</span> V.bar<span class="sc">%*%</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>Y <span class="sc">+</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))<span class="sc">%*%</span>A.prior)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    nu.bar            <span class="ot">=</span> <span class="fu">nrow</span>(Y) <span class="sc">+</span> nu.prior</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    S.bar             <span class="ot">=</span> S.prior <span class="sc">+</span> <span class="fu">t</span>(Y)<span class="sc">%*%</span>Y <span class="sc">+</span> <span class="fu">t</span>(A.prior)<span class="sc">%*%</span><span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))<span class="sc">%*%</span>A.prior <span class="sc">-</span> <span class="fu">t</span>(A.bar)<span class="sc">%*%</span>V.bar.inv<span class="sc">%*%</span>A.bar</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    S.bar.inv         <span class="ot">=</span> <span class="fu">solve</span>(S.bar)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># posterior draws </span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior   <span class="ot">=</span> <span class="fu">rWishart</span>(S, <span class="at">df=</span>nu.bar, <span class="at">Sigma=</span>S.bar.inv)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior   <span class="ot">=</span> <span class="fu">apply</span>(Sigma.posterior,<span class="dv">3</span>,solve)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior   <span class="ot">=</span> <span class="fu">array</span>(Sigma.posterior,<span class="fu">c</span>(N,N,S))</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    A.posterior       <span class="ot">=</span> <span class="fu">array</span>(<span class="fu">rnorm</span>(<span class="fu">prod</span>(<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),S))),<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),S))</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    L                 <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">chol</span>(V.bar))</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S){</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>      A.posterior[,,s]<span class="ot">=</span> A.bar <span class="sc">+</span> L<span class="sc">%*%</span>A.posterior[,,s]<span class="sc">%*%</span><span class="fu">chol</span>(Sigma.posterior[,,s])</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    output            <span class="ot">=</span> <span class="fu">list</span>(<span class="at">A.posterior=</span>A.posterior, <span class="at">Sigma.posterior=</span>Sigma.posterior)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(output)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ul>
+<li>The posterior mean of the <span class="math inline">\(A\)</span> is:</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="table-responsive">
+<table class="table table-striped table-hover table-bordered table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">A</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">Simulation Parameter Y1</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">Simulation Parameter Y2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Constant term</td>
+<td style="text-align: center;">-0.0225</td>
+<td style="text-align: center;">0.0195</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Y1 lag</td>
+<td style="text-align: center;">1.0006</td>
+<td style="text-align: center;">0.0061</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Y2 lag</td>
+<td style="text-align: center;">-0.0045</td>
+<td style="text-align: center;">0.9974</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+</div>
+</div>
+<p>Table 2 Basic Model Proofing Simulation for <span class="math inline">\(A\)</span></p>
+<ul>
+<li>The posterior mean of the <span class="math inline">\(\Sigma\)</span> is:</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="table-responsive">
+<table class="table table-striped table-hover table-bordered table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">Sigma</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">Simulation Parameter Y1</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">Simulation Parameter Y2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Y1 lag</td>
+<td style="text-align: center;">0.9825</td>
+<td style="text-align: center;">0.0623</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Y2 lag</td>
+<td style="text-align: center;">0.0623</td>
+<td style="text-align: center;">1.0653</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+</div>
+</div>
+<p>Table 3 Basic Model Proofing Simulation for <span class="math inline">\(\Sigma\)</span></p>
+<p>Extension Model:</p>
+</section>
+</section>
 <section id="references" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
 
