@@ -78,6 +78,7 @@ library(kableExtra)   # for print table
 library(dplyr)
 library(corrplot)
 library(tseries) # for adf test
+library(GIGrvg)
 ```
 
 ```{r}
@@ -434,7 +435,7 @@ Based on Bayes' Theorem:
 \begin{aligned}
 
 P(A|B) & =\frac{P(B|A)P(A)}{P(B)} \\
-P(A|B) & \propto P(B|A)\P(A)
+P(A|B) & \propto P(B|A)P(A)
 
 \end{aligned}
 ```
@@ -685,6 +686,271 @@ kable(basic.model.proof.Sigma, align = "c") %>%
 Table 3 Basic Model Proofing Simulation for $\Sigma$
 
 Extension Model:
+
+## The extended model
+The extended model will be built based on the the change in distribution of the error to **Laplace distribution** instead of the normally distributed errors assumption. The Laplace distribution is suitable for describing financial anomalies due to its sharp peaks and thick tails and the use of this distribution improves the robustness of the model to anomalies and is particularly suitable for financial time series. As our variables are most financial time series data, a Laplace distribution is more suitable to apply to our error term.
+
+Following [Eltoft,Kim, and Lee 2006b](https://ieeexplore.ieee.org/document/1618702), for covariance with a general Kronecker structure, if each ${\lambda_t}$ has an independent exponential distribution with mean ${\alpha}$, then marginally ${U_t}$ has a multivariate Laplace distribution with mean vector 0 and covariance matrix ${\alpha\Sigma}$.
+
+```{=tex}
+\begin{align}
+U_t &\sim \text{Laplace}(0, \alpha\Sigma) \\
+U_t | \lambda_t &\sim \mathcal{MN}(0, \Sigma, \lambda_t I_T) \\
+\lambda_t &\sim \text{Exponential}(\frac{1}{\alpha})
+\end{align}
+```
+
+The kernel of the likelihood function:
+
+```{=tex}
+\begin{align}
+L(A,\Sigma,\lambda_t|Y,X) &\propto \det(\Sigma)^{-\frac{T}{2}} \det(\lambda_t I_T)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' (\lambda_t I_T)^{-1} (Y-XA) ]\}
+\end{align}
+```
+
+For posteriors distribution, $A$, $\Sigma$ and $\lambda_t$ can then be derived using the likelihood and the prior distributions as follows:
+
+```{=tex}
+\begin{align}
+p(A,\Sigma|Y,X) &\propto L(A,\Sigma,\lambda_t|Y,X)p(A,\Sigma) \\
+\\
+&= \det(\Sigma)^{-\frac{T}{2}} \det(\lambda_t I_T)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' (\lambda_t I_T)^{-1} (Y-XA) ]\} \\
+&\times \det(\Sigma)^{-\frac{N+k+\underline{\nu}+1}{2}} exp\{-\frac{1}{2}tr[\Sigma^{-1}(A-\underline{A})'(\underline{V})^{-1}(A-\underline{A})]\} \\
+&\times exp\{-\frac{1}{2}tr[\Sigma^{-1}\underline{S}]\} \\
+&= \det(\Sigma)^{-\frac{T+N+K+\underline{\nu}+1}{2}} \det(\lambda_t I_T)^{-\frac{N}{2}} \\
+&\times exp\{-\frac{1}{2} tr[\Sigma^{-1}(Y'(\lambda_t I_T)^{-1}Y - 2A'X'(\lambda_t I_T)^{-1}Y + A'X'(\lambda_t I_T)^{-1}XA \\
+&+ A'\underline{V}^{-1}A -2A'\underline{V}^{-1}\underline{A} + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S})]\}
+
+\end{align}
+```
+
+The kernel can be rearranged in the form of the **Matrix-variate normal-inverse Wishart distribution**.
+
+```{=tex}
+\begin{align}
+p(A,\Sigma|Y,X) &\sim MNIW(\bar{A},\bar{V},\bar{S},\bar{\nu}) \\
+&\\
+\bar{V} &= (X'(\lambda_t I_T)^{-1}X + \underline{V}^{-1})^{-1} \\
+\bar{A} &= \bar{V}(X'(\lambda_t I_T)^{-1}Y + \underline{V}^{-1}\underline{A}) \\
+\bar{\nu} &= T + \underline{\nu}\\
+\bar{S} &= Y'(\lambda_t I_T)^{-1}Y + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S} - \bar{A}'\bar{V}^{-1}\bar{A}
+\end{align}
+```
+
+The kernel of the fully conditional posterior distribution of $\lambda_t$ is then derived as follows:
+
+```{=tex}
+\begin{align}
+p(\lambda_t|Y,X,A,\Sigma) &\propto L(A,\Sigma,\lambda_t|Y,X)p(\lambda_t) \\
+\\
+&\propto \det(\lambda_t I_T)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' (\lambda_t I_T)^{-1} (Y-XA) ]\} \\
+&\times \frac{1}{\alpha}exp\{ -\frac{1}{\alpha}\lambda_t \}\\
+
+&= \lambda_t^{-\frac{TN}{2}} exp\{-\frac{1}{2}\frac{1}{\lambda_t} tr[\Sigma^{-1}(Y-XA)'(Y-XA)]\}\\
+&\times exp\{-\frac{1}{\alpha}\lambda_t \}\\
+
+&= \lambda_t^{-\frac{TN}{2}+1-1} exp\{-\frac{1}{2}[\frac{[tr[\Sigma^{-1}(Y-XA)'(Y-XA)]}{\lambda_t} +\frac{2}{\alpha}\lambda_t]\} 
+\end{align}
+```
+
+The above expression can be rearranged in the form of a Generalized inverse Gaussian distribution kernel as follows:
+
+```{=tex}
+\begin{align}
+\lambda_t|Y,A,\Sigma &\sim GIG(a,b,p) \\
+\\
+a &=\frac{2}{\alpha} \\
+b &= tr[\Sigma^{-1}(Y-XA)'(Y-XA)] \\
+p &= -\frac{TN}{2}+1
+\end{align}
+```
+
+### Proof of extended model
+The Gibbs sampler method will be applied to generate random draws from the full conditional posterior distribution:
+
+1. Draw $\Sigma^{(s)}$ from the $IW(\bar{S},\bar{\nu})$ distribution.
+2. Draw $A^{(s)}$ from the $MN(\bar{A},\Sigma^{(s)}, \bar{V})$ distribution.
+3. Draw $\lambda_t^{(s)}$ from $GIG(a,b,p)$.
+
+Repeat steps 1, step 2 and 3 for $S_1$+$S_2$times.
+
+Discard the first draws that allowed the algorithm to converge to the stationary posterior distribution.
+
+Output is $\left\{ {A^{(s)}, \Sigma^{(s)}}, \lambda_t^{(s)}\right\}^{S_1+S_2}_{s=S_1+1}$.
+
+```{r Stat Setup for Extend model, fig.align='center',fig.pos='H'}
+#| echo: false
+#| message: false
+#| warning: false
+# setup 
+S1                = 500                            # determine the burn-in draws
+S2                = 9500                           # number of draws from the final simulation
+total_S           = S1+S2
+A.posterior       = array(NA, dim = c((1+N*p),N,S1+S2))
+Sigma.posterior   = array(NA, dim = c(N,N,S1+S2))
+lambda.posterior  = matrix(NA, S1+S2, 1)
+
+# initial value of lambda
+lambda.posterior[1] = 10                               # set lambda0 
+
+# Prior Gamma distribution: k, theta
+lambda.priors = list(
+  k = 1,
+  theta = .1
+)
+
+```
+
+Function below is `posterior.draws.exten`:
+
+```{r Model Exten, fig.align='center',fig.pos='H'}
+#| echo: true
+#| message: false
+#| warning: false
+
+## Posterior sample draw function for extended model(posterior.draws.exten)
+posterior.draws.exten = function (total_S, Y, X){
+for (s in 1:total_S){
+    # NIW posterior parameters
+    V.bar.inv              = t(X)%*%X + diag(1/diag(lambda.posterior[s]* V.prior)) 
+    V.bar                  = solve(V.bar.inv)
+    A.bar                  = V.bar%*%(t(X)%*%Y + diag(1/diag(lambda.posterior[s]* V.prior))%*%A.prior)
+    nu.bar                 = nrow(Y) + nu.prior
+    S.bar                  = S.prior + t(Y)%*%Y + t(A.prior)%*%diag(1/diag(lambda.posterior[s]* V.prior))%*%A.prior - t(A.bar)%*%V.bar.inv%*%A.bar
+    S.bar.inv              = solve(S.bar)
+  
+    # posterior draws for A and Sigma
+    Sigma.posterior.IW     = rWishart(1, df=nu.bar, Sigma=S.bar.inv)
+    Sigma.posterior.draw   = apply(Sigma.posterior.IW,3,solve)
+    Sigma.posterior[,,s]   = Sigma.posterior.draw
+    A.posterior[,,s]       = array(rnorm(prod(c(dim(A.bar),1))),c(dim(A.bar),1))
+    L                      = t(chol(V.bar))
+    A.posterior[,,s]       = A.bar + L%*%A.posterior[,,s]%*%chol(Sigma.posterior[,,s])
+    
+    
+    # Update parameters for lambda posterior
+    p                      = lambda.priors$k - (N)/2              # N=10
+    diff_A                 = A.posterior[,,s] - A.prior
+    product                = t(diff_A) %*% solve(V.prior) %*% diff_A
+    b                      = sum(diag(solve(Sigma.posterior[,,s] %*% product)))
+    a                      = 2 / lambda.priors$theta
+    
+    # Draw next period value for lambda from GIG distribution
+    if (s!=total_S){
+       lambda.posterior[s+1] = GIGrvg::rgig(n=1, lambda = p, chi = b, psi = a)
+    }
+  }
+  
+    output                 = list(A.posterior.exten = A.posterior[,,(S1+1):S2], 
+                                  Sigma.posterior.exten = Sigma.posterior[,,(S1+1):S2], 
+                                  lambda.posterior.exten = lambda.posterior[(S1+1):S2,])
+
+    return(output)
+}
+```
+
+
+
+```{r Extension Function Applying, fig.align='center',fig.pos='H'}
+#| echo: false
+#| message: false
+#| warning: false
+
+## Applying function 
+# posterior.extend.draws = posterior.draws.exten(total_S = total_S, Y=Y, X=X)
+
+```
+
+#### Function Proofing
+
+```{r Extend Model Function Proof, fig.align='center',fig.pos='H'}
+#| echo: false
+#| message: false
+#| warning: false
+
+# setup 
+kappa.1           = 1                                # shrinkage for A1 to Ap
+kappa.2           = 100                              # shrinkage for constant 
+S1                = 500                              # determine the burn-in draws
+S2                = 9500                             # number of draws from the final simulation
+total_S           = S1+S2
+A.posterior       = array(NA, dim = c((1+N*p),N,S1+S2))
+Sigma.posterior   = array(NA, dim = c(N,N,S1+S2))
+k.posterior       = matrix(NA, S1+S2, 1)
+k.posterior[1]    = 10                               # set k0 
+
+# Prior Gamma distribution: k, theta
+lambda.priors = list(
+  k = 1,
+  theta = .1
+)
+
+# Applying function 
+posterior.extend.draws.p = posterior.draws.exten(total_S = total_S, Y=Y, X=X)
+```
+
+After fitting a model that includes a constant term and one lag with artificial data, just like the basic model, the extend model also shows that the posterior mean of both the autoregressive and covariance matrices closely identity matrix, and the posterior mean of the constant term is almost a vector of zeros.
+
+ - The posterior mean of the $A$ is:
+
+```{r Extend Model Proof A, fig.align='center',fig.pos='H'}
+#| echo: false
+#| message: false
+#| warning: false
+extend.model.proof.A <-
+  tibble( "A" = c("Constant term", "Y1 lag","Y2 lag"),
+          "Simulation Parameter Y1" 
+          = c(round(mean(posterior.extend.draws.p[["A.posterior.exten"]][1,1,]),4),
+              round(mean(posterior.extend.draws.p[["A.posterior.exten"]][2,1,]),4),
+              round(mean(posterior.extend.draws.p[["A.posterior.exten"]][3,1,]),4)),
+           "Simulation Parameter Y2" 
+          = c(round(mean(posterior.extend.draws.p[["A.posterior.exten"]][1,2,]),4),
+              round(mean(posterior.extend.draws.p[["A.posterior.exten"]][2,2,]),4),
+              round(mean(posterior.extend.draws.p[["A.posterior.exten"]][3,2,]),4))
+  )
+
+kable(extend.model.proof.A, align = "c") %>% 
+  kable_styling(font_size = 8, 
+                fixed_thead = TRUE, 
+                full_width = FALSE, 
+                position = "center",
+                latex_options = c("HOLD_position"),
+                bootstrap_options = c("striped", "hover", "bordered", "responsive", "dark"))
+
+```
+
+Table 4 Extend Model Proofing Simulation for $A$
+
+
+ - The posterior mean of the $\Sigma$ is:
+
+```{r Extend Model Proof Sigma, fig.align='center',fig.pos='H'}
+#| echo: false
+#| message: false
+#| warning: false
+
+extend.model.proof.Sigma <-
+  tibble( "Sigma" = c("Y1 lag","Y2 lag"),
+          "Simulation Parameter Y1" 
+          = c(round(mean(posterior.extend.draws.p[["Sigma.posterior.exten"]][1,1,]),4),
+              round(mean(posterior.extend.draws.p[["Sigma.posterior.exten"]][2,1,]),4)),
+           "Simulation Parameter Y2" 
+          = c(round(mean(posterior.extend.draws.p[["Sigma.posterior.exten"]][1,2,]),4),
+              round(mean(posterior.extend.draws.p[["Sigma.posterior.exten"]][2,2,]),4))
+  )
+
+kable(extend.model.proof.Sigma, align = "c") %>% 
+  kable_styling(font_size = 8, 
+                fixed_thead = TRUE, 
+                full_width = FALSE, 
+                position = "center",
+                latex_options = c("HOLD_position"),
+                bootstrap_options = c("striped", "hover", "bordered", "responsive", "dark"))
+
+```
+
+Table 5 Extend Model Proofing Simulation for $\Sigma$
+
 
 
 ## References {.unnumbered}
