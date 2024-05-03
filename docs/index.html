@@ -136,6 +136,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#first-benchmark-assumption-minnesota-prior" id="toc-first-benchmark-assumption-minnesota-prior" class="nav-link" data-scroll-target="#first-benchmark-assumption-minnesota-prior">First Benchmark Assumption: Minnesota prior</a>
   <ul class="collapse">
   <li><a href="#where" id="toc-where" class="nav-link" data-scroll-target="#where">where:</a></li>
+  <li><a href="#the-extended-model" id="toc-the-extended-model" class="nav-link" data-scroll-target="#the-extended-model">The extended model</a>
+  <ul class="collapse">
+  <li><a href="#proof-of-extended-model" id="toc-proof-of-extended-model" class="nav-link" data-scroll-target="#proof-of-extended-model">Proof of extended model</a></li>
+  </ul></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul></li>
   </ul>
@@ -367,7 +371,7 @@ E=
 <span class="math display">\[\begin{aligned}
 
 P(A|B) &amp; =\frac{P(B|A)P(A)}{P(B)} \\
-P(A|B) &amp; \propto P(B|A)\P(A)
+P(A|B) &amp; \propto P(B|A)P(A)
 
 \end{aligned}\]</span>
 <p>Therefore we have:</p>
@@ -496,18 +500,18 @@ X = \begin{bmatrix}
 <tbody>
 <tr class="odd">
 <td style="text-align: center;">Constant term</td>
-<td style="text-align: center;">-0.1837</td>
-<td style="text-align: center;">-0.1037</td>
+<td style="text-align: center;">-0.1561</td>
+<td style="text-align: center;">-0.0540</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">Y1 lag</td>
-<td style="text-align: center;">0.9927</td>
-<td style="text-align: center;">-0.0031</td>
+<td style="text-align: center;">0.9743</td>
+<td style="text-align: center;">-0.0093</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">Y2 lag</td>
-<td style="text-align: center;">-0.0007</td>
-<td style="text-align: center;">0.9896</td>
+<td style="text-align: center;">-0.0136</td>
+<td style="text-align: center;">0.9895</td>
 </tr>
 </tbody>
 </table>
@@ -534,13 +538,13 @@ X = \begin{bmatrix}
 <tbody>
 <tr class="odd">
 <td style="text-align: center;">Y1 lag</td>
-<td style="text-align: center;">0.9966</td>
-<td style="text-align: center;">-0.0551</td>
+<td style="text-align: center;">0.9247</td>
+<td style="text-align: center;">-0.0149</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">Y2 lag</td>
-<td style="text-align: center;">-0.0551</td>
-<td style="text-align: center;">1.0024</td>
+<td style="text-align: center;">-0.0149</td>
+<td style="text-align: center;">1.0652</td>
 </tr>
 </tbody>
 </table>
@@ -551,6 +555,190 @@ X = \begin{bmatrix}
 </div>
 <p>Table 3 Basic Model Proofing Simulation for <span class="math inline">\(\Sigma\)</span></p>
 <p>Extension Model:</p>
+</section>
+</section>
+<section id="the-extended-model" class="level2">
+<h2 class="anchored" data-anchor-id="the-extended-model">The extended model</h2>
+<p>The extended model will be built based on the the change in distribution of the error to <strong>Laplace distribution</strong> instead of the normally distributed errors assumption. The Laplace distribution is suitable for describing financial anomalies due to its sharp peaks and thick tails and the use of this distribution improves the robustness of the model to anomalies and is particularly suitable for financial time series. As our variables are most financial time series data, a Laplace distribution is more suitable to apply to our error term.</p>
+<p>Following <a href="https://ieeexplore.ieee.org/document/1618702">Eltoft,Kim, and Lee 2006b</a>, for covariance with a general Kronecker structure, if each <span class="math inline">\({\lambda_t}\)</span> has an independent exponential distribution with mean <span class="math inline">\({\alpha}\)</span>, then marginally <span class="math inline">\({U_t}\)</span> has a multivariate Laplace distribution with mean vector 0 and covariance matrix <span class="math inline">\({\alpha\Sigma}\)</span>.</p>
+<span class="math display">\[\begin{align}
+U_t &amp;\sim \text{Laplace}(0, \alpha\Sigma) \\
+U_t | \lambda_t &amp;\sim \mathcal{MN}(0, \Sigma, \lambda_t I_T) \\
+\lambda_t &amp;\sim \text{Exponential}(\frac{1}{\alpha})
+\end{align}\]</span>
+<p>The kernel of the likelihood function:</p>
+<span class="math display">\[\begin{align}
+L(A,\Sigma,\lambda_t|Y,X) &amp;\propto \det(\Sigma)^{-\frac{T}{2}} \det(\lambda_t I_T)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' (\lambda_t I_T)^{-1} (Y-XA) ]\}
+\end{align}\]</span>
+<p>For posteriors distribution, <span class="math inline">\(A\)</span>, <span class="math inline">\(\Sigma\)</span> and <span class="math inline">\(\lambda_t\)</span> can then be derived using the likelihood and the prior distributions as follows:</p>
+<span class="math display">\[\begin{align}
+p(A,\Sigma|Y,X) &amp;\propto L(A,\Sigma,\lambda_t|Y,X)p(A,\Sigma) \\
+\\
+&amp;= \det(\Sigma)^{-\frac{T}{2}} \det(\lambda_t I_T)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' (\lambda_t I_T)^{-1} (Y-XA) ]\} \\
+&amp;\times \det(\Sigma)^{-\frac{N+k+\underline{\nu}+1}{2}} exp\{-\frac{1}{2}tr[\Sigma^{-1}(A-\underline{A})'(\underline{V})^{-1}(A-\underline{A})]\} \\
+&amp;\times exp\{-\frac{1}{2}tr[\Sigma^{-1}\underline{S}]\} \\
+&amp;= \det(\Sigma)^{-\frac{T+N+K+\underline{\nu}+1}{2}} \det(\lambda_t I_T)^{-\frac{N}{2}} \\
+&amp;\times exp\{-\frac{1}{2} tr[\Sigma^{-1}(Y'(\lambda_t I_T)^{-1}Y - 2A'X'(\lambda_t I_T)^{-1}Y + A'X'(\lambda_t I_T)^{-1}XA \\
+&amp;+ A'\underline{V}^{-1}A -2A'\underline{V}^{-1}\underline{A} + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S})]\}
+
+\end{align}\]</span>
+<p>The kernel can be rearranged in the form of the <strong>Matrix-variate normal-inverse Wishart distribution</strong>.</p>
+<span class="math display">\[\begin{align}
+p(A,\Sigma|Y,X) &amp;\sim MNIW(\bar{A},\bar{V},\bar{S},\bar{\nu}) \\
+&amp;\\
+\bar{V} &amp;= (X'(\lambda_t I_T)^{-1}X + \underline{V}^{-1})^{-1} \\
+\bar{A} &amp;= \bar{V}(X'(\lambda_t I_T)^{-1}Y + \underline{V}^{-1}\underline{A}) \\
+\bar{\nu} &amp;= T + \underline{\nu}\\
+\bar{S} &amp;= Y'(\lambda_t I_T)^{-1}Y + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S} - \bar{A}'\bar{V}^{-1}\bar{A}
+\end{align}\]</span>
+<p>The kernel of the fully conditional posterior distribution of <span class="math inline">\(\lambda_t\)</span> is then derived as follows:</p>
+<span class="math display">\[\begin{align}
+p(\lambda_t|Y,X,A,\Sigma) &amp;\propto L(A,\Sigma,\lambda_t|Y,X)p(\lambda_t) \\
+\\
+&amp;\propto \det(\lambda_t I_T)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' (\lambda_t I_T)^{-1} (Y-XA) ]\} \\
+&amp;\times \frac{1}{\alpha}exp\{ -\frac{1}{\alpha}\lambda_t \}\\
+
+&amp;= \lambda_t^{-\frac{TN}{2}} exp\{-\frac{1}{2}\frac{1}{\lambda_t} tr[\Sigma^{-1}(Y-XA)'(Y-XA)]\}\\
+&amp;\times exp\{-\frac{1}{\alpha}\lambda_t \}\\
+
+&amp;= \lambda_t^{-\frac{TN}{2}+1-1} exp\{-\frac{1}{2}[\frac{[tr[\Sigma^{-1}(Y-XA)'(Y-XA)]}{\lambda_t} +\frac{2}{\alpha}\lambda_t]\}
+\end{align}\]</span>
+<p>The above expression can be rearranged in the form of a Generalized inverse Gaussian distribution kernel as follows:</p>
+<span class="math display">\[\begin{align}
+\lambda_t|Y,A,\Sigma &amp;\sim GIG(a,b,p) \\
+\\
+a &amp;=\frac{2}{\alpha} \\
+b &amp;= tr[\Sigma^{-1}(Y-XA)'(Y-XA)] \\
+p &amp;= -\frac{TN}{2}+1
+\end{align}\]</span>
+<section id="proof-of-extended-model" class="level3">
+<h3 class="anchored" data-anchor-id="proof-of-extended-model">Proof of extended model</h3>
+<p>The Gibbs sampler method will be applied to generate random draws from the full conditional posterior distribution:</p>
+<ol type="1">
+<li>Draw <span class="math inline">\(\Sigma^{(s)}\)</span> from the <span class="math inline">\(IW(\bar{S},\bar{\nu})\)</span> distribution.</li>
+<li>Draw <span class="math inline">\(A^{(s)}\)</span> from the <span class="math inline">\(MN(\bar{A},\Sigma^{(s)}, \bar{V})\)</span> distribution.</li>
+<li>Draw <span class="math inline">\(\lambda_t^{(s)}\)</span> from <span class="math inline">\(GIG(a,b,p)\)</span>.</li>
+</ol>
+<p>Repeat steps 1, step 2 and 3 for <span class="math inline">\(S_1\)</span>+<span class="math inline">\(S_2\)</span>times.</p>
+<p>Discard the first draws that allowed the algorithm to converge to the stationary posterior distribution.</p>
+<p>Output is <span class="math inline">\(\left\{ {A^{(s)}, \Sigma^{(s)}}, \lambda_t^{(s)}\right\}^{S_1+S_2}_{s=S_1+1}\)</span>.</p>
+<p>Function below is <code>posterior.draws.exten</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Posterior sample draw function for extended model(posterior.draws.exten)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>posterior.draws.exten <span class="ot">=</span> <span class="cf">function</span> (total_S, Y, X){</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>total_S){</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># NIW posterior parameters</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    V.bar.inv              <span class="ot">=</span> <span class="fu">t</span>(X)<span class="sc">%*%</span>X <span class="sc">+</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(lambda.posterior[s]<span class="sc">*</span> V.prior)) </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    V.bar                  <span class="ot">=</span> <span class="fu">solve</span>(V.bar.inv)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    A.bar                  <span class="ot">=</span> V.bar<span class="sc">%*%</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>Y <span class="sc">+</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(lambda.posterior[s]<span class="sc">*</span> V.prior))<span class="sc">%*%</span>A.prior)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    nu.bar                 <span class="ot">=</span> <span class="fu">nrow</span>(Y) <span class="sc">+</span> nu.prior</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    S.bar                  <span class="ot">=</span> S.prior <span class="sc">+</span> <span class="fu">t</span>(Y)<span class="sc">%*%</span>Y <span class="sc">+</span> <span class="fu">t</span>(A.prior)<span class="sc">%*%</span><span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(lambda.posterior[s]<span class="sc">*</span> V.prior))<span class="sc">%*%</span>A.prior <span class="sc">-</span> <span class="fu">t</span>(A.bar)<span class="sc">%*%</span>V.bar.inv<span class="sc">%*%</span>A.bar</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    S.bar.inv              <span class="ot">=</span> <span class="fu">solve</span>(S.bar)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># posterior draws for A and Sigma</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior.IW     <span class="ot">=</span> <span class="fu">rWishart</span>(<span class="dv">1</span>, <span class="at">df=</span>nu.bar, <span class="at">Sigma=</span>S.bar.inv)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior.draw   <span class="ot">=</span> <span class="fu">apply</span>(Sigma.posterior.IW,<span class="dv">3</span>,solve)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior[,,s]   <span class="ot">=</span> Sigma.posterior.draw</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    A.posterior[,,s]       <span class="ot">=</span> <span class="fu">array</span>(<span class="fu">rnorm</span>(<span class="fu">prod</span>(<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),<span class="dv">1</span>))),<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),<span class="dv">1</span>))</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    L                      <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">chol</span>(V.bar))</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    A.posterior[,,s]       <span class="ot">=</span> A.bar <span class="sc">+</span> L<span class="sc">%*%</span>A.posterior[,,s]<span class="sc">%*%</span><span class="fu">chol</span>(Sigma.posterior[,,s])</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update parameters for lambda posterior</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    p                      <span class="ot">=</span> lambda.priors<span class="sc">$</span>k <span class="sc">-</span> (N)<span class="sc">/</span><span class="dv">2</span>              <span class="co"># N=10</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    diff_A                 <span class="ot">=</span> A.posterior[,,s] <span class="sc">-</span> A.prior</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    product                <span class="ot">=</span> <span class="fu">t</span>(diff_A) <span class="sc">%*%</span> <span class="fu">solve</span>(V.prior) <span class="sc">%*%</span> diff_A</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    b                      <span class="ot">=</span> <span class="fu">sum</span>(<span class="fu">diag</span>(<span class="fu">solve</span>(Sigma.posterior[,,s] <span class="sc">%*%</span> product)))</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    a                      <span class="ot">=</span> <span class="dv">2</span> <span class="sc">/</span> lambda.priors<span class="sc">$</span>theta</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Draw next period value for lambda from GIG distribution</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (s<span class="sc">!=</span>total_S){</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>       lambda.posterior[s<span class="sc">+</span><span class="dv">1</span>] <span class="ot">=</span> GIGrvg<span class="sc">::</span><span class="fu">rgig</span>(<span class="at">n=</span><span class="dv">1</span>, <span class="at">lambda =</span> p, <span class="at">chi =</span> b, <span class="at">psi =</span> a)</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    output                 <span class="ot">=</span> <span class="fu">list</span>(<span class="at">A.posterior.exten =</span> A.posterior[,,(S1<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>S2], </span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">Sigma.posterior.exten =</span> Sigma.posterior[,,(S1<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>S2], </span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">lambda.posterior.exten =</span> lambda.posterior[(S1<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>S2,])</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(output)</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="function-proofing-1" class="level4">
+<h4 class="anchored" data-anchor-id="function-proofing-1">Function Proofing</h4>
+<p>After fitting a model that includes a constant term and one lag with artificial data, just like the basic model, the extend model also shows that the posterior mean of both the autoregressive and covariance matrices closely identity matrix, and the posterior mean of the constant term is almost a vector of zeros.</p>
+<ul>
+<li>The posterior mean of the <span class="math inline">\(A\)</span> is:</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="table-responsive">
+<table class="table table-striped table-hover table-bordered table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">A</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">Simulation Parameter Y1</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">Simulation Parameter Y2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Constant term</td>
+<td style="text-align: center;">-0.1562</td>
+<td style="text-align: center;">-0.0538</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Y1 lag</td>
+<td style="text-align: center;">0.9742</td>
+<td style="text-align: center;">-0.0093</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Y2 lag</td>
+<td style="text-align: center;">-0.0137</td>
+<td style="text-align: center;">0.9894</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+</div>
+</div>
+<p>Table 4 Extend Model Proofing Simulation for <span class="math inline">\(A\)</span></p>
+<ul>
+<li>The posterior mean of the <span class="math inline">\(\Sigma\)</span> is:</li>
+</ul>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="table-responsive">
+<table class="table table-striped table-hover table-bordered table-sm small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">Sigma</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">Simulation Parameter Y1</th>
+<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">Simulation Parameter Y2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Y1 lag</td>
+<td style="text-align: center;">0.9243</td>
+<td style="text-align: center;">-0.0146</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Y2 lag</td>
+<td style="text-align: center;">-0.0146</td>
+<td style="text-align: center;">1.0650</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+</div>
+</div>
+<p>Table 5 Extend Model Proofing Simulation for <span class="math inline">\(\Sigma\)</span></p>
+</section>
 </section>
 </section>
 <section id="references" class="level2 unnumbered">
