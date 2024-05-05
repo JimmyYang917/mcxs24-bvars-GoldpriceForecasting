@@ -86,6 +86,8 @@ library(GIGrvg)
 #| message: false
 #| warning: false
 
+# why not using fredr?
+
 # 1.Gold current price in USD per 0.1 ounce, present by SPDR Gold Shares (GLD)
 goldETF_link = "https://query1.finance.yahoo.com/v7/finance/download/GLD?period1=1199232000&period2=1712016000&interval=1mo&events=history&includeAdjustedClose=true"
 goldETF_download = read.csv(goldETF_link)
