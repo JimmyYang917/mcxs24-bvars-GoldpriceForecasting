@@ -327,7 +327,7 @@ rownames(adf_table)<- c("gold_ETF_data",           "gold_future_data",
                      "Federal_funds_rate_data", "US_dollars_Index_data",
                      "Volatility_Index_data")
 colnames(adf_table)<- c("P-value")
-print(adf_table)
+knitr::kable(adf_table)
 ```
 
 
