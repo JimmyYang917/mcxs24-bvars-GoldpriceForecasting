@@ -306,7 +306,7 @@ knitr::kable(adf_table)
 ```
 
 
-# Basic Model and Hypothesis
+# Modeling and Hypothesis
 
 This research project based on **Bayesian VARs(p) model** to forecast the Gold price in next two years. For time $t$ = {1,2,3,...,$T-1$,$T$} :
 
@@ -457,7 +457,7 @@ where $/Sigma$ follow a Inverse Wishart distribution:
 - $\underline{S}$ is N × N positive definite symmetric matrix called the scale matrix 
 - $\underline{v}$ > N + 2 denotes degrees of freedom
 
-# First Benchmark Assumption: Minnesota prior
+## First Benchmark Assumption: Basic model with Minnesota prior
 
 In real life, macroeconomic variables are more likely being unit-root non stationary and are well-characterized by a multivariate random walk process
 
@@ -492,10 +492,9 @@ Set the column specific prior covariance of $A$ (prior shrinkage)to:
 ```
 
 where:
--
 
 
-#### Function Proofing
+### Function Proofing
 
 Consider Bi-variate Gaussian random walk process:
 
@@ -659,7 +658,7 @@ Table 3 Basic Model Proofing Simulation for $\Sigma$
 
 Extension Model:
 
-## The extended model
+## The extended model: Laplace distribution of error term
 
 The **Basic Model** is the standard VARs model that assume the error terms $U$ are independent and identically distributed($iid$) as $N\sim (0,\Sigma)$. In other formation, it could be presented as $vec(U)\sim N(0,\Sigma\otimes I_{t})$. Where $\Sigma$ is a $n \times n $ covariance matrix, $I_{t}$ is a $ t \times t$ identity matrix, $\otimes$ is the Kronecker product and the operator $vec(.)$ is vectorization that inverts the matrix into the column vector by stacking the columns.
 
@@ -668,7 +667,7 @@ Therefore, we could consider a more general covariance structure:
 ```{=tex}
 \begin{aligned}
 
-$vec(U)\sim N(0,\Sigma\otimes I_{t})$
+vec(U)\sim N(0,\Sigma\otimes I_{t})
 
 \end{align}
 ```
@@ -915,4 +914,4 @@ Table 5 Extend Model Proofing Simulation for $\Sigma$
 
 
 
-## References {.unnumbered}
+# References {.unnumbered}
