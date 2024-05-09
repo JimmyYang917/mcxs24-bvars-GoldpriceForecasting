@@ -132,16 +132,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
   <li><a href="#data-and-data-properties" id="toc-data-and-data-properties" class="nav-link" data-scroll-target="#data-and-data-properties">Data and Data Properties</a></li>
   <li><a href="#plots-of-all-variables" id="toc-plots-of-all-variables" class="nav-link" data-scroll-target="#plots-of-all-variables">Plots of all variables</a></li>
-  <li><a href="#basic-model-and-hypothesis" id="toc-basic-model-and-hypothesis" class="nav-link" data-scroll-target="#basic-model-and-hypothesis">Basic Model and Hypothesis</a></li>
-  <li><a href="#first-benchmark-assumption-minnesota-prior" id="toc-first-benchmark-assumption-minnesota-prior" class="nav-link" data-scroll-target="#first-benchmark-assumption-minnesota-prior">First Benchmark Assumption: Minnesota prior</a>
+  <li><a href="#modeling-and-hypothesis" id="toc-modeling-and-hypothesis" class="nav-link" data-scroll-target="#modeling-and-hypothesis">Modeling and Hypothesis</a>
   <ul class="collapse">
-  <li><a href="#where" id="toc-where" class="nav-link" data-scroll-target="#where">where:</a></li>
-  <li><a href="#the-extended-model" id="toc-the-extended-model" class="nav-link" data-scroll-target="#the-extended-model">The extended model</a>
+  <li><a href="#first-benchmark-assumption-basic-model-with-minnesota-prior" id="toc-first-benchmark-assumption-basic-model-with-minnesota-prior" class="nav-link" data-scroll-target="#first-benchmark-assumption-basic-model-with-minnesota-prior">First Benchmark Assumption: Basic model with Minnesota prior</a>
+  <ul class="collapse">
+  <li><a href="#function-proofing" id="toc-function-proofing" class="nav-link" data-scroll-target="#function-proofing">Function Proofing</a></li>
+  </ul></li>
+  <li><a href="#the-extended-model-laplace-distribution-of-error-term" id="toc-the-extended-model-laplace-distribution-of-error-term" class="nav-link" data-scroll-target="#the-extended-model-laplace-distribution-of-error-term">The extended model: Laplace distribution of error term</a>
   <ul class="collapse">
   <li><a href="#proof-of-extended-model" id="toc-proof-of-extended-model" class="nav-link" data-scroll-target="#proof-of-extended-model">Proof of extended model</a></li>
   </ul></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
     </div>
@@ -339,8 +341,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="basic-model-and-hypothesis" class="level1">
-<h1>Basic Model and Hypothesis</h1>
+<section id="modeling-and-hypothesis" class="level1">
+<h1>Modeling and Hypothesis</h1>
 <p>This research project based on <strong>Bayesian VARs(p) model</strong> to forecast the Gold price in next two years. For time <span class="math inline">\(t\)</span> = {1,2,3,…,<span class="math inline">\(T-1\)</span>,<span class="math inline">\(T\)</span>} :</p>
 <span class="math display">\[\begin{aligned}
 y_t &amp;= \mu_0 + A_1y_{t-1} + A_2y_{t-2}...+A_py_{t-p} +\epsilon_t\\
@@ -454,9 +456,8 @@ vec(A)\sim N_{MN}(vec(\underline{A}),\Sigma\otimes \underline{V})
 
 \end{aligned}\]</span>
 <p>where <span class="math inline">\(/Sigma\)</span> follow a Inverse Wishart distribution: - <span class="math inline">\(\underline{S}\)</span> is N × N positive definite symmetric matrix called the scale matrix - <span class="math inline">\(\underline{v}\)</span> &gt; N + 2 denotes degrees of freedom</p>
-</section>
-<section id="first-benchmark-assumption-minnesota-prior" class="level1">
-<h1>First Benchmark Assumption: Minnesota prior</h1>
+<section id="first-benchmark-assumption-basic-model-with-minnesota-prior" class="level2">
+<h2 class="anchored" data-anchor-id="first-benchmark-assumption-basic-model-with-minnesota-prior">First Benchmark Assumption: Basic model with Minnesota prior</h2>
 <p>In real life, macroeconomic variables are more likely being unit-root non stationary and are well-characterized by a multivariate random walk process</p>
 <span class="math display">\[\begin{aligned}
 
@@ -477,10 +478,9 @@ y_{t} = y_{t-1} + \epsilon_t
 \underline{V} = diag\left[ \kappa_{2} \quad \kappa_{1}(\textbf{p} ^{-2}\otimes I^{'}_{N}) \right]
 
 \end{aligned}\]</span>
-<section id="where" class="level2">
-<h2 class="anchored" data-anchor-id="where">where:</h2>
-<section id="function-proofing" class="level4">
-<h4 class="anchored" data-anchor-id="function-proofing">Function Proofing</h4>
+<p>where:</p>
+<section id="function-proofing" class="level3">
+<h3 class="anchored" data-anchor-id="function-proofing">Function Proofing</h3>
 <p>Consider Bi-variate Gaussian random walk process:</p>
 <p><span class="math display">\[
 y_t =
@@ -617,13 +617,13 @@ X = \begin{bmatrix}
 <p>Extension Model:</p>
 </section>
 </section>
-<section id="the-extended-model" class="level2">
-<h2 class="anchored" data-anchor-id="the-extended-model">The extended model</h2>
+<section id="the-extended-model-laplace-distribution-of-error-term" class="level2">
+<h2 class="anchored" data-anchor-id="the-extended-model-laplace-distribution-of-error-term">The extended model: Laplace distribution of error term</h2>
 <p>The <strong>Basic Model</strong> is the standard VARs model that assume the error terms <span class="math inline">\(U\)</span> are independent and identically distributed(<span class="math inline">\(iid\)</span>) as <span class="math inline">\(N\sim (0,\Sigma)\)</span>. In other formation, it could be presented as <span class="math inline">\(vec(U)\sim N(0,\Sigma\otimes I_{t})\)</span>. Where <span class="math inline">\(\Sigma\)</span> is a $n n $ covariance matrix, <span class="math inline">\(I_{t}\)</span> is a $ t t$ identity matrix, <span class="math inline">\(\otimes\)</span> is the Kronecker product and the operator <span class="math inline">\(vec(.)\)</span> is vectorization that inverts the matrix into the column vector by stacking the columns.</p>
 <p>Therefore, we could consider a more general covariance structure:</p>
 <span class="math display">\[\begin{aligned}
 
-$vec(U)\sim N(0,\Sigma\otimes I_{t})$
+vec(U)\sim N(0,\Sigma\otimes I_{t})
 
 \end{align}\]</span>
 <p>The extended model will be built based on the the change in distribution of the error to <strong>Laplace distribution</strong> instead of the normally distributed errors assumption. The Laplace distribution is suitable for describing financial anomalies due to its sharp peaks and thick tails and the use of this distribution improves the robustness of the model to anomalies and is particularly suitable for financial time series. As our variables are most financial time series data, a Laplace distribution is more suitable to apply to our error term.</p>
@@ -808,11 +808,11 @@ p &amp;= -\frac{TN}{2}+1
 </section>
 </section>
 </section>
-<section id="references" class="level2 unnumbered">
-<h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
-
-
 </section>
+<section id="references" class="level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+
+
 </section>
 
 </main> <!-- /main -->
