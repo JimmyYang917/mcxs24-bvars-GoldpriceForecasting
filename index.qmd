@@ -665,7 +665,7 @@ The **Basic Model** is the standard VARs model that assume the error terms $U$ a
 Therefore, we could consider a more general covariance structure:
 
 ```{=tex}
-\begin{aligned}
+\begin{align}
 
 vec(U)\sim N(0,\Sigma\otimes I_{t})
 
