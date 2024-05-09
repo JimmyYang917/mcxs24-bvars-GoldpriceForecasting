@@ -69,10 +69,6 @@ knitr::opts_chunk$set(warning = FALSE)
 ```
 
 ```{r Library}
-#| echo: false
-#| message: false
-#| warning: false
-
 library(readabs)
 library(fredr)
 library(blscrapeR)
@@ -88,10 +84,6 @@ library(GIGrvg)
 ```
 
 ```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
 # 1.Gold current price in USD per 0.1 ounce, present by SPDR Gold Shares (GLD)
 goldETF_link = "https://query1.finance.yahoo.com/v7/finance/download/GLD?period1=1199232000&period2=1712016000&interval=1mo&events=history&includeAdjustedClose=true"
 goldETF_download = read.csv(goldETF_link)
@@ -215,9 +207,6 @@ Volatility_Index_data <- Volatility_Index_file %>%
 
 
 ```{r}
-#| echo: false
-#| message: false
-#| warning: false
 data_list <-    list(gold_ETF_data,           gold_future_data, 
                      BIT_USD_data,            bond_yield_13weeks_data, 
                      bond_yield_5years_data,  bond_yield_10_years_data,  
@@ -246,10 +235,6 @@ After download all variables as designed, merge all data sets into a new frame a
 # Plots of all variables
 
 ```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
 data1 <- subset(filtered_data, select = -c(date))
 
 data1 <- mutate_all(data1, as.numeric)
@@ -268,10 +253,6 @@ As above, we could have all 17 variables in visualization format individually. A
 **Correlation Table**
 
 ```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
 correlation_matrix <- cor(data1)
 
 corrplot(correlation_matrix, method = "color", type = "upper", tl.srt = 45,tl.col = "black",tl.cex = 0.5)
@@ -281,10 +262,6 @@ A simple correlation provide us a basic understanding of those 17 variables. Gol
 Therefore, we could use ACF and PACF test to indicate whether there is autocorrelations.
 
 ```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
 par(mfrow = c(4, 4), mar=c(2,2,2,2))
 for (i in 1:17){
 acf = acf(data1[,i], plot = FALSE)[1:20]
@@ -303,9 +280,6 @@ title(main = paste(colnames(data1)[i]), line = 0.5)
 Both ACF and PACF suggest that variables are highly autocorrelated except M2: Board money change rate. That might because the policy has changed in earlier 2020 and 2022. Therefore, we further need ADF test(unit root test) to feed our time series are stationary or not.
 
 ```{r}
-#| echo: false
-#| message: false
-#| warning: false
 
 adf_test <- list()
 for (i in 1:17) {
@@ -564,8 +538,6 @@ Function below is `posterior.draws`:
 
 ```{r Basic Model, fig.align='center',fig.pos='H'}
 #| echo: true
-#| message: false
-#| warning: false
 
 ## Posterior sample draw function for basic model(posterior.draws)
 posterior.draws       = function (S, Y, X){
@@ -632,9 +604,7 @@ posterior.sample.draws.p = posterior.draws(S=10000, Y=Y, X=X)
 - The posterior mean of the $A$ is:
 
 ```{r Basic Model Proof A, fig.align='center',fig.pos='H'}
-#| echo: false
-#| message: false
-#| warning: false
+
 
 basic.model.proof.A <- 
   tibble( "A" = c("Constant term", "Y1 lag","Y2 lag"),
@@ -664,9 +634,7 @@ Table 2 Basic Model Proofing Simulation for $A$
 - The posterior mean of the $\Sigma$ is:
 
 ```{r Basic Model Proof Sigma, fig.align='center',fig.pos='H'}
-#| echo: false
-#| message: false
-#| warning: false
+
 
 basic.model.proof.Sigma <-
   tibble( "Sigma" = c("Y1 lag","Y2 lag"),
@@ -785,9 +753,7 @@ Discard the first draws that allowed the algorithm to converge to the stationary
 Output is $\left\{ {A^{(s)}, \Sigma^{(s)}}, \lambda_t^{(s)}\right\}^{S_1+S_2}_{s=S_1+1}$.
 
 ```{r Stat Setup for Extend model, fig.align='center',fig.pos='H'}
-#| echo: false
-#| message: false
-#| warning: false
+
 # setup 
 S1                = 500                            # determine the burn-in draws
 S2                = 9500                           # number of draws from the final simulation
@@ -811,8 +777,6 @@ Function below is `posterior.draws.exten`:
 
 ```{r Model Exten, fig.align='center',fig.pos='H'}
 #| echo: true
-#| message: false
-#| warning: false
 
 ## Posterior sample draw function for extended model(posterior.draws.exten)
 posterior.draws.exten = function (total_S, Y, X){
@@ -855,24 +819,9 @@ for (s in 1:total_S){
 }
 ```
 
-
-
-```{r Extension Function Applying, fig.align='center',fig.pos='H'}
-#| echo: false
-#| message: false
-#| warning: false
-
-## Applying function 
-# posterior.extend.draws = posterior.draws.exten(total_S = total_S, Y=Y, X=X)
-
-```
-
 #### Function Proofing
 
 ```{r Extend Model Function Proof, fig.align='center',fig.pos='H'}
-#| echo: false
-#| message: false
-#| warning: false
 
 # setup 
 kappa.1           = 1                                # shrinkage for A1 to Ap
@@ -900,9 +849,7 @@ After fitting a model that includes a constant term and one lag with artificial 
  - The posterior mean of the $A$ is:
 
 ```{r Extend Model Proof A, fig.align='center',fig.pos='H'}
-#| echo: false
-#| message: false
-#| warning: false
+
 extend.model.proof.A <-
   tibble( "A" = c("Constant term", "Y1 lag","Y2 lag"),
           "Simulation Parameter Y1" 
@@ -931,9 +878,6 @@ Table 4 Extend Model Proofing Simulation for $A$
  - The posterior mean of the $\Sigma$ is:
 
 ```{r Extend Model Proof Sigma, fig.align='center',fig.pos='H'}
-#| echo: false
-#| message: false
-#| warning: false
 
 extend.model.proof.Sigma <-
   tibble( "Sigma" = c("Y1 lag","Y2 lag"),
