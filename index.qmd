@@ -688,6 +688,17 @@ Table 3 Basic Model Proofing Simulation for $\Sigma$
 Extension Model:
 
 ## The extended model
+
+The **Basic Model** is the standard VARs model that assume the error terms $U$ are independent and identically distributed($iid$) as $N\sim (0,\Sigma)$. In other formation, it could be presented as $vec(U)\sim N(0,\Sigma\otimes I_{t})$。Where $\Sigma$ is a $n \times n $ covariance matrix, $I_{t}$ is a $ t \times t$ identity matrix, $\otimes$ is the Kronecker product and the operator $vec(.)$ is vectorization that inverts the matrix into the column vector by stacking the columns.
+
+Therefore, we could consider a more general covariance structure:
+
+```{=tex}
+$vec(U)\sim N(0,\Sigma\otimes I_{t})$
+\end{align}
+```
+
+
 The extended model will be built based on the the change in distribution of the error to **Laplace distribution** instead of the normally distributed errors assumption. The Laplace distribution is suitable for describing financial anomalies due to its sharp peaks and thick tails and the use of this distribution improves the robustness of the model to anomalies and is particularly suitable for financial time series. As our variables are most financial time series data, a Laplace distribution is more suitable to apply to our error term.
 
 Following [Eltoft,Kim, and Lee 2006b](https://ieeexplore.ieee.org/document/1618702), for covariance with a general Kronecker structure, if each ${\lambda_t}$ has an independent exponential distribution with mean ${\alpha}$, then marginally ${U_t}$ has a multivariate Laplace distribution with mean vector 0 and covariance matrix ${\alpha\Sigma}$.
