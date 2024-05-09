@@ -81,6 +81,7 @@ library(dplyr)
 library(corrplot)
 library(tseries) # for adf test
 library(GIGrvg)
+set.seed(123)#set random seed for test
 ```
 
 ```{r}
@@ -568,9 +569,6 @@ posterior.draws       = function (S, Y, X){
 
 
 ```{r Basic Model Function Proof, fig.align='center',fig.pos='H'}
-#| echo: false
-#| message: false
-#| warning: false
 
 e1 = cumsum(rnorm(1000, 0, sd=1))
 e2 = cumsum(rnorm(1000, 0, sd=1))
@@ -663,12 +661,15 @@ Extension Model:
 
 ## The extended model
 
-The **Basic Model** is the standard VARs model that assume the error terms $U$ are independent and identically distributed($iid$) as $N\sim (0,\Sigma)$. In other formation, it could be presented as $vec(U)\sim N(0,\Sigma\otimes I_{t})$。Where $\Sigma$ is a $n \times n $ covariance matrix, $I_{t}$ is a $ t \times t$ identity matrix, $\otimes$ is the Kronecker product and the operator $vec(.)$ is vectorization that inverts the matrix into the column vector by stacking the columns.
+The **Basic Model** is the standard VARs model that assume the error terms $U$ are independent and identically distributed($iid$) as $N\sim (0,\Sigma)$. In other formation, it could be presented as $vec(U)\sim N(0,\Sigma\otimes I_{t})$. Where $\Sigma$ is a $n \times n $ covariance matrix, $I_{t}$ is a $ t \times t$ identity matrix, $\otimes$ is the Kronecker product and the operator $vec(.)$ is vectorization that inverts the matrix into the column vector by stacking the columns.
 
 Therefore, we could consider a more general covariance structure:
 
 ```{=tex}
+\begin{aligned}
+
 $vec(U)\sim N(0,\Sigma\otimes I_{t})$
+
 \end{align}
 ```
 
