@@ -560,18 +560,18 @@ X = \begin{bmatrix}
 <tbody>
 <tr class="odd">
 <td style="text-align: center;">Constant term</td>
-<td style="text-align: center;">0.0952</td>
-<td style="text-align: center;">0.1006</td>
+<td style="text-align: center;">0.0613</td>
+<td style="text-align: center;">0.0817</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">Y1 lag</td>
-<td style="text-align: center;">0.9947</td>
-<td style="text-align: center;">0.0015</td>
+<td style="text-align: center;">0.9887</td>
+<td style="text-align: center;">0.0052</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">Y2 lag</td>
-<td style="text-align: center;">0.0040</td>
-<td style="text-align: center;">0.9867</td>
+<td style="text-align: center;">0.0026</td>
+<td style="text-align: center;">0.9955</td>
 </tr>
 </tbody>
 </table>
@@ -598,13 +598,13 @@ X = \begin{bmatrix}
 <tbody>
 <tr class="odd">
 <td style="text-align: center;">Y1 lag</td>
-<td style="text-align: center;">1.0443</td>
-<td style="text-align: center;">0.0059</td>
+<td style="text-align: center;">0.9783</td>
+<td style="text-align: center;">0.0879</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">Y2 lag</td>
-<td style="text-align: center;">0.0059</td>
-<td style="text-align: center;">0.9474</td>
+<td style="text-align: center;">0.0879</td>
+<td style="text-align: center;">1.0165</td>
 </tr>
 </tbody>
 </table>
@@ -619,8 +619,13 @@ X = \begin{bmatrix}
 </section>
 <section id="the-extended-model" class="level2">
 <h2 class="anchored" data-anchor-id="the-extended-model">The extended model</h2>
-<p>The <strong>Basic Model</strong> is the standard VARs model that assume the error terms <span class="math inline">\(U\)</span> are independent and identically distributed(<span class="math inline">\(iid\)</span>) as <span class="math inline">\(N\sim (0,\Sigma)\)</span>. In other formation, it could be presented as <span class="math inline">\(vec(U)\sim N(0,\Sigma\otimes I_{t})\)</span>。Where <span class="math inline">\(\Sigma\)</span> is a $n n $ covariance matrix, <span class="math inline">\(I_{t}\)</span> is a $ t t$ identity matrix, <span class="math inline">\(\otimes\)</span> is the Kronecker product and the operator <span class="math inline">\(vec(.)\)</span> is vectorization that inverts the matrix into the column vector by stacking the columns.</p>
+<p>The <strong>Basic Model</strong> is the standard VARs model that assume the error terms <span class="math inline">\(U\)</span> are independent and identically distributed(<span class="math inline">\(iid\)</span>) as <span class="math inline">\(N\sim (0,\Sigma)\)</span>. In other formation, it could be presented as <span class="math inline">\(vec(U)\sim N(0,\Sigma\otimes I_{t})\)</span>. Where <span class="math inline">\(\Sigma\)</span> is a $n n $ covariance matrix, <span class="math inline">\(I_{t}\)</span> is a $ t t$ identity matrix, <span class="math inline">\(\otimes\)</span> is the Kronecker product and the operator <span class="math inline">\(vec(.)\)</span> is vectorization that inverts the matrix into the column vector by stacking the columns.</p>
 <p>Therefore, we could consider a more general covariance structure:</p>
+<span class="math display">\[\begin{aligned}
+
+$vec(U)\sim N(0,\Sigma\otimes I_{t})$
+
+\end{align}\]</span>
 <p>The extended model will be built based on the the change in distribution of the error to <strong>Laplace distribution</strong> instead of the normally distributed errors assumption. The Laplace distribution is suitable for describing financial anomalies due to its sharp peaks and thick tails and the use of this distribution improves the robustness of the model to anomalies and is particularly suitable for financial time series. As our variables are most financial time series data, a Laplace distribution is more suitable to apply to our error term.</p>
 <p>Following <a href="https://ieeexplore.ieee.org/document/1618702">Eltoft,Kim, and Lee 2006b</a>, for covariance with a general Kronecker structure, if each <span class="math inline">\({\lambda_t}\)</span> has an independent exponential distribution with mean <span class="math inline">\({\alpha}\)</span>, then marginally <span class="math inline">\({U_t}\)</span> has a multivariate Laplace distribution with mean vector 0 and covariance matrix <span class="math inline">\({\alpha\Sigma}\)</span>.</p>
 <span class="math display">\[\begin{align}
@@ -746,18 +751,18 @@ p &amp;= -\frac{TN}{2}+1
 <tbody>
 <tr class="odd">
 <td style="text-align: center;">Constant term</td>
-<td style="text-align: center;">0.0954</td>
-<td style="text-align: center;">0.1014</td>
+<td style="text-align: center;">0.0620</td>
+<td style="text-align: center;">0.0816</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">Y1 lag</td>
-<td style="text-align: center;">0.9947</td>
-<td style="text-align: center;">0.0015</td>
+<td style="text-align: center;">0.9886</td>
+<td style="text-align: center;">0.0052</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">Y2 lag</td>
-<td style="text-align: center;">0.0040</td>
-<td style="text-align: center;">0.9866</td>
+<td style="text-align: center;">0.0026</td>
+<td style="text-align: center;">0.9955</td>
 </tr>
 </tbody>
 </table>
@@ -784,13 +789,13 @@ p &amp;= -\frac{TN}{2}+1
 <tbody>
 <tr class="odd">
 <td style="text-align: center;">Y1 lag</td>
-<td style="text-align: center;">1.0448</td>
-<td style="text-align: center;">0.0053</td>
+<td style="text-align: center;">0.9780</td>
+<td style="text-align: center;">0.0876</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">Y2 lag</td>
-<td style="text-align: center;">0.0053</td>
-<td style="text-align: center;">0.9472</td>
+<td style="text-align: center;">0.0876</td>
+<td style="text-align: center;">1.0163</td>
 </tr>
 </tbody>
 </table>
