@@ -61,7 +61,11 @@ To enhance the accuracy of gold price predictions, a total selection of 17 varia
     -   $FFERs_{t}$ : As the Federal Funds Effective Rates aim to lower the inflation, decrease the M2 level.
     -   $USDIndex_{t}$ : to present as the purchasing power of USD cross world-wide. That increase the total amount of investors and financial institutions come into US market to earn higher returns.
     -   $VolatilityIndex_{t}$ : to present the risk cross whole market and expectations of further coming events.
-    
+
+```{r}
+rm(list=ls())
+```
+
 ```{r global options}
 knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_chunk$set(message = FALSE)
@@ -81,154 +85,174 @@ library(dplyr)
 library(corrplot)
 library(tseries) # for adf test
 library(GIGrvg)
+library(zoo)
+library(ggplot2)      # plot in same graph
+library(GIGrvg)       # GIG distribution
+library(mvtnorm)      # Bvars forecast
+library(plot3D)
+library(HDInterval)   # hdi plot
+library(grDevices)
 set.seed(123)#set random seed for test
 ```
 
 ```{r}
-# 1.Gold current price in USD per 0.1 ounce, present by SPDR Gold Shares (GLD)
-goldETF_link = "https://query1.finance.yahoo.com/v7/finance/download/GLD?period1=1199232000&period2=1712016000&interval=1mo&events=history&includeAdjustedClose=true"
-goldETF_download = read.csv(goldETF_link)
-names(goldETF_download) <- tolower(names(goldETF_download))
-gold_ETF_data <- goldETF_download %>%
-  select("date","gold_ETF_data" = "adj.close")
 
-# 2. Gold futures price in USD per ounce
-gold_link = "https://query1.finance.yahoo.com/v7/finance/download/GC%3DF?period1=1009843200&period2=1703980800&interval=1mo&filter=history&frequency=1mo&includeAdjustedClose=true"
-gold_download = read.csv(gold_link)
-names(gold_download) <- tolower(names(gold_download))
-gold_future_data <- gold_download %>%
-  select("date","gold_future_data" = "adj.close")
-
-# 3. BIT - USD
-BIT_USD = "https://query1.finance.yahoo.com/v7/finance/download/BTC-USD?period1=1410912000&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
-BIT_USD_file = read.csv(BIT_USD)
-names(BIT_USD_file) <- tolower(names(BIT_USD_file))
-BIT_USD_data <- BIT_USD_file %>%
-  select("date","BIT_USD_data" = "adj.close")
-
-# 4. 13 Weeks treasury bond yield
-bond_yield_13weeks = "https://query1.finance.yahoo.com/v7/finance/download/%5EIRX?period1=-315360000&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
-bond_yield_13weeks_file = read.csv(bond_yield_13weeks)
-names(bond_yield_13weeks_file) <- tolower(names(bond_yield_13weeks_file))
-bond_yield_13weeks_data <- bond_yield_13weeks_file %>%
-  select("date","bond_yield_13weeks_data" = "adj.close")
-
-# 5. 5-Year treasury bond yield
-bond_yield_5years = "https://query1.finance.yahoo.com/v7/finance/download/%5EFVX?period1=-252374400&period2=1712016000&interval=1mo&events=history&includeAdjustedClose=true"
-bond_yield_5years_file = read.csv(bond_yield_5years)
-names(bond_yield_5years_file) <- tolower(names(bond_yield_5years_file))
-bond_yield_5years_data <- bond_yield_5years_file %>%
-  select("date","bond_yield_5years_data" = "adj.close")
-
-# 6. 10-Year treasury bond yield
-bond_yield_10years = "https://query1.finance.yahoo.com/v7/finance/download/%5ETNX?period1=-252374400&period2=1712016000&interval=1mo&events=history&includeAdjustedClose=true"
-bond_yield_10_years = read.csv(bond_yield_10years)
-names(bond_yield_10_years) <- tolower(names(bond_yield_10_years))
-bond_yield_10_years_data <- bond_yield_10_years %>%
-  select("date","bond_yield_10_years_data" = "adj.close")
-
-# 7. 30-Year treasury bond yield
-bond_yield_30years = "https://query1.finance.yahoo.com/v7/finance/download/%5ETYX?period1=224812800&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
-bond_yield_30years_file = read.csv(bond_yield_30years)
-names(bond_yield_30years_file) <- tolower(names(bond_yield_30years_file))
-bond_yield_30years_data <- bond_yield_30years_file %>%
-  select("date","bond_yield_30years_data" = "adj.close")
-
-# 8. Nasdaq Index
-Nasdaq_IXIC = "https://query1.finance.yahoo.com/v7/finance/download/%5EIXIC?period1=34646400&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
-Nasdaq_IXIC_file = read.csv(Nasdaq_IXIC)
-names(Nasdaq_IXIC_file) <- tolower(names(Nasdaq_IXIC_file))
-Nasdaq_IXIC_data <- Nasdaq_IXIC_file %>%
-  select("date","Nasdaq_IXIC_data" = "adj.close")
-
-# 9. M2 level
-M2_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=WM2NS&scale=left&cosd=1980-11-03&coed=2024-03-04&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=pch&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1980-11-03"
-M2_rate_file = read.csv(M2_rate)
-names(M2_rate_file) <- tolower(names(M2_rate_file))
-M2_rate_data <- M2_rate_file %>%
-  select("date","M2_rate_data" = "wm2ns_pch")
-
-# 10. Inflation rate
-Inflation_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=CPIAUCSL&scale=left&cosd=1947-01-01&coed=2024-02-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=pch&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1947-01-01"
-Inflation_rate_file = read.csv(Inflation_rate)
-names(Inflation_rate_file) <- tolower(names(Inflation_rate_file))
-Inflation_rate_data <- Inflation_rate_file %>%
-  select("date","Inflation_rate_data" = "cpiaucsl_pch")
-
-# 11. Unemployment rate
-unemployment_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=UNRATE&scale=left&cosd=1948-01-01&coed=2024-02-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-04-02&revision_date=2024-04-02&nd=1948-01-01"
-unemployment_rate_file = read.csv(unemployment_rate)
-names(unemployment_rate_file) <- tolower(names(unemployment_rate_file))
-unemployment_rate_data <- unemployment_rate_file %>%
-  select("date","unemployment_rate_data" = "unrate")
-
-# 12. Crude oil price
-Crude_oil_price = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=off&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=DCOILBRENTEU&scale=left&cosd=1990-01-01&coed=2024-03-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1987-05-20"
-Crude_oil_price_file = read.csv(Crude_oil_price)
-names(Crude_oil_price_file) <- tolower(names(Crude_oil_price_file))
-Crude_oil_price_data <- Crude_oil_price_file %>%
-  select("date","Crude_oil_price_data" = "dcoilbrenteu")
-
-# 13. PPI - Industry
-PPI_industry_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=PCUOMFGOMFG&scale=left&cosd=1984-12-01&coed=2024-02-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=pch&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1984-12-01"
-PPI_industry_rate_file = read.csv(PPI_industry_rate)
-names(PPI_industry_rate_file) <- tolower(names(PPI_industry_rate_file))
-PPI_industry_rate_data <- PPI_industry_rate_file %>%
-  select("date","PPI_industry_rate_data" = "pcuomfgomfg_pch")
-
-# 14. PPI - Commodity
-PPI_commodity_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=PPIACO&scale=left&cosd=1913-01-01&coed=2024-02-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=pch&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1913-01-01"
-PPI_commodity_rate_file = read.csv(PPI_commodity_rate)
-names(PPI_commodity_rate_file) <- tolower(names(PPI_commodity_rate_file))
-PPI_commodity_rate_data <- PPI_commodity_rate_file %>%
-  select("date","PPI_commodity_rate_data" = "ppiaco_pch")
-
-# 15. Federal Funds Effective Rates
-Federal_funds_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=FEDFUNDS&scale=left&cosd=1990-01-01&coed=2024-03-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1954-07-01"
-Federal_funds_rate_file = read.csv(Federal_funds_rate)
-names(Federal_funds_rate_file) <- tolower(names(Federal_funds_rate_file))
-Federal_funds_rate_data <- Federal_funds_rate_file %>%
-  select("date","Federal_funds_rate_data" = "fedfunds")
-
-# 16. US dollars Index
-US_dollars_Index = "https://query1.finance.yahoo.com/v7/finance/download/DX-Y.NYB?period1=31795200&period2=1712102400&interval=1mo&events=history&includeAdjustedClose=true"
-US_dollars_Index_file = read.csv(US_dollars_Index)
-names(US_dollars_Index_file) <- tolower(names(US_dollars_Index_file))
-US_dollars_Index_data <- US_dollars_Index_file %>%
-  select("date","US_dollars_Index_data" = "adj.close")
-
-# 17. Volatility Index
-Volatility_Index = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=VIXCLS&scale=left&cosd=1990-01-02&coed=2024-03-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-04-03&revision_date=2024-04-03&nd=1990-01-02"
-Volatility_Index_file = read.csv(Volatility_Index)
-names(Volatility_Index_file) <- tolower(names(Volatility_Index_file))
-Volatility_Index_data <- Volatility_Index_file %>%
-  select("date","Volatility_Index_data" = "vixcls")
+Data_collection <- function(data_download) {
+  data           = data.frame(data_download[,1], data_download[,6])
+  colnames(data) = c('date','price')
+  
+  data$date      = as.Date(as.character(data$date),format="%Y-%m-%d") 
+  data <- data %>%
+    filter(date >= as.Date("2000-08-01"))
+  data <- data[data$price != "null", ]
+  #data$price[data$price == "null"] <- NA
+  #data           = na.omit(data)
+  data           = xts(data$price, data$date)
+  data_finally           = to.monthly(data, OHLC = FALSE)
+  return(data_finally)
+}
 
 ```
 
+```{r}
+
+Data_collection_US <- function(data_download) {
+  data           = data.frame(data_download[,1], data_download[,2])
+  colnames(data) = c('date','price')
+  
+  data$date      = as.Date(as.character(data$date),format="%Y-%m-%d") 
+  data <- data %>%
+    filter(date >= as.Date("2000-08-01"))
+  data <- data[data$price != "null", ]
+  #data$price[data$price == "null"] <- NA
+  #data           = na.omit(data)
+  data           = xts(data$price, data$date)
+  data_finally           = to.monthly(data, OHLC = FALSE)
+  return(data_finally)
+}
+
+```
 
 ```{r}
-data_list <-    list(gold_ETF_data,           gold_future_data, 
-                     BIT_USD_data,            bond_yield_13weeks_data, 
-                     bond_yield_5years_data,  bond_yield_10_years_data,  
-                     bond_yield_30years_data, Nasdaq_IXIC_data, 
-                     M2_rate_data,            Inflation_rate_data,
-                     unemployment_rate_data,  Crude_oil_price_data,
-                     PPI_industry_rate_data,  PPI_commodity_rate_data,
-                     Federal_funds_rate_data, US_dollars_Index_data,
-                     Volatility_Index_data)  
+
+Date_collection <- function(data) {
+  correct_dates       = seq(as.Date("2000-09-01"), by="month", length.out=length(data))
+  correct_dates       = floor_date(correct_dates, "month") - days(1)
+  return(correct_dates)
+}
+
+```
+
+```{r}
+
+# Block 1st elements for now: re-pick of variables between Gold futures and Gold ETF
+
+# 1.Gold current price in USD per 0.1 ounce, present by SPDR Gold Shares (GLD)
+# (data periods: 2004-11 to recent)
+#goldETF_link = "https://query1.finance.yahoo.com/v7/finance/download/GLD?period1=1199232000&period2=1712016000&interval=1mo&events=history&includeAdjustedClose=true"
+#goldETF_download = read.csv(goldETF_link)
+#names(goldETF_download) <- tolower(names(goldETF_download))
+#gold_ETF_data <- goldETF_download %>%
+  #select("date","gold_ETF_data" = "adj.close")
+
+# 1. Gold futures price in USD per ounce (data periods: 2000-8 to recent)
+#daily data download
+
+gold_link = "https://query1.finance.yahoo.com/v7/finance/download/GC%3DF?period1=967608000&period2=1715586098&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true" 
+gold_download       = read.csv(gold_link)
+gold_data           = Data_collection(gold_download)
+index(gold_data)    = Date_collection(gold_data)
 
 
-merged_data <- Reduce(function(x, y) merge(x, y, by = "date", all = TRUE), data_list)
+# 2. 13 Weeks treasury bond yield (data periods: 1960-1 to recent)
+bond_yield_13weeks = "https://query1.finance.yahoo.com/v7/finance/download/%5EIRX?period1=-315312000&period2=1715610633&interval=1d&events=history&includeAdjustedClose=true"
+bond_yield_13weeks_file = read.csv(bond_yield_13weeks)
+bond_yield_13weeks_data           = Data_collection(bond_yield_13weeks_file)
+index(bond_yield_13weeks_data)    = Date_collection(bond_yield_13weeks_data)
+
+# 3. 5-Year treasury bond yield (data periods: 1962-2 to recent)
+bond_yield_5years = "https://query1.finance.yahoo.com/v7/finance/download/%5EFVX?period1=-252326400&period2=1715610588&interval=1d&events=history&includeAdjustedClose=true"
+bond_yield_5years_file = read.csv(bond_yield_5years)
+bond_yield_5years_data           = Data_collection(bond_yield_5years_file)
+index(bond_yield_5years_data)    = Date_collection(bond_yield_5years_data)
+
+# 4. 10-Year treasury bond yield (data periods: 1962-2 to recent) TNX
+bond_yield_10years = "https://query1.finance.yahoo.com/v7/finance/download/%5ETNX?period1=-252326400&period2=1715610541&interval=1d&events=history&includeAdjustedClose=true"
+bond_yield_10_years = read.csv(bond_yield_10years)
+bond_yield_10_years_data           = Data_collection(bond_yield_10_years)
+index(bond_yield_10_years_data)    = Date_collection(bond_yield_10_years_data)
 
 
-start_date <- as.Date("2014-01-01")
-end_date <- as.Date("2024-04-01")
-filtered_data <- merged_data %>%
-  filter(date >= start_date & date <= end_date)
+# 5. Nasdaq Index (data periods: 1971-2 to recent) ^IXIC
+Nasdaq_IXIC = "https://query1.finance.yahoo.com/v7/finance/download/%5EIXIC?period1=34612200&period2=1715610493&interval=1d&events=history&includeAdjustedClose=true"
+Nasdaq_IXIC_file = read.csv(Nasdaq_IXIC)
+Nasdaq_IXIC_data           = Data_collection(Nasdaq_IXIC_file)
+index(Nasdaq_IXIC_data)    = Date_collection(Nasdaq_IXIC_data)
 
-filtered_data <- na.omit(filtered_data)
+# 6. M2 level
+M2_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=WM2NS&scale=left&cosd=1980-11-03&coed=2024-05-04&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=pch&vintage_date=2024-05-13&revision_date=2024-05-13&nd=1980-11-03"
+M2_rate_file = read.csv(M2_rate)
+M2_rate_data           = Data_collection_US(M2_rate_file)
+index(M2_rate_data)    = Date_collection(M2_rate_data)
 
+# 7. Inflation rate （******Questions******）
+Inflation_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=CPIAUCSL&scale=left&cosd=1947-01-01&coed=2024-05-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=pc1&vintage_date=2024-05-13&revision_date=2024-05-13&nd=1947-01-01"
+
+Inflation_rate_file = read.csv(Inflation_rate)
+Inflation_rate_data           = Data_collection_US(Inflation_rate_file)
+index(Inflation_rate_data)    = Date_collection(Inflation_rate_data)
+
+# 8. Unemployment rate
+unemployment_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=UNRATE&scale=left&cosd=1948-01-01&coed=2024-05-01&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-05-13&revision_date=2024-05-13&nd=1948-01-01"
+unemployment_rate_file = read.csv(unemployment_rate)
+unemployment_rate_data           = Data_collection_US(unemployment_rate_file)
+index(unemployment_rate_data)    = Date_collection(unemployment_rate_data)
+
+
+# 9. Crude oil price
+Crude_oil_price = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=off&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=DCOILBRENTEU&scale=left&cosd=1990-01-01&coed=2024-05-13&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=eop&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-05-13&revision_date=2024-05-13&nd=1987-05-20"
+Crude_oil_price_file = read.csv(Crude_oil_price)
+Crude_oil_price_data           = Data_collection_US(Crude_oil_price_file)
+index(Crude_oil_price_data)    = Date_collection(Crude_oil_price_data)
+
+
+# 10. Federal Funds Effective Rates
+Federal_funds_rate = "https://fred.stlouisfed.org/graph/fredgraph.csv?bgcolor=%23e1e9f0&chart_type=line&drp=0&fo=open%20sans&graph_bgcolor=%23ffffff&height=450&mode=fred&recession_bars=on&txtcolor=%23444444&ts=12&tts=12&width=1318&nt=0&thu=0&trc=0&show_legend=yes&show_axis_titles=yes&show_tooltip=yes&id=FEDFUNDS&scale=left&cosd=1990-01-01&coed=2024-05-13&line_color=%234572a7&link_values=false&line_style=solid&mark_type=none&mw=3&lw=2&ost=-99999&oet=99999&mma=0&fml=a&fq=Monthly&fam=avg&fgst=lin&fgsnd=2020-02-01&line_index=1&transformation=lin&vintage_date=2024-05-13&revision_date=2024-05-13&nd=1954-07-01"
+Federal_funds_rate_file = read.csv(Federal_funds_rate)
+Federal_funds_rate_data           = Data_collection_US(Federal_funds_rate_file)
+index(Federal_funds_rate_data)    = Date_collection(Federal_funds_rate_data)
+
+# 11. US dollars Index DX-Y.NYB
+US_dollars_Index = "https://query1.finance.yahoo.com/v7/finance/download/DX-Y.NYB?period1=31813200&period2=1715611000&interval=1d&events=history&includeAdjustedClose=true"
+US_dollars_Index_file = read.csv(US_dollars_Index)
+US_dollars_Index_data           = Data_collection(US_dollars_Index_file)
+index(US_dollars_Index_data)    = Date_collection(US_dollars_Index_data)
+
+# 12. Volatility Index
+Volatility_Index = "https://query1.finance.yahoo.com/v7/finance/download/%5EVIX?period1=631267200&period2=1715610192&interval=1d&events=history&includeAdjustedClose=true"
+Volatility_Index_file = read.csv(Volatility_Index)
+Volatility_Index_data          = Data_collection(Volatility_Index_file)
+index(Volatility_Index_data)   = Date_collection(Volatility_Index_data)
+
+```
+
+```{r Data Combine, fig.pos="H"}
+
+# All Variables
+all_data             = merge( gold_data,               bond_yield_13weeks_data, 
+                                      bond_yield_5years_data,  bond_yield_10_years_data,  
+                                      Nasdaq_IXIC_data,        M2_rate_data,            
+                                      Inflation_rate_data,     unemployment_rate_data,  
+                                      Crude_oil_price_data,    Federal_funds_rate_data, 
+                                      US_dollars_Index_data,   Volatility_Index_data)
+
+colnames(all_data)   = c("GFutures_data",    "TBill13W_data", 
+                         "TBill5Y_data",     "TBill10Y_data", 
+                         "Nasdaq_data",      "M2_data", 
+                         "InflaR_data",      "UnempR_data",
+                         "CrudeOil_data",    "InterestR_data",
+                         "USDIndex_data",    "Volatility_data")
+all_data <- all_data[complete.cases(all_data), ]
 ```
 
 After download all variables as designed, merge all data sets into a new frame and change the column names. The date of data used in this research will start at 2014-10-01 as at 2024-04-01.
@@ -236,18 +260,39 @@ After download all variables as designed, merge all data sets into a new frame a
 # Plots of all variables
 
 ```{r}
-data1 <- subset(filtered_data, select = -c(date))
-
-data1 <- mutate_all(data1, as.numeric)
+data1 <- subset(all_data)
 
 par(mfrow = c(4, 4), mar=c(2,2,2,2))
-for (i in 1:17) { 
+for (i in 1:12) { 
   ts.plot(data1[, i], main = colnames(data1)[i], 
-          ylab = "", xlab = "")
+          ylab = "", xlab = "", col="red")
 }
 
-
 ```
+
+```{r}
+
+# 选择要绘制的数据列
+selected_columns <- c("GFutures_data", "Nasdaq_data")#, "CrudeOil_data", "USDIndex_data", "Volatility_data")
+selected_columns2 <- c("TBill13W_data", "TBill5Y_data", "TBill10Y_data", "M2_data", "InflaR_data", "UnempR_data", "InterestR_data")
+
+# 首先创建一个包含只有选定列的新xts对象
+selected_data <- data1[, selected_columns]
+selected_data2 <- data1[, selected_columns2]
+
+# 为每个选定的数据列生成颜色
+colors1 <- rainbow(length(selected_columns))
+colors2 <- rainbow(length(selected_columns2))
+
+# 绘制第一组选定的数据列
+plot.xts(selected_data, main="Selected Time Series Data", col=colors1)
+legend("topright", legend=names(selected_data), col=colors1, lty=1, cex=0.8, bty="n")
+
+# 绘制第二组选定的数据列
+plot.xts(selected_data2, main="Selected Rates Series Data", col=colors2, lwd=2)
+legend("topright", legend=names(selected_data2), col=colors2, lty=1, cex=0.8, bty="n")
+```
+
 
 As above, we could have all 17 variables in visualization format individually. As a quick overlook, 13 weeks bond has a similar trend with federal funds effective rates; other 3 treasury bonds move quite same; gold and its' future, Nasdaq, Bit coin, crude oil price and US dollars Index have upper ward trends; Unemployment rates seems like opposite to federal rates; M2 and other 3 time series seems like stationary on mean but variance change over time.
 
@@ -264,15 +309,15 @@ Therefore, we could use ACF and PACF test to indicate whether there is autocorre
 
 ```{r}
 par(mfrow = c(4, 4), mar=c(2,2,2,2))
-for (i in 1:17){
-acf = acf(data1[,i], plot = FALSE)[1:20]
+for (i in 1:12){
+acf = acf(data1[,i], plot = FALSE)[1:12]
 plot(acf, main = "")
 title(main = paste(colnames(data1)[i]), line = 0.5)
 }
 
 par(mfrow = c(4, 4), mar=c(2,2,2,2))
-for (i in 1:17){
-pacf = pacf(data1[,i], plot = FALSE)[1:20]
+for (i in 1:12){
+pacf = pacf(data1[,i], plot = FALSE)[1:12]
 plot(pacf, main = "")
 title(main = paste(colnames(data1)[i]), line = 0.5)
 }
@@ -283,7 +328,7 @@ Both ACF and PACF suggest that variables are highly autocorrelated except M2: Bo
 ```{r}
 
 adf_test <- list()
-for (i in 1:17) {
+for (i in 1:12) {
   adf_result = adf.test(data1[,i], k = 4)
   adf_test[[i]] <- adf_result
 }
@@ -292,19 +337,41 @@ adf_table <- data.frame(p_value = numeric(length(adf_test)))
 for (i in 1:length(adf_test)) {adf_table[i, "p_value"] = round(adf_test[[i]]$p.value,3)
 }
 
-rownames(adf_table)<- c("gold_ETF_data",           "gold_future_data", 
-                     "BIT_USD_data",            "bond_yield_13weeks_data", 
-                     "bond_yield_5years_data",  "bond_yield_10_years_data",  
-                     "bond_yield_30years_data", "Nasdaq_IXIC_data", 
-                     "M2_rate_data",            "Inflation_rate_data",
-                    "unemployment_rate_data",  "Crude_oil_price_data",
-                     "PPI_industry_rate_data",  "PPI_commodity_rate_data",
-                     "Federal_funds_rate_data", "US_dollars_Index_data",
-                     "Volatility_Index_data")
+rownames(adf_table)<- c("GFutures_data",    "TBill13W_data", 
+                         "TBill5Y_data",     "TBill10Y_data", 
+                         "Nasdaq_data",      "M2_data", 
+                         "InflaR_data",      "UnempR_data",
+                         "CrudeOil_data",    "InterestR_data",
+                         "USDIndex_data",    "Volatility_data")
 colnames(adf_table)<- c("P-value")
 knitr::kable(adf_table)
 ```
 
+```{r}
+# 选择您想要转换的列索引
+columns_to_log <- c("GFutures_data", "Nasdaq_data", "CrudeOil_data", "USDIndex_data", "Volatility_data")
+
+# 对指定的列进行对数转换，处理零或负数值
+# 增加一个小的常数，如1e-6，以避免对零或负数取对数
+all_data[, columns_to_log] <- log(all_data[, columns_to_log] + 1e-6)
+
+names(all_data)[1] <- "Lgold"
+names(all_data)[5] <- "LNasIndex"
+```
+
+
+```{r}
+# 选择要绘制的数据列
+selected_columns <- c("Lgold", "LNasIndex", "CrudeOil_data", "USDIndex_data", "Volatility_data")
+
+selected_data <- all_data[, selected_columns]
+
+colors1 <- rainbow(length(selected_columns))
+
+plot.xts(selected_data, main="Log INDEX Data", col=colors1, type="l", lty=1, lwd=2, grid=T, major.ticks="years", minor.ticks="quarters", xlab="Date", ylab="Log Value")
+legend("bottom", legend=colnames(selected_data), col=colors1, lty=1, lwd=2, cex=0.8, bty="n")
+
+```
 
 # Modeling and Hypothesis
 
@@ -593,6 +660,7 @@ A.prior[2:(N + 1),] = diag(N)
 V.prior             = diag(c(kappa.2,kappa.1*((1:p)^(-2))%x%rep(1,N)))
 S.prior             = diag(diag(Sigma.hat))
 nu.prior            = N+2
+I.matrix            = diag(1,nrow(Y),nrow(Y))
 # Applying function 
 posterior.sample.draws.p = posterior.draws(S=10000, Y=Y, X=X)
 
@@ -630,7 +698,7 @@ Table 2 Basic Model Proofing Simulation for $A$
 
 - The posterior mean of the $\Sigma$ is:
 
-```{r Basic Model Proof Sigma, fig.align='center',fig.pos='H'}
+```{r}
 
 
 basic.model.proof.Sigma <-
@@ -750,6 +818,50 @@ p &= -\frac{TN}{2}+1
 \end{align}
 ```
 
+```{r}
+
+par(mfrow = c(1, 2), mar = c(4, 2, 4, 2))  
+
+
+lambdas <- c(0.5, 1, 2)
+
+
+colors <- c("red", "blue", "green")
+
+
+curve(dexp(x, rate = lambdas[1]), from = 0, to = 5, ylim = c(0, 2), lwd = 2,
+      xlab = "x", ylab = "Density", col = colors[1], main = "Exponential Distributions")
+for (i in 2:length(lambdas)) {
+  curve(dexp(x, rate = lambdas[i]), from = 0, to = 5, col = colors[i], add = TRUE, lwd = 2)
+}
+
+
+legend("topright", legend = paste("lambda =", lambdas), col = colors, lty = 1, lwd = 2, cex = 0.6)
+
+library(extraDistr)
+
+parameters <- list(
+  list(mean = 0, beta = 2),
+  list(mean = 0, beta = 1),
+  list(mean = 0, beta = 0.5)
+)
+
+
+colors <- c("red", "blue", "green")
+
+
+plot(NULL, xlim = c(-10, 10), ylim = c(0, 1), xlab = "x", ylab = "Density",
+     main = "Laplace Distributions")
+for (i in seq_along(parameters)) {
+  curve(dlaplace(x, mu = parameters[[i]]$mean, s = parameters[[i]]$beta),
+        col = colors[i], lwd = 2, add = TRUE)
+}
+
+
+legend("topright", legend = sapply(parameters, function(p) paste("mean =", p$mean, ", beta =", p$beta)),
+       col = colors, lty = 1, lwd = 2, bty = "n", cex = 0.6)
+```
+
 ### Proof of extended model
 The Gibbs sampler method will be applied to generate random draws from the full conditional posterior distribution:
 
@@ -763,7 +875,9 @@ Discard the first draws that allowed the algorithm to converge to the stationary
 
 Output is $\left\{ {A^{(s)}, \Sigma^{(s)}}, \lambda_t^{(s)}\right\}^{S_1+S_2}_{s=S_1+1}$.
 
-```{r Stat Setup for Extend model, fig.align='center',fig.pos='H'}
+Function below is `posterior.draws.exten`:
+
+```{r}
 
 # setup 
 S1                = 500                            # determine the burn-in draws
@@ -774,30 +888,29 @@ Sigma.posterior   = array(NA, dim = c(N,N,S1+S2))
 lambda.posterior  = matrix(NA, S1+S2, 1)
 
 # initial value of lambda
-lambda.posterior[1] = 10                               # set lambda0 
+lambda.posterior[1] = 2                               # set lambda0 
 
-# Prior Gamma distribution: k, theta
+# Prior distribution: alpha
 lambda.priors = list(
-  k = 1,
-  theta = .1
+  alpha = 2
 )
 
 ```
 
-Function below is `posterior.draws.exten`:
 
-```{r Model Exten, fig.align='center',fig.pos='H'}
+```{r}
 #| echo: true
 
 ## Posterior sample draw function for extended model(posterior.draws.exten)
 posterior.draws.exten = function (total_S, Y, X){
 for (s in 1:total_S){
     # NIW posterior parameters
-    V.bar.inv              = t(X)%*%X + diag(1/diag(lambda.posterior[s]* V.prior)) 
+    
+    V.bar.inv              = t(X)%*%solve(lambda.posterior[s]*I.matrix)%*%X + diag(1/diag(V.prior)) 
     V.bar                  = solve(V.bar.inv)
-    A.bar                  = V.bar%*%(t(X)%*%Y + diag(1/diag(lambda.posterior[s]* V.prior))%*%A.prior)
+    A.bar                  = V.bar%*%(t(X)%*%solve(lambda.posterior[s]*I.matrix)%*%Y + diag(1/diag(V.prior))%*%A.prior)
     nu.bar                 = nrow(Y) + nu.prior
-    S.bar                  = S.prior + t(Y)%*%Y + t(A.prior)%*%diag(1/diag(lambda.posterior[s]* V.prior))%*%A.prior - t(A.bar)%*%V.bar.inv%*%A.bar
+    S.bar                  = S.prior + t(Y)%*%solve(lambda.posterior[s]*I.matrix)%*%Y + t(A.prior)%*%diag(1/diag(V.prior))%*%A.prior - t(A.bar)%*%V.bar.inv%*%A.bar
     S.bar.inv              = solve(S.bar)
   
     # posterior draws for A and Sigma
@@ -810,11 +923,11 @@ for (s in 1:total_S){
     
     
     # Update parameters for lambda posterior
-    p                      = lambda.priors$k - (N)/2              # N=10
-    diff_A                 = A.posterior[,,s] - A.prior
-    product                = t(diff_A) %*% solve(V.prior) %*% diff_A
-    b                      = sum(diag(solve(Sigma.posterior[,,s] %*% product)))
-    a                      = 2 / lambda.priors$theta
+    p                      = 1-0.5*nrow(Y)*ncol(Y)             # N=10
+    diff_A                 = Y - X%*%A.posterior[,,s]
+    product                = t(diff_A) %*% diff_A
+    b                      = sum(diag(solve(Sigma.posterior[,,s]) %*% product))
+    a                      = 2 / lambda.priors$alhpa
     
     # Draw next period value for lambda from GIG distribution
     if (s!=total_S){
@@ -828,27 +941,33 @@ for (s in 1:total_S){
 
     return(output)
 }
+
+
 ```
+
 
 #### Function Proofing
 
-```{r Extend Model Function Proof, fig.align='center',fig.pos='H'}
+```{r}
 
 # setup 
 kappa.1           = 1                                # shrinkage for A1 to Ap
 kappa.2           = 100                              # shrinkage for constant 
-S1                = 500                              # determine the burn-in draws
-S2                = 9500                             # number of draws from the final simulation
+S1                = 5                              # determine the burn-in draws
+S2                = 95                             # number of draws from the final simulation
 total_S           = S1+S2
 A.posterior       = array(NA, dim = c((1+N*p),N,S1+S2))
 Sigma.posterior   = array(NA, dim = c(N,N,S1+S2))
-k.posterior       = matrix(NA, S1+S2, 1)
-k.posterior[1]    = 10                               # set k0 
+
+#lambda.posterior     = diag(5,nrow(Y),nrow(Y))
+lambda.posterior  = matrix(NA, S1+S2, 1)
+
+# initial value of lambda
+lambda.posterior[1] = 2                               # set lambda0 
 
 # Prior Gamma distribution: k, theta
 lambda.priors = list(
-  k = 1,
-  theta = .1
+    alpha = 2
 )
 
 # Applying function 
@@ -859,7 +978,7 @@ After fitting a model that includes a constant term and one lag with artificial 
 
  - The posterior mean of the $A$ is:
 
-```{r Extend Model Proof A, fig.align='center',fig.pos='H'}
+```{r}
 
 extend.model.proof.A <-
   tibble( "A" = c("Constant term", "Y1 lag","Y2 lag"),
@@ -888,7 +1007,7 @@ Table 4 Extend Model Proofing Simulation for $A$
 
  - The posterior mean of the $\Sigma$ is:
 
-```{r Extend Model Proof Sigma, fig.align='center',fig.pos='H'}
+```{r}
 
 extend.model.proof.Sigma <-
   tibble( "Sigma" = c("Y1 lag","Y2 lag"),
@@ -911,6 +1030,436 @@ kable(extend.model.proof.Sigma, align = "c") %>%
 ```
 
 Table 5 Extend Model Proofing Simulation for $\Sigma$
+
+# Empirical Analysis -  Model Applying and Forecasing
+
+## Basic Model
+```{r}
+
+## Create Y and X
+y             = ts(all_data[,1:ncol(all_data)])     # 10col, 135row
+Y             = ts(y[13:nrow(y),], frequency=12)      # 10col, 131row
+X             = matrix(1,nrow(Y),1)
+for (i in 1:frequency(Y)){
+  X           = cbind(X,y[13:nrow(y)-i,])            # 10*4+1=41col, 131row
+}
+ 
+## Pre-setup 
+N             = ncol(Y)                             # N=10
+p             = frequency(Y)                        # p=4
+A.hat         = solve(t(X)%*%X)%*%t(X)%*%Y
+Sigma.hat     = t(Y-X%*%A.hat)%*%(Y-X%*%A.hat)/nrow(Y)
+
+# Prior distribution (with Minnesota prior)
+kappa.1       = 0.01                                     # shrinkage for A1 to Ap
+kappa.2       = 100                                   # shrinkage for constant 
+A.prior       = matrix(0,nrow(A.hat),ncol(A.hat))
+# A.prior[2,1]  = 1
+# A.prior[7,6]  = 1  
+A.prior[2:13,] = diag(12)
+V.prior       = diag(c(kappa.2,kappa.1*((1:p)^(-2))%x%rep(1,N)))
+S.prior       = diag(diag(Sigma.hat))
+nu.prior      = N+2 
+I.matrix            = diag(1,nrow(Y),nrow(Y))
+```
+
+```{r}
+
+## Function Applying
+posterior.sample.draws = posterior.draws(S=10000, Y=Y, X=X) # sample use S=10000
+A.posterior.simu       = posterior.sample.draws$A.posterior
+Sigma.posterior.simu   = posterior.sample.draws$Sigma.posterior
+
+```
+
+```{r}
+
+## Two-year ahead forecasting h=24
+# set up
+h                      = 24
+S                      = 10000
+Y.h                    = array(NA,c(h,N,S))
+
+# sampling predictive density
+for (s in 1:S){
+  A.posterior.draw     = A.posterior.simu[,,s]
+  Sigma.posterior.draw = Sigma.posterior.simu[,,s]
+    x.Ti               = Y[(nrow(Y)-p+1):nrow(Y),]
+    x.Ti               = x.Ti[p:1,]
+  for (i in 1:h){
+    x.T                = c(1,as.vector(t(x.Ti)))
+    Y.f                = rmvnorm(1, mean = x.T%*%A.posterior.draw, sigma=Sigma.posterior.draw)
+    x.Ti               = rbind(Y.f,x.Ti[1:(p-1),])
+    Y.h[i,,s]          = Y.f[1:N]
+  }
+}
+
+```
+
+Figure 6 presents a 3D visualization of the density intervals for the log CPI and inflation expectations. Inflation expectations show some fluctuations, while the log CPI exhibits a stable increase. as indicated by the narrow bounded confidence intervals (light blue for CPI and light green for inflation expectations). The varying heights of the intervals reflect the level of prediction certainty; as we project further into the future, the intervals become wider and more dispersed due to increased uncertainty. 
+
+```{r}
+
+blue1 = "deepskyblue"            # #0000FF
+blue2 = "lightblue"       # #ADD8E6
+blue3 = "royalblue"       # #4169E1
+blue4 = "blue"     # #00BFFF
+blue5 = "dodgerblue"      # #1E90FF
+blue6 = "steelblue"       # #4682B4
+
+blue1.rgb   = col2rgb(blue1)
+blue1.shade1= rgb(blue1.rgb[1],blue1.rgb[2],blue1.rgb[3], alpha=120, maxColorValue=255)
+
+
+green1  = "#05386B"
+green2  = "#379683"
+green3  = "#5CDB95"
+green4  = "#8EE4AF"
+green5  = "#EDF5E1"
+green6  = "darkgreen"
+
+green3.rgb   = col2rgb(green3)
+green3.shade1= rgb(green3.rgb[1],green3.rgb[2],green3.rgb[3], alpha=120, maxColorValue=255)
+```
+
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+par(mfcol = c(1, 2), mar=c(2,2,2,2)-0.1)
+
+# Log gold forecasting 
+limits.Lgold      = range(Y.h[,1,])
+point.Lgold.f     = apply(Y.h[,1,],1,mean)
+
+interval.Lgold.f  = apply(Y.h[,1,],1,hdi,credMass=0.90)
+theta            = 180
+phi              = 15.5
+
+x                = seq(from=limits.Lgold[1], to=limits.Lgold[2], length.out=100)
+z                = matrix(NA,h,99)
+for (i in 1:h){
+  z[i,]          = hist(Y.h[i,1,], breaks=x, plot=FALSE)$density
+}
+x                = hist(Y.h[i,1,], breaks=x, plot=FALSE)$mids
+yy               = 1:h
+z                = t(z)
+
+f4               = persp3D(x=x, y=yy, z=z, phi=phi, theta=theta, 
+                           xlab="\ngold[t+h|t]", ylab="h", zlab="\npredictive densities of cpi",
+                           shade=NA, border=NA, ticktype="detailed", nticks=3,cex.lab=1,
+                           col=NA,plot=FALSE)
+perspbox (x=x, y=yy, z=z, bty="f", col.axis="black", phi=phi, theta=theta, 
+          xlab="\nlog.gold[t+h|t]", ylab="h", zlab="\npredictive densities of gold", 
+          ticktype="detailed", nticks=3,cex.lab=1, col = NULL, plot = TRUE)
+
+polygon3D(x=c(interval.Lgold.f[1,],interval.Lgold.f[2,h:1]),  y=c(1:h,h:1), 
+          z=rep(0,2*h), 
+          col = blue2, NAcol = blue5, border = NA, add = TRUE, plot = TRUE)
+
+for (i in 1:h){
+  f4.l = trans3d(x=x, y=yy[i], z=z[,i], pmat=f4)
+  lines(f4.l, lwd=1, col=blue5)
+}
+f4.l1 = trans3d(x=point.Lgold.f, y=yy, z=0, pmat=f4)
+lines(f4.l1, lwd=1.5, col=blue4)
+
+# Log NASDAQ INDEX forecasting 
+limits.LNasIndex      = range(Y.h[,5,])
+point.LNasIndex.f     = apply(Y.h[,5,],1,mean)
+
+interval.LNasIndex.f  = apply(Y.h[,5,],1,hdi,credMass=0.90)
+theta            = 180
+phi              = 15.5
+
+x                = seq(from=limits.LNasIndex[1], to=limits.LNasIndex[2], length.out=100)
+z                = matrix(NA,h,99)
+for (i in 1:h){
+  z[i,]          = hist(Y.h[i,5,], breaks=x, plot=FALSE)$density
+}
+x                = hist(Y.h[i,5,], breaks=x, plot=FALSE)$mids
+yy               = 1:h
+z                = t(z)
+
+f4               = persp3D(x=x, y=yy, z=z, phi=phi, theta=theta, 
+                           xlab="\nLNasIndex[t+h|t]", ylab="h", zlab="\npredictive densities of LNasIndex",
+                           shade=NA, border=NA, ticktype="detailed", nticks=3,cex.lab=1,
+                           col=NA,plot=FALSE)
+perspbox (x=x, y=yy, z=z, bty="f", col.axis="black", phi=phi, theta=theta, 
+          xlab="\nlog.NasIndex[t+h|t]", ylab="h", zlab="\npredictive densities of LNasIndex", 
+          ticktype="detailed", nticks=3,cex.lab=1, col = NULL, plot = TRUE)
+
+polygon3D(x=c(interval.LNasIndex.f[1,],interval.LNasIndex.f[2,h:1]),  y=c(1:h,h:1), 
+          z=rep(0,2*h), 
+          col = blue2, NAcol = blue5, border = NA, add = TRUE, plot = TRUE)
+
+for (i in 1:h){
+  f4.l = trans3d(x=x, y=yy[i], z=z[,i], pmat=f4)
+  lines(f4.l, lwd=1, col=blue5)
+}
+f4.l1 = trans3d(x=point.LNasIndex.f, y=yy, z=0, pmat=f4)
+lines(f4.l1, lwd=1.5, col=blue4)
+
+```
+
+Figure 6 3D forecasting graph on basic model
+
+```{r}
+lgold.point.f    = apply(Y.h[,1,],1,mean)
+lgold.interval.f = apply(Y.h[,1,],1,hdi,credMass=0.99)
+lgold.range      = range(y[,1],lgold.interval.f)
+
+par(mfrow=c(1,1), mar=rep(3,4),cex.axis=1.5)
+plot(1:(length(y[,1])+h),c(y[,1],lgold.point.f), type="l", ylim=lgold.range, axes=FALSE, xlab="", ylab="", lwd=2, col=blue1)
+axis(1,c(3,51,111,171,231,267,nrow(y),nrow(y)+h),c("2000","2005","2010","2015","2020","2023","",""), col=blue1)
+axis(2,c(lgold.range[1],mean(lgold.range),lgold.range[2]),c("","lgold",""), col=blue1)
+abline(v=284, col=blue1)
+polygon(c(length(y[,1]):(length(y[,1])+h),(length(y[,1]):(length(y[,1])+h))[21:1]),
+        c(y[284,1],lgold.interval.f[1,],lgold.interval.f[2,20:1],y[284,1]),
+        col=blue1.shade1, border=blue1.shade1)
+
+LNasIndex.point.f    = apply(Y.h[,5,],1,mean)
+LNasIndex.interval.f = apply(Y.h[,5,],1,hdi,credMass=0.99)
+LNasIndex.range      = range(y[,5],LNasIndex.interval.f)
+
+par(mfrow=c(1,1), mar=rep(3,4),cex.axis=1.5)
+plot(1:(length(y[,5])+h),c(y[,5],LNasIndex.point.f), type="l", ylim=LNasIndex.range, axes=FALSE, xlab="", ylab="", lwd=2, col=blue1)
+axis(1,c(3,51,111,171,231,267,nrow(y),nrow(y)+h),c("2000","2005","2010","2015","2020","2023","",""), col=blue1)
+axis(2,c(LNasIndex.range[1],mean(LNasIndex.range),LNasIndex.range[2]),c("","LNasIndex",""), col=blue1)
+abline(v=284, col=blue1)
+polygon(c(length(y[,5]):(length(y[,5])+h),(length(y[,5]):(length(y[,5])+h))[21:1]),
+        c(y[284,1],LNasIndex.interval.f[1,],LNasIndex.interval.f[2,20:1],y[284,1]),
+        col=blue1.shade1, border=blue1.shade1)
+
+```
+
+Figure 7 Basic Model Key Data Plot
+
+```{r}
+
+combined_range = range(c(y[,1], y[,5], lgold.interval.f, LNasIndex.interval.f))
+
+par(mfrow=c(1,1), mar=rep(3,4), cex.axis=1.5)
+
+plot(1:(length(y[,1])+h), c(y[,1], lgold.point.f), type="l", ylim=combined_range, col="blue", lwd=2, xlab="", ylab="")
+polygon(c(length(y[,1]):(length(y[,1])+h), (length(y[,1]):(length(y[,1])+h))[21:1]),
+        c(y[284,1], lgold.interval.f[1,], lgold.interval.f[2,20:1], y[284,1]),
+        col=rgb(0, 0, 255, 100, max=255), border=rgb(0, 0, 255, 100, max=255))
+
+lines(1:(length(y[,5])+h), c(y[,5], LNasIndex.point.f), type="l", ylim=combined_range, col="red", lwd=2, xlab="", ylab="")
+polygon(c(length(y[,5]):(length(y[,5])+h), (length(y[,5]):(length(y[,5])+h))[21:1]),
+        c(y[284,5], LNasIndex.interval.f[1,], LNasIndex.interval.f[2,20:1], y[284,5]),
+        col=rgb(255, 0, 0, 100, max=255), border=rgb(255, 0, 0, 100, max=255))
+abline(v=284, col=green6)
+
+```
+
+### Extension Model
+
+```{r}
+
+# setup 
+kappa.1           = 0.01                                # shrinkage for A1 to Ap
+kappa.2           = 100                              # shrinkage for constant 
+S1                = 500                              # determine the burn-in draws
+S2                = 9500                             # number of draws from the final simulation
+total_S           = S1+S2
+A.posterior       = array(NA, dim = c((1+N*p),N,S1+S2))
+Sigma.posterior   = array(NA, dim = c(N,N,S1+S2))
+
+#lambda.posterior     = diag(5,nrow(Y),nrow(Y))
+lambda.posterior  = matrix(NA, S1+S2, 1)
+
+lambda.posterior[1] = 2
+# Prior Gamma distribution: k, theta
+lambda.priors = list(
+  alpha = 2
+)
+
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+## Function Applying
+posterior.extend.draws     = posterior.draws.exten(total_S = total_S, Y=Y, X=X)
+A.posterior.ext.simu       = posterior.extend.draws[["A.posterior.exten"]]
+Sigma.posterior.ext.simu   = posterior.extend.draws[["Sigma.posterior.exten"]]
+
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+## two-year ahead forecasting h=8
+# set up
+h                 = 24
+S                 = 9000
+Y.h.ext           = array(NA,c(h,N,S))
+
+
+# sampling predictive density
+for (s in 1:S){
+  A.posterior.draw         = A.posterior.ext.simu[,,s]
+  Sigma.posterior.draw     = Sigma.posterior.ext.simu[,,s]
+    x.Ti                   = Y[(nrow(Y)-p+1):nrow(Y),]
+    x.Ti                   = x.Ti[p:1,]
+  for (i in 1:h){
+    x.T                    = c(1,as.vector(t(x.Ti)))
+    Y.f                    = rmvnorm(1, mean = x.T%*%A.posterior.draw, sigma=Sigma.posterior.draw)
+      x.Ti                 = rbind(Y.f,x.Ti[1:(p-1),])
+    Y.h.ext[i,,s]          = Y.f[1:N]
+  }
+}
+```
+
+
+
+
+
+Figure 8 presents a 3D visualization of the density intervals for the log CPI and inflation expectations calculated by the extension model. The results are generally similar to those of the basic model, with the only difference being that the log CPI shows a downward trend instead of an upward one.
+
+
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+par(mfcol = c(1, 2), mar=c(2,2,2,2)-0.1)
+
+# Log CPI forecasting 
+limits.lcpi.ext      = range(Y.h.ext[,1,])
+point.lcpi.f.ext     = apply(Y.h.ext[,1,],1,mean)
+
+interval.lcpi.f.ext  = apply(Y.h.ext[,1,],1,hdi,credMass=0.90)
+
+x                = seq(from=limits.lcpi.ext[1], to=limits.lcpi.ext[2], length.out=100)
+z                = matrix(NA,h,99)
+for (i in 1:h){
+  z[i,]          = hist(Y.h.ext[i,1,], breaks=x, plot=FALSE)$density
+}
+x                = hist(Y.h.ext[i,1,], breaks=x, plot=FALSE)$mids
+yy               = 1:h
+z                = t(z)
+
+f4               = persp3D(x=x, y=yy, z=z, phi=phi, theta=theta, 
+                           xlab="\ncpi[t+h|t]", ylab="h", zlab="\npredictive densities of cpi",
+                           shade=NA, border=NA, ticktype="detailed", nticks=3,cex.lab=1,
+                           col=NA,plot=FALSE)
+perspbox (x=x, y=yy, z=z, bty="f", col.axis="black", phi=phi, theta=theta, 
+          xlab="\nlog.cpi[t+h|t]", ylab="h", zlab="\npredictive densities of cpi", 
+          ticktype="detailed", nticks=3,cex.lab=1, col = NULL, plot = TRUE)
+
+polygon3D(x=c(interval.lcpi.f.ext[1,],interval.lcpi.f.ext[2,h:1]), 
+           y=c(1:h,h:1), 
+          z=rep(0,2*h), 
+          col = blue2, NAcol = blue5, border = NA, add = TRUE, plot = TRUE)
+
+for (i in 1:h){
+  f4.l = trans3d(x=x, y=yy[i], z=z[,i], pmat=f4)
+  lines(f4.l, lwd=1, col=blue3)
+}
+f4.l1 = trans3d(x=point.lcpi.f.ext, y=yy, z=0, pmat=f4)
+lines(f4.l1, lwd=1.5, col=green1)
+
+# Expected inflation rate forecasting 
+limits.infexp.ext      = range(Y.h.ext[,2,])
+point.infexp.f.ext     = apply(Y.h.ext[,2,],1,mean)
+
+interval.infexp.f.ext  = apply(Y.h.ext[,2,],1,hdi,credMass=0.90)
+
+x                = seq(from=limits.infexp.ext[1], to=limits.infexp.ext[2], length.out=100)
+z                = matrix(NA,h,99)
+for (i in 1:h){
+  z[i,]          = hist(Y.h.ext[i,2,], breaks=x, plot=FALSE)$density
+}
+x                = hist(Y.h.ext[i,2,], breaks=x, plot=FALSE)$mids
+yy               = 1:h
+z                = t(z)
+
+f4               = persp3D(x=x, y=yy, z=z, phi=phi, theta=theta, 
+                           xlab="\ninfexp[t+h|t]", ylab="h", zlab="\npredictive densities of infexp",
+                           shade=NA, border=NA, ticktype="detailed", nticks=3,cex.lab=1,
+                           col=NA,plot=FALSE)
+perspbox (x=x, y=yy, z=z, bty="f", col.axis="black", phi=phi, theta=theta, 
+          xlab="\ninfexp[t+h|t]", ylab="h", zlab="\npredictive densities of infexp", 
+          ticktype="detailed", nticks=3,cex.lab=1, col = NULL, plot = TRUE)
+
+polygon3D(x=c(interval.infexp.f.ext[1,],interval.infexp.f.ext[2,h:1]), 
+          y=c(1:h,h:1), z=rep(0,2*h), 
+          col = green5, NAcol = green2, border = NA, add = TRUE, plot = TRUE)
+
+for (i in 1:h){
+  f4.l = trans3d(x=x, y=yy[i], z=z[,i], pmat=f4)
+  lines(f4.l, lwd=1, col=green6)
+}
+f4.l1 = trans3d(x=point.infexp.f.ext, y=yy, z=0, pmat=f4)
+lines(f4.l1, lwd=1.5, col=green1)
+```
+
+
+
+
+Figure 8 3d forecasting graph on extension model
+
+
+
+```{r}
+lgold.point.f    = apply(Y.h.ext[,1,],1,mean)
+lgold.interval.f = apply(Y.h.ext[,1,],1,hdi,credMass=0.90)
+lgold.range      = range(y[,1],lgold.interval.f)
+
+par(mfrow=c(1,1), mar=rep(3,4),cex.axis=1.5)
+plot(1:(length(y[,1])+h),c(y[,1],lgold.point.f), type="l", ylim=lgold.range, axes=FALSE, xlab="", ylab="", lwd=2, col=blue1)
+axis(1,c(3,51,111,171,231,267,nrow(y),nrow(y)+h),c("2000","2005","2010","2015","2020","2023","",""), col=blue1)
+axis(2,c(lgold.range[1],mean(lgold.range),lgold.range[2]),c("","lgold",""), col=blue1)
+abline(v=284, col=blue1)
+polygon(c(length(y[,1]):(length(y[,1])+h),(length(y[,1]):(length(y[,1])+h))[21:1]),
+        c(y[284,1],lgold.interval.f[1,],lgold.interval.f[2,20:1],y[284,1]),
+        col=blue1.shade1, border=blue1.shade1)
+
+LNasIndex.point.f    = apply(Y.h.ext[,5,],1,mean)
+LNasIndex.interval.f = apply(Y.h.ext[,5,],1,hdi,credMass=0.90)
+LNasIndex.range      = range(y[,5],LNasIndex.interval.f)
+
+par(mfrow=c(1,1), mar=rep(3,4),cex.axis=1.5)
+plot(1:(length(y[,5])+h),c(y[,5],LNasIndex.point.f), type="l", ylim=LNasIndex.range, axes=FALSE, xlab="", ylab="", lwd=2, col=blue1)
+axis(1,c(3,51,111,171,231,267,nrow(y),nrow(y)+h),c("2000","2005","2010","2015","2020","2023","",""), col=blue1)
+axis(2,c(LNasIndex.range[1],mean(LNasIndex.range),LNasIndex.range[2]),c("","LNasIndex",""), col=blue1)
+abline(v=284, col=blue1)
+polygon(c(length(y[,5]):(length(y[,5])+h),(length(y[,5]):(length(y[,5])+h))[21:1]),
+        c(y[284,1],LNasIndex.interval.f[1,],LNasIndex.interval.f[2,20:1],y[284,1]),
+        col=blue1.shade1, border=blue1.shade1)
+```
+
+
+```{r}
+combined_range = range(c(y[,1], y[,5], lgold.interval.f, LNasIndex.interval.f))
+
+par(mfrow=c(1,1), mar=rep(3,4), cex.axis=1.5)
+
+plot(1:(length(y[,1])+h), c(y[,1], lgold.point.f), type="l", ylim=combined_range, col="blue", lwd=2, xlab="", ylab="")
+polygon(c(length(y[,1]):(length(y[,1])+h), (length(y[,1]):(length(y[,1])+h))[21:1]),
+        c(y[284,1], lgold.interval.f[1,], lgold.interval.f[2,20:1], y[284,1]),
+        col=rgb(0, 0, 255, 100, max=255), border=rgb(0, 0, 255, 100, max=255))
+
+lines(1:(length(y[,5])+h), c(y[,5], LNasIndex.point.f), type="l", ylim=combined_range, col="red", lwd=2, xlab="", ylab="")
+polygon(c(length(y[,5]):(length(y[,5])+h), (length(y[,5]):(length(y[,5])+h))[21:1]),
+        c(y[284,5], LNasIndex.interval.f[1,], LNasIndex.interval.f[2,20:1], y[284,5]),
+        col=rgb(255, 0, 0, 100, max=255), border=rgb(255, 0, 0, 100, max=255))
+abline(v=284, col=green6)
+
+```
+
+
+For the analysis of key data, we can see that the extension model presents a more aggressive outlook compared to the basic model (Figure 9). The expected inflation rate continues to decline over the next eight quarters, reaching negative values by the end of 2024 (deflation). People's inflation expectations are also volatile, fluctuating within the 0%-2% range.
+
 
 
 
