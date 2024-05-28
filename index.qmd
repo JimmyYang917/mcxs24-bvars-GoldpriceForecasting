@@ -618,7 +618,7 @@ posterior.draws       = function (S, Y, X){
     S.bar.inv         = solve(S.bar)
     
     # posterior draws 
-    Sigma.posterior   = rWishart(S, df=nu.bar, Sigma=S.bar.inv)
+    Sigma.posterior   = rWishart(1, df=nu.bar, Sigma=S.bar.inv)
     Sigma.posterior   = apply(Sigma.posterior,3,solve)
     Sigma.posterior   = array(Sigma.posterior,c(N,N,S))
     A.posterior       = array(rnorm(prod(c(dim(A.bar),S))),c(dim(A.bar),S))
