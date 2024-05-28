@@ -520,7 +520,7 @@ X = \begin{bmatrix}
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    S.bar.inv         <span class="ot">=</span> <span class="fu">solve</span>(S.bar)</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># posterior draws </span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior   <span class="ot">=</span> <span class="fu">rWishart</span>(S, <span class="at">df=</span>nu.bar, <span class="at">Sigma=</span>S.bar.inv)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior   <span class="ot">=</span> <span class="fu">rWishart</span>(<span class="dv">1</span>, <span class="at">df=</span>nu.bar, <span class="at">Sigma=</span>S.bar.inv)</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior   <span class="ot">=</span> <span class="fu">apply</span>(Sigma.posterior,<span class="dv">3</span>,solve)</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior   <span class="ot">=</span> <span class="fu">array</span>(Sigma.posterior,<span class="fu">c</span>(N,N,S))</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    A.posterior       <span class="ot">=</span> <span class="fu">array</span>(<span class="fu">rnorm</span>(<span class="fu">prod</span>(<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),S))),<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),S))</span>
@@ -551,13 +551,13 @@ X = \begin{bmatrix}
 <tbody>
 <tr class="odd">
 <td style="text-align: center;">Constant term</td>
-<td style="text-align: center;">0.0613</td>
-<td style="text-align: center;">0.0817</td>
+<td style="text-align: center;">0.0619</td>
+<td style="text-align: center;">0.0812</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">Y1 lag</td>
-<td style="text-align: center;">0.9887</td>
-<td style="text-align: center;">0.0052</td>
+<td style="text-align: center;">0.9885</td>
+<td style="text-align: center;">0.0051</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">Y2 lag</td>
@@ -589,13 +589,13 @@ X = \begin{bmatrix}
 <tbody>
 <tr class="odd">
 <td style="text-align: center;">Y1 lag</td>
-<td style="text-align: center;">0.9783</td>
-<td style="text-align: center;">0.0879</td>
+<td style="text-align: center;">1.0049</td>
+<td style="text-align: center;">0.1173</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">Y2 lag</td>
-<td style="text-align: center;">0.0879</td>
-<td style="text-align: center;">1.0165</td>
+<td style="text-align: center;">0.1173</td>
+<td style="text-align: center;">0.9770</td>
 </tr>
 </tbody>
 </table>
@@ -748,18 +748,18 @@ p &amp;= -\frac{TN}{2}+1
 <tbody>
 <tr class="odd">
 <td style="text-align: center;">Constant term</td>
-<td style="text-align: center;">0.0549</td>
-<td style="text-align: center;">0.0884</td>
+<td style="text-align: center;">0.0586</td>
+<td style="text-align: center;">0.0824</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">Y1 lag</td>
-<td style="text-align: center;">0.9886</td>
-<td style="text-align: center;">0.0043</td>
+<td style="text-align: center;">0.9890</td>
+<td style="text-align: center;">0.0049</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">Y2 lag</td>
-<td style="text-align: center;">0.0030</td>
-<td style="text-align: center;">0.9958</td>
+<td style="text-align: center;">0.0028</td>
+<td style="text-align: center;">0.9956</td>
 </tr>
 </tbody>
 </table>
@@ -786,13 +786,13 @@ p &amp;= -\frac{TN}{2}+1
 <tbody>
 <tr class="odd">
 <td style="text-align: center;">Y1 lag</td>
-<td style="text-align: center;">0.2493</td>
-<td style="text-align: center;">0.0223</td>
+<td style="text-align: center;">0.2560</td>
+<td style="text-align: center;">0.0213</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">Y2 lag</td>
-<td style="text-align: center;">0.0223</td>
-<td style="text-align: center;">0.2581</td>
+<td style="text-align: center;">0.0213</td>
+<td style="text-align: center;">0.2670</td>
 </tr>
 </tbody>
 </table>
