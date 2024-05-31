@@ -32,19 +32,16 @@ Among various safe-haven investments, gold has regained popularity as a hedge ag
 
 # Data and Data Properties
 
-To enhance the accuracy of gold price predictions, a total selection of 17 variables has been chosen, encompassing gold competitors, risk-free assets, gold futures, and the Nasdaq index. From a broader macroeconomic standpoint, the variables also include inflation, the Producer Price Index (PPI), unemployment rates, crude oil prices, volatility indices, the dollar index, changes in the M2 money supply level, and federal fund effective rates.
+To enhance the accuracy of gold price predictions, a total selection of 12 variables has been chosen, encompassing gold competitors, risk-free assets, and the Nasdaq index. From a broader macroeconomic standpoint, the variables also include inflation, the Producer Price Index (PPI), unemployment rates, crude oil prices, volatility indices, the dollar index, changes in the M2 money supply level, and federal fund effective rates.
 
--   $GoldETF_{t}$: Gold current price in USD per 0.1 ounce, present by SPDR Gold Shares (GLD), which minus management fees.
+-   $GoldFutures_{t}$ : Gold future price in USD per ounce, as considering the expectations in further gold price movements and high liquidity safe haven currency than real product.
 
 -   Competitors and Substitutes for Gold ：
 
-    -   $GoldFutures_{t}$ : Gold future price in USD per ounce, as considering the expectations in further gold price movements and high liquidity safe haven currency than real product.
-    -   $BITUSD_{t}$ : As an emerging investment product, with the concept of decentralization, it has become a risk-averse investment product for many investors and financial institutions.
     -   Risk-free assets: treasury bonds
         -   $13WeekNotes_{t}$ : Considering as short-term risk free assets return. More time using in short term risk hedging in portfolio.
         -   $Tbill(5Year)_{t}$ : Considering as mid-term risk free assets return.
-        -   $Tbill(10Year)_{t}$ : Considering as mid-term risk free assets return.
-        -   $Tbill(30Year)_{t}$ : Considering as long-term risk free assets return.
+        -   $Tbill(10Year)_{t}$ : Considering as long-term risk free assets return.
 
 -   Market returns as opposed to safe-haven investments：
 
@@ -56,8 +53,6 @@ To enhance the accuracy of gold price predictions, a total selection of 17 varia
     -   $Infla_{t}$ : CPI Index that present whole price level changes of all goods and services in US. Gold price are highly correlated with inflation.
     -   $Unemp_{t}$ : unemployment rate provide by Bureau of Statistic of US to present a general environment of Labor market.
     -   $CrudeOil_{t}$ : to present as basic cost of production.
-    -   $PPI(industry)_{t}$ : to present production side inflation of increase in cost in percentage.
-    -   $PPI(commodity)_{t}$ : to present production side inflation of increase in cost in percentage.
     -   $FFERs_{t}$ : As the Federal Funds Effective Rates aim to lower the inflation, decrease the M2 level.
     -   $USDIndex_{t}$ : to present as the purchasing power of USD cross world-wide. That increase the total amount of investors and financial institutions come into US market to earn higher returns.
     -   $VolatilityIndex_{t}$ : to present the risk cross whole market and expectations of further coming events.
@@ -144,17 +139,6 @@ Date_collection <- function(data) {
 ```
 
 ```{r}
-
-# Block 1st elements for now: re-pick of variables between Gold futures and Gold ETF
-
-# 1.Gold current price in USD per 0.1 ounce, present by SPDR Gold Shares (GLD)
-# (data periods: 2004-11 to recent)
-#goldETF_link = "https://query1.finance.yahoo.com/v7/finance/download/GLD?period1=1199232000&period2=1712016000&interval=1mo&events=history&includeAdjustedClose=true"
-#goldETF_download = read.csv(goldETF_link)
-#names(goldETF_download) <- tolower(names(goldETF_download))
-#gold_ETF_data <- goldETF_download %>%
-  #select("date","gold_ETF_data" = "adj.close")
-
 # 1. Gold futures price in USD per ounce (data periods: 2000-8 to recent)
 #daily data download
 
@@ -255,7 +239,7 @@ colnames(all_data)   = c("GFutures_data",    "TBill13W_data",
 all_data <- all_data[complete.cases(all_data), ]
 ```
 
-After download all variables as designed, merge all data sets into a new frame and change the column names. The date of data used in this research will start at 2014-10-01 as at 2024-04-01.
+After download all variables as designed, merge all data sets into a new frame and change the column names. The date of data used in this research will start at 2004-08-31 as at 2024-03-31.
 
 # Plots of all variables
 
@@ -272,29 +256,26 @@ for (i in 1:12) {
 
 ```{r}
 
-# 选择要绘制的数据列
+# Choose the columns
 selected_columns <- c("GFutures_data", "Nasdaq_data")#, "CrudeOil_data", "USDIndex_data", "Volatility_data")
 selected_columns2 <- c("TBill13W_data", "TBill5Y_data", "TBill10Y_data", "M2_data", "InflaR_data", "UnempR_data", "InterestR_data")
 
-# 首先创建一个包含只有选定列的新xts对象
 selected_data <- data1[, selected_columns]
 selected_data2 <- data1[, selected_columns2]
 
-# 为每个选定的数据列生成颜色
 colors1 <- rainbow(length(selected_columns))
 colors2 <- rainbow(length(selected_columns2))
 
-# 绘制第一组选定的数据列
+# plot first variables
 plot.xts(selected_data, main="Selected Time Series Data", col=colors1)
 legend("topright", legend=names(selected_data), col=colors1, lty=1, cex=0.8, bty="n")
 
-# 绘制第二组选定的数据列
+# plot second variables
 plot.xts(selected_data2, main="Selected Rates Series Data", col=colors2, lwd=2)
 legend("topright", legend=names(selected_data2), col=colors2, lty=1, cex=0.8, bty="n")
 ```
 
-
-As above, we could have all 17 variables in visualization format individually. As a quick overlook, 13 weeks bond has a similar trend with federal funds effective rates; other 3 treasury bonds move quite same; gold and its' future, Nasdaq, Bit coin, crude oil price and US dollars Index have upper ward trends; Unemployment rates seems like opposite to federal rates; M2 and other 3 time series seems like stationary on mean but variance change over time.
+As above, we could have all 12 variables in visualization format individually. As a quick overlook, 13 weeks bond has a similar trend with federal funds effective rates; other 2 treasury bonds move quite same; gold future, Nasdaq, crude oil price and US dollars Index have upper ward trends; Unemployment rates seems like opposite to federal rates; M2 and other 2 time series seems like stationary on mean but variance change over time.
 
 **Correlation Table**
 
@@ -303,7 +284,8 @@ correlation_matrix <- cor(data1)
 
 corrplot(correlation_matrix, method = "color", type = "upper", tl.srt = 45,tl.col = "black",tl.cex = 0.5)
 ```
-A simple correlation provide us a basic understanding of those 17 variables. Gold as safe-haven is highly positive correlated with Gold future and Nasdaq Index. Seems like its also a strong bond between Bit coin and Gold, however other factors not shown as strong correlation with Gold price.
+
+A simple correlation provide us a basic understanding of those 12 variables. Gold future as safe-haven is highly positive correlated with Nasdaq Index.
 
 Therefore, we could use ACF and PACF test to indicate whether there is autocorrelations.
 
@@ -348,20 +330,17 @@ knitr::kable(adf_table)
 ```
 
 ```{r}
-# 选择您想要转换的列索引
+
 columns_to_log <- c("GFutures_data", "Nasdaq_data", "CrudeOil_data", "USDIndex_data", "Volatility_data")
 
-# 对指定的列进行对数转换，处理零或负数值
-# 增加一个小的常数，如1e-6，以避免对零或负数取对数
 all_data[, columns_to_log] <- log(all_data[, columns_to_log] + 1e-6)
 
 names(all_data)[1] <- "Lgold"
 names(all_data)[5] <- "LNasIndex"
 ```
 
-
 ```{r}
-# 选择要绘制的数据列
+
 selected_columns <- c("Lgold", "LNasIndex", "CrudeOil_data", "USDIndex_data", "Volatility_data")
 
 selected_data <- all_data[, selected_columns]
@@ -381,30 +360,24 @@ This research project based on **Bayesian VARs(p) model** to forecast the Gold p
 \begin{aligned}
 y_t &= \mu_0 + A_1y_{t-1} + A_2y_{t-2}...+A_py_{t-p} +\epsilon_t\\
 
-\epsilon_t|Y_{t-1} &\sim iid \mathcal{N}_{17}(0_{17}, \Sigma)
+\epsilon_t|Y_{t-1} &\sim iid \mathcal{N}_{12}(0_{12}, \Sigma)
 \end{aligned}
 ```
-
-Where N = 17 and $y_{t}$ is a vector of 17 variables at time $t$.
+Where N = 12 and $y_{t}$ is a vector of 12 variables at time $t$:
 
 ```{=tex}
 \begin{aligned}
 
 y_{t}=\begin{pmatrix}
-GoldETF_{t} \\
 GoldFutures_{t}\\
-BITUSD_{t} \\
 13WeekNotes_{t}\\
 Treasurybill(5Year)_{t} \\
 Treasurybill(10Year)_{t} \\
-Treasurybill(30Year)_{t} \\
 NasdaqIndex_{t} \\
 M2_{t} \\
 Inflation_{t} \\
 Unemployment_{t}\\
 CrudeOil_{t}\\
-PPI(industry)_{t} \\
-PPI(commodity)_{t}\\
 FFERs_{t} \\
 USDollarIndex_{t}\\
 VolatilityIndex_{t}\\
@@ -414,12 +387,12 @@ VolatilityIndex_{t}\\
 ```
 For time $t$ = 1,2,.....,$T$：
 
--   $y_t$ is a $N(17)\times 1$ vector of observations at time $t$
--   $\mu_0$ is a $N(17)\times 1$ vector of constant terms
--   $A_i$ is a $N(17)\times N(17)$ matrix of autoregressive slope parameters
--   $\epsilon_t$ is a $N(17)\times 1$ vector of error terms which is a multivariate white nose process(time invariant)
+-   $y_t$ is a $N(12)\times 1$ vector of observations at time $t$
+-   $\mu_0$ is a $N(12)\times 1$ vector of constant terms
+-   $A_i$ is a $N(12)\times N(12)$ matrix of autoregressive slope parameters
+-   $\epsilon_t$ is a $N(12)\times 1$ vector of error terms which is a multivariate white nose process(time invariant)
 -   $Y_{t-1}$ is the information set collecting observations on y up to time $t-1$
--   $\Sigma$ is a $N(17)\times N(17)$ covariance matrix of the error term
+-   $\Sigma$ is a $N(12)\times N(12)$ covariance matrix of the error term
 
 In matrix notation:
 
@@ -431,7 +404,7 @@ E|X &\sim \mathcal{MN}_{T\times N}(\textbf{0},\Sigma,I_T)
 \\
 Y|X &\sim \mathcal{MN}_{T\times N}(XA,\Sigma,I_T)
 \end{align} 
-$$ 
+$$
 
 ```{=tex}
 \begin{aligned}
@@ -468,7 +441,6 @@ E=
 
 \end{aligned}
 ```
-
 where K = 1 + pN
 
 Base on the model above, we could first turn B Vars(p) model into B Vars(1) model and easily regress to have the parameter matrix. Then we could have a $t+h$ period forward forecasting with increase of variance, in this case: $h$ = 24.
@@ -487,7 +459,6 @@ P(A|B) & \propto P(B|A)P(A)
 
 \end{aligned}
 ```
-
 Therefore we have:
 
 ```{=tex}
@@ -503,13 +474,16 @@ A|\Sigma &\sim \mathcal{MN}_{K\times N}(\underline{A}, \Sigma,\underline{V})
 
 \end{aligned}
 ```
-
 Which is the posterior distribution is the proportion of likelihood function and prior.
 
 where $A_{M \times N}$ follow a matrix normal distribution:
-- $\underline{A}$ is the mean of matrix normal distribution
-- $\Sigma_{N \times N}$is the row specific covariance matrix
-- $\underline{V}_{M \times M}$is the column specific covariance matrix 
+
+-    $\underline{A}$ is the mean of matrix normal distribution
+
+-    $\Sigma_{N \times N}$is the row specific covariance matrix
+
+-   $\underline{V}_{M \times M}$ is the column specific covariance matrix
+
 therefore, we have:
 
 ```{=tex}
@@ -519,14 +493,15 @@ vec(A)\sim N_{MN}(vec(\underline{A}),\Sigma\otimes \underline{V})
 
 \end{aligned}
 ```
+where $\Sigma$ follow a Inverse Wishart distribution:
 
-where $/Sigma$ follow a Inverse Wishart distribution:
-- $\underline{S}$ is N × N positive definite symmetric matrix called the scale matrix 
-- $\underline{v}$ > N + 2 denotes degrees of freedom
+-    $\underline{S}$ is N × N positive definite symmetric matrix called the scale matrix. -
+
+-    $\underline{v}$ \> N + 2 denotes degrees of freedom.
 
 ## First Benchmark Assumption: Basic model with Minnesota prior
 
-In real life, macroeconomic variables are more likely being unit-root non stationary and are well-characterized by a multivariate random walk process
+In real life, macroeconomic variables are more likely being unit-root non stationary and are well-characterized by a multivariate random walk process：
 
 ```{=tex}
 \begin{aligned}
@@ -535,10 +510,10 @@ y_{t} = y_{t-1} + \epsilon_t
 
 \end{aligned}
 ```
-
--Therefore, we first use Minnesota prior(1984) for our Bayesian forecasting:
+Therefore, our benchmark model uses Minnesota prior(1984) based on random walk process for our Bayesian forecasting:
 
 Set the prior mean $A$ to:
+
 ```{=tex}
 \begin{aligned}
 
@@ -546,27 +521,38 @@ Set the prior mean $A$ to:
 
 \end{aligned}
 ```
-
 where the mean of first lag equal to 1 and mean of constant term and other lags are 0.
 
 Set the column specific prior covariance of $A$ (prior shrinkage)to:
+
 ```{=tex}
 \begin{aligned}
 
-\underline{V} = diag\left[ \kappa_{2} \quad \kappa_{1}(\textbf{p} ^{-2}\otimes I^{'}_{N}) \right]
+\underline{V} = diag\left[ \kappa_{2} \quad \kappa_{1}(\textbf{P} ^{-2}\otimes \textbf{i}^{'}_{N}) \right]
 
 \end{aligned}
 ```
-
 where:
 
+-   \-$\textbf{P}$ is the list of legs, $\textbf{P} \ \ \ =\left[ 1 \quad 2 \quad 3\quad ... \quad p \right]$
+
+-   $\textbf{i}^{'}_{N}$ is a $N \times 1$ vector of ones
+
+-   $\kappa_{1}$: overall shrinkage level for autoregressive slopes
+
+-   $\kappa_{2}$: overall shrinkage for the constant term
+
+therefore, we could have the variance of $A$: $$
+VAR\left[ vec\left( A \right) \right]\quad = \quad \Sigma \ \ \otimes \ \ \underline{V}
+$$
 
 ### Function Proofing
 
 Consider Bi-variate Gaussian random walk process:
 
 $$
-y_t = 
+\begin{align}
+y_t &= 
 \begin{bmatrix}
 y_{t,1} \\
 y_{t,2}
@@ -578,11 +564,12 @@ y_{t-1,2}
 \begin{bmatrix}
 \epsilon_{t,1} \\
 \epsilon_{t,2}
-\end{bmatrix} 
-, where   \  \ 
-\epsilon_{t,1} \sim \mathcal{N}(0,1)  \ and \ 
-\epsilon_{t,2} \sim \mathcal{N}(0,1)
-$$
+\end{bmatrix} \\
+where \quad  
+\epsilon_{t,1} &\sim \mathcal{N}(0,1)  \\ 
+\epsilon_{t,2} &\sim \mathcal{N}(0,1)
+\end{align}
+$$ Variables in Matrix Notation:
 
 $$ 
 Y = \begin{bmatrix}
@@ -599,7 +586,6 @@ X = \begin{bmatrix}
 1 \quad y_{n-1}'
 \end{bmatrix}
 $$
-
 
 Function below is `posterior.draws`:
 
@@ -633,7 +619,6 @@ posterior.draws       = function (S, Y, X){
 }
 ```
 
-
 ```{r Basic Model Function Proof, fig.align='center',fig.pos='H'}
 
 e1 = cumsum(rnorm(1000, 0, sd=1))
@@ -666,7 +651,7 @@ posterior.sample.draws.p = posterior.draws(S=10000, Y=Y, X=X)
 
 ```
 
-- The posterior mean of the $A$ is:
+-   The posterior mean of the $A$ is:
 
 ```{r Basic Model Proof A, fig.align='center',fig.pos='H'}
 
@@ -696,10 +681,9 @@ kable(basic.model.proof.A, align = "c") %>%
 
 Table 2 Basic Model Proofing Simulation for $A$
 
-- The posterior mean of the $\Sigma$ is:
+-   The posterior mean of the $\Sigma$ is:
 
 ```{r}
-
 
 basic.model.proof.Sigma <-
   tibble( "Sigma" = c("Y1 lag","Y2 lag"),
@@ -728,68 +712,71 @@ Extension Model:
 
 ## The extended model: Laplace distribution of error term
 
-The **Basic Model** is the standard VARs model that assume the error terms $U$ are independent and identically distributed($iid$) as $N\sim (0,\Sigma)$. In other formation, it could be presented as $vec(U)\sim N(0,\Sigma\otimes I_{t})$. Where $\Sigma$ is a $n \times n $ covariance matrix, $I_{t}$ is a $ t \times t$ identity matrix, $\otimes$ is the Kronecker product and the operator $vec(.)$ is vectorization that inverts the matrix into the column vector by stacking the columns.
+The **Basic Model** is the standard VARs model that assume the error terms $U$ are independent and identically distributed($iid$) as $U \ \sim N_{TN}(0 \ , \ \Sigma)$. In other formation, it could be presented as $vec(U) \ \sim N(0 \ , \ \Sigma \ \otimes \  I_{T})$. Where $\Sigma$ is a $N\times N$ cross sectional covariance matrix, $I_{t}$ is a $T\times T$ identity matrix present serial covariance, $\otimes$ is the Kronecker product and the operator $vec(.)$ is vectorization that inverts the matrix into the column vector by stacking the columns.
 
 Therefore, we could consider a more general covariance structure:
 
 ```{=tex}
 \begin{align}
 
-vec(U)\sim N(0,\Sigma\otimes I_{t})
+vec(U) \ \sim N(0 \ , \ \Sigma \ \otimes \  \Omega)\\
+where \quad \quad \Omega \ &= \ \ diag\left[ \lambda_{1}, \lambda_{2},...,\lambda_{t}  \right]\\
+and \quad \quad \lambda \ &\sim \ Exp \ (\alpha)\\
 
 \end{align}
 ```
+And then, the distribution of error terms in extension model will be **Laplace distribution** instead of the normally distributed errors assumption. The Laplace distribution is well-suited for describing financial anomalies due to its sharp peaks and heavy tails. Utilizing this distribution enhances the model's robustness against anomalies, making it particularly appropriate for financial time series analysis. Given that most of our variables are financial time series data, applying a Laplace distribution to the error term is more appropriate.
 
-
-The extended model will be built based on the the change in distribution of the error to **Laplace distribution** instead of the normally distributed errors assumption. The Laplace distribution is suitable for describing financial anomalies due to its sharp peaks and thick tails and the use of this distribution improves the robustness of the model to anomalies and is particularly suitable for financial time series. As our variables are most financial time series data, a Laplace distribution is more suitable to apply to our error term.
-
-Following [Eltoft,Kim, and Lee 2006b](https://ieeexplore.ieee.org/document/1618702), for covariance with a general Kronecker structure, if each ${\lambda_t}$ has an independent exponential distribution with mean ${\alpha}$, then marginally ${U_t}$ has a multivariate Laplace distribution with mean vector 0 and covariance matrix ${\alpha\Sigma}$.
+Following [Eltoft,Kim, and Lee 2006b](https://ieeexplore.ieee.org/document/1618702), for covariance with a general Kronecker structure, if each ${\lambda}$ has an independent exponential distribution with mean ${\alpha}$, then marginally ${U_t}$ has a multivariate Laplace distribution with mean vector 0 and covariance matrix ${\alpha\Sigma}$.
 
 ```{=tex}
 \begin{align}
-U_t &\sim \text{Laplace}(0, \alpha\Sigma) \\
-U_t | \lambda_t &\sim \mathcal{MN}(0, \Sigma, \lambda_t I_T) \\
-\lambda_t &\sim \text{Exponential}(\frac{1}{\alpha})
+
+U &\sim \ Laplace(0 \ , \  \alpha\Sigma) \\
+U|\lambda &\sim \mathcal{MN}(0 \ , \  \Sigma \ , \ \Omega) \\
+\Omega \ &= \ \ diag\left[ \lambda_{1}, \lambda_{2},...,\lambda_{t}  \right]\\
+\lambda &\sim \ Exp(\alpha)
+
 \end{align}
 ```
-
 The kernel of the likelihood function:
 
 ```{=tex}
 \begin{align}
-L(A,\Sigma,\lambda_t|Y,X) &\propto \det(\Sigma)^{-\frac{T}{2}} \det(\lambda_t I_T)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' (\lambda_t I_T)^{-1} (Y-XA) ]\}
+L(A,\Sigma,\Omega|Y,X) &\propto \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\}
 \end{align}
 ```
-
 For posteriors distribution, $A$, $\Sigma$ and $\lambda_t$ can then be derived using the likelihood and the prior distributions as follows:
 
 ```{=tex}
 \begin{align}
-p(A,\Sigma|Y,X) &\propto L(A,\Sigma,\lambda_t|Y,X)p(A,\Sigma) \\
+
+p(A,\Sigma|Y,X) &\propto L(A,\Sigma,\Omega|Y,X) \ p(A,\Sigma) \\
 \\
-&= \det(\Sigma)^{-\frac{T}{2}} \det(\lambda_t I_T)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' (\lambda_t I_T)^{-1} (Y-XA) ]\} \\
+&= \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\} \\
 &\times \det(\Sigma)^{-\frac{N+k+\underline{\nu}+1}{2}} exp\{-\frac{1}{2}tr[\Sigma^{-1}(A-\underline{A})'(\underline{V})^{-1}(A-\underline{A})]\} \\
 &\times exp\{-\frac{1}{2}tr[\Sigma^{-1}\underline{S}]\} \\
-&= \det(\Sigma)^{-\frac{T+N+K+\underline{\nu}+1}{2}} \det(\lambda_t I_T)^{-\frac{N}{2}} \\
-&\times exp\{-\frac{1}{2} tr[\Sigma^{-1}(Y'(\lambda_t I_T)^{-1}Y - 2A'X'(\lambda_t I_T)^{-1}Y + A'X'(\lambda_t I_T)^{-1}XA \\
+
+&= \det(\Sigma)^{-\frac{T+N+K+\underline{\nu}+1}{2}} \det(\Omega)^{-\frac{N}{2}} \\
+&\times exp\{-\frac{1}{2} tr[\Sigma^{-1}(Y'\Omega^{-1}Y - 2A'X'\Omega^{-1}Y + A'X'\Omega^{-1}XA \\
 &+ A'\underline{V}^{-1}A -2A'\underline{V}^{-1}\underline{A} + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S})]\}
 
 \end{align}
 ```
-
 The kernel can be rearranged in the form of the **Matrix-variate normal-inverse Wishart distribution**.
 
 ```{=tex}
 \begin{align}
+
 p(A,\Sigma|Y,X) &\sim MNIW(\bar{A},\bar{V},\bar{S},\bar{\nu}) \\
 &\\
-\bar{V} &= (X'(\lambda_t I_T)^{-1}X + \underline{V}^{-1})^{-1} \\
-\bar{A} &= \bar{V}(X'(\lambda_t I_T)^{-1}Y + \underline{V}^{-1}\underline{A}) \\
+\bar{V} &= (X'\Omega^{-1}X + \underline{V}^{-1})^{-1} \\
+\bar{A} &= \bar{V}(X'\Omega^{-1}Y + \underline{V}^{-1}\underline{A}) \\
 \bar{\nu} &= T + \underline{\nu}\\
-\bar{S} &= Y'(\lambda_t I_T)^{-1}Y + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S} - \bar{A}'\bar{V}^{-1}\bar{A}
+\bar{S} &= Y'\Omega^{-1}Y + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S} - \bar{A}'\bar{V}^{-1}\bar{A}
+
 \end{align}
 ```
-
 The kernel of the fully conditional posterior distribution of $\lambda_t$ is then derived as follows:
 
 ```{=tex}
@@ -805,6 +792,12 @@ p(\lambda_t|Y,X,A,\Sigma) &\propto L(A,\Sigma,\lambda_t|Y,X)p(\lambda_t) \\
 &= \lambda_t^{-\frac{TN}{2}+1-1} exp\{-\frac{1}{2}[\frac{[tr[\Sigma^{-1}(Y-XA)'(Y-XA)]}{\lambda_t} +\frac{2}{\alpha}\lambda_t]\} 
 \end{align}
 ```
+```{r}
+# the following extension equations will be update latter due to the change of lambda,
+# the extension will be separate into two parts
+# 1: the independent lambda
+# 2: estimate lambda's mean, alpha, still use gibbs sampler
+```
 
 The above expression can be rearranged in the form of a Generalized inverse Gaussian distribution kernel as follows:
 
@@ -817,7 +810,6 @@ b &= tr[\Sigma^{-1}(Y-XA)'(Y-XA)] \\
 p &= -\frac{TN}{2}+1
 \end{align}
 ```
-
 ```{r}
 
 par(mfrow = c(1, 2), mar = c(4, 2, 4, 2))  
@@ -863,11 +855,12 @@ legend("topright", legend = sapply(parameters, function(p) paste("mean =", p$mea
 ```
 
 ### Proof of extended model
+
 The Gibbs sampler method will be applied to generate random draws from the full conditional posterior distribution:
 
-1. Draw $\Sigma^{(s)}$ from the $IW(\bar{S},\bar{\nu})$ distribution.
-2. Draw $A^{(s)}$ from the $MN(\bar{A},\Sigma^{(s)}, \bar{V})$ distribution.
-3. Draw $\lambda_t^{(s)}$ from $GIG(a,b,p)$.
+1.  Draw $\Sigma^{(s)}$ from the $IW(\bar{S},\bar{\nu})$ distribution.
+2.  Draw $A^{(s)}$ from the $MN(\bar{A},\Sigma^{(s)}, \bar{V})$ distribution.
+3.  Draw $\lambda_t^{(s)}$ from $GIG(a,b,p)$.
 
 Repeat steps 1, step 2 and 3 for $S_1$+$S_2$times.
 
@@ -896,7 +889,6 @@ lambda.priors = list(
 )
 
 ```
-
 
 ```{r}
 #| echo: true
@@ -945,7 +937,6 @@ for (s in 1:total_S){
 
 ```
 
-
 #### Function Proofing
 
 ```{r}
@@ -976,7 +967,7 @@ posterior.extend.draws.p = posterior.draws.exten(total_S = total_S, Y=Y, X=X)
 
 After fitting a model that includes a constant term and one lag with artificial data, just like the basic model, the extend model also shows that the posterior mean of both the autoregressive and covariance matrices closely identity matrix, and the posterior mean of the constant term is almost a vector of zeros.
 
- - The posterior mean of the $A$ is:
+-   The posterior mean of the $A$ is:
 
 ```{r}
 
@@ -1004,8 +995,7 @@ kable(extend.model.proof.A, align = "c") %>%
 
 Table 4 Extend Model Proofing Simulation for $A$
 
-
- - The posterior mean of the $\Sigma$ is:
+-   The posterior mean of the $\Sigma$ is:
 
 ```{r}
 
@@ -1031,9 +1021,10 @@ kable(extend.model.proof.Sigma, align = "c") %>%
 
 Table 5 Extend Model Proofing Simulation for $\Sigma$
 
-# Empirical Analysis -  Model Applying and Forecasing
+# Empirical Analysis - Model Applying and Forecasing
 
 ## Basic Model
+
 ```{r}
 
 ## Create Y and X
@@ -1096,7 +1087,7 @@ for (s in 1:S){
 
 ```
 
-Figure 6 presents a 3D visualization of the density intervals for the log CPI and inflation expectations. Inflation expectations show some fluctuations, while the log CPI exhibits a stable increase. as indicated by the narrow bounded confidence intervals (light blue for CPI and light green for inflation expectations). The varying heights of the intervals reflect the level of prediction certainty; as we project further into the future, the intervals become wider and more dispersed due to increased uncertainty. 
+Figure 6 presents a 3D visualization of the density intervals for the log Gold Future Prices and Log Nasdaq Index points. From past trends we could clearly see that negative correlations between those two. When the market suffered from dot-com and global financial crisis during 2000 to 2012, Gold futures increase sharply as expectation of risks, market returns fluctuations a lot. For next 24 months forecasting based on benchmark model, we could see Log gold future price more sharply increase then Log Nasdaq Index points. The varying heights of the intervals reflect the level of prediction certainty; as we project further into the future, the intervals become wider and more dispersed due to increased uncertainty.
 
 ```{r}
 
@@ -1121,7 +1112,6 @@ green6  = "darkgreen"
 green3.rgb   = col2rgb(green3)
 green3.shade1= rgb(green3.rgb[1],green3.rgb[2],green3.rgb[3], alpha=120, maxColorValue=255)
 ```
-
 
 ```{r}
 #| echo: false
@@ -1318,13 +1308,11 @@ for (s in 1:S){
 }
 ```
 
+Figure 8 presents a 3D visualization of the density intervals for the log gold future price and Log Nasdaq Index points calculated by the extension model. The results are generally similar to those of the basic model, with the only difference being that the intervels are much smaller then basic ones.
 
-
-
-
-Figure 8 presents a 3D visualization of the density intervals for the log CPI and inflation expectations calculated by the extension model. The results are generally similar to those of the basic model, with the only difference being that the log CPI shows a downward trend instead of an upward one.
-
-
+```{r}
+# Need recheck coding latter
+```
 
 ```{r}
 #| echo: false
@@ -1403,12 +1391,7 @@ f4.l1 = trans3d(x=point.infexp.f.ext, y=yy, z=0, pmat=f4)
 lines(f4.l1, lwd=1.5, col=green1)
 ```
 
-
-
-
 Figure 8 3d forecasting graph on extension model
-
-
 
 ```{r}
 lgold.point.f    = apply(Y.h.ext[,1,],1,mean)
@@ -1438,7 +1421,6 @@ polygon(c(length(y[,5]):(length(y[,5])+h),(length(y[,5]):(length(y[,5])+h))[21:1
         col=blue1.shade1, border=blue1.shade1)
 ```
 
-
 ```{r}
 combined_range = range(c(y[,1], y[,5], lgold.interval.f, LNasIndex.interval.f))
 
@@ -1456,11 +1438,5 @@ polygon(c(length(y[,5]):(length(y[,5])+h), (length(y[,5]):(length(y[,5])+h))[21:
 abline(v=284, col=green6)
 
 ```
-
-
-For the analysis of key data, we can see that the extension model presents a more aggressive outlook compared to the basic model (Figure 9). The expected inflation rate continues to decline over the next eight quarters, reaching negative values by the end of 2024 (deflation). People's inflation expectations are also volatile, fluctuating within the 0%-2% range.
-
-
-
 
 # References {.unnumbered}
