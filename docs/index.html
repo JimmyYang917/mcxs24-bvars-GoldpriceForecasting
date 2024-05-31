@@ -197,19 +197,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="data-and-data-properties" class="level1">
 <h1>Data and Data Properties</h1>
-<p>To enhance the accuracy of gold price predictions, a total selection of 17 variables has been chosen, encompassing gold competitors, risk-free assets, gold futures, and the Nasdaq index. From a broader macroeconomic standpoint, the variables also include inflation, the Producer Price Index (PPI), unemployment rates, crude oil prices, volatility indices, the dollar index, changes in the M2 money supply level, and federal fund effective rates.</p>
+<p>To enhance the accuracy of gold price predictions, a total selection of 12 variables has been chosen, encompassing gold competitors, risk-free assets, and the Nasdaq index. From a broader macroeconomic standpoint, the variables also include inflation, the Producer Price Index (PPI), unemployment rates, crude oil prices, volatility indices, the dollar index, changes in the M2 money supply level, and federal fund effective rates.</p>
 <ul>
-<li><p><span class="math inline">\(GoldETF_{t}\)</span>: Gold current price in USD per 0.1 ounce, present by SPDR Gold Shares (GLD), which minus management fees.</p></li>
+<li><p><span class="math inline">\(GoldFutures_{t}\)</span> : Gold future price in USD per ounce, as considering the expectations in further gold price movements and high liquidity safe haven currency than real product.</p></li>
 <li><p>Competitors and Substitutes for Gold ：</p>
 <ul>
-<li><span class="math inline">\(GoldFutures_{t}\)</span> : Gold future price in USD per ounce, as considering the expectations in further gold price movements and high liquidity safe haven currency than real product.</li>
-<li><span class="math inline">\(BITUSD_{t}\)</span> : As an emerging investment product, with the concept of decentralization, it has become a risk-averse investment product for many investors and financial institutions.</li>
 <li>Risk-free assets: treasury bonds
 <ul>
 <li><span class="math inline">\(13WeekNotes_{t}\)</span> : Considering as short-term risk free assets return. More time using in short term risk hedging in portfolio.</li>
 <li><span class="math inline">\(Tbill(5Year)_{t}\)</span> : Considering as mid-term risk free assets return.</li>
-<li><span class="math inline">\(Tbill(10Year)_{t}\)</span> : Considering as mid-term risk free assets return.</li>
-<li><span class="math inline">\(Tbill(30Year)_{t}\)</span> : Considering as long-term risk free assets return.</li>
+<li><span class="math inline">\(Tbill(10Year)_{t}\)</span> : Considering as long-term risk free assets return.</li>
 </ul></li>
 </ul></li>
 <li><p>Market returns as opposed to safe-haven investments：</p>
@@ -222,14 +219,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><span class="math inline">\(Infla_{t}\)</span> : CPI Index that present whole price level changes of all goods and services in US. Gold price are highly correlated with inflation.</li>
 <li><span class="math inline">\(Unemp_{t}\)</span> : unemployment rate provide by Bureau of Statistic of US to present a general environment of Labor market.</li>
 <li><span class="math inline">\(CrudeOil_{t}\)</span> : to present as basic cost of production.</li>
-<li><span class="math inline">\(PPI(industry)_{t}\)</span> : to present production side inflation of increase in cost in percentage.</li>
-<li><span class="math inline">\(PPI(commodity)_{t}\)</span> : to present production side inflation of increase in cost in percentage.</li>
 <li><span class="math inline">\(FFERs_{t}\)</span> : As the Federal Funds Effective Rates aim to lower the inflation, decrease the M2 level.</li>
 <li><span class="math inline">\(USDIndex_{t}\)</span> : to present as the purchasing power of USD cross world-wide. That increase the total amount of investors and financial institutions come into US market to earn higher returns.</li>
 <li><span class="math inline">\(VolatilityIndex_{t}\)</span> : to present the risk cross whole market and expectations of further coming events.</li>
 </ul></li>
 </ul>
-<p>After download all variables as designed, merge all data sets into a new frame and change the column names. The date of data used in this research will start at 2014-10-01 as at 2024-04-01.</p>
+<p>After download all variables as designed, merge all data sets into a new frame and change the column names. The date of data used in this research will start at 2004-08-31 as at 2024-03-31.</p>
 </section>
 <section id="plots-of-all-variables" class="level1">
 <h1>Plots of all variables</h1>
@@ -246,14 +241,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="index_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>As above, we could have all 17 variables in visualization format individually. As a quick overlook, 13 weeks bond has a similar trend with federal funds effective rates; other 3 treasury bonds move quite same; gold and its’ future, Nasdaq, Bit coin, crude oil price and US dollars Index have upper ward trends; Unemployment rates seems like opposite to federal rates; M2 and other 3 time series seems like stationary on mean but variance change over time.</p>
+<p>As above, we could have all 12 variables in visualization format individually. As a quick overlook, 13 weeks bond has a similar trend with federal funds effective rates; other 2 treasury bonds move quite same; gold future, Nasdaq, crude oil price and US dollars Index have upper ward trends; Unemployment rates seems like opposite to federal rates; M2 and other 2 time series seems like stationary on mean but variance change over time.</p>
 <p><strong>Correlation Table</strong></p>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>A simple correlation provide us a basic understanding of those 17 variables. Gold as safe-haven is highly positive correlated with Gold future and Nasdaq Index. Seems like its also a strong bond between Bit coin and Gold, however other factors not shown as strong correlation with Gold price.</p>
+<p>A simple correlation provide us a basic understanding of those 12 variables. Gold future as safe-haven is highly positive correlated with Nasdaq Index.</p>
 <p>Therefore, we could use ACF and PACF test to indicate whether there is autocorrelations.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -276,23 +271,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">GFutures_data</td>
-<td style="text-align: right;">0.709</td>
+<td style="text-align: right;">0.741</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">TBill13W_data</td>
-<td style="text-align: right;">0.521</td>
+<td style="text-align: right;">0.530</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">TBill5Y_data</td>
-<td style="text-align: right;">0.804</td>
+<td style="text-align: right;">0.911</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">TBill10Y_data</td>
-<td style="text-align: right;">0.743</td>
+<td style="text-align: right;">0.902</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Nasdaq_data</td>
-<td style="text-align: right;">0.937</td>
+<td style="text-align: right;">0.860</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">M2_data</td>
@@ -300,15 +295,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="odd">
 <td style="text-align: left;">InflaR_data</td>
-<td style="text-align: right;">0.060</td>
+<td style="text-align: right;">0.059</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">UnempR_data</td>
-<td style="text-align: right;">0.329</td>
+<td style="text-align: right;">0.323</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">CrudeOil_data</td>
-<td style="text-align: right;">0.307</td>
+<td style="text-align: right;">0.305</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">InterestR_data</td>
@@ -316,11 +311,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="odd">
 <td style="text-align: left;">USDIndex_data</td>
-<td style="text-align: right;">0.576</td>
+<td style="text-align: right;">0.596</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Volatility_data</td>
-<td style="text-align: right;">0.018</td>
+<td style="text-align: right;">0.017</td>
 </tr>
 </tbody>
 </table>
@@ -338,26 +333,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="math display">\[\begin{aligned}
 y_t &amp;= \mu_0 + A_1y_{t-1} + A_2y_{t-2}...+A_py_{t-p} +\epsilon_t\\
 
-\epsilon_t|Y_{t-1} &amp;\sim iid \mathcal{N}_{17}(0_{17}, \Sigma)
+\epsilon_t|Y_{t-1} &amp;\sim iid \mathcal{N}_{12}(0_{12}, \Sigma)
 \end{aligned}\]</span>
-<p>Where N = 17 and <span class="math inline">\(y_{t}\)</span> is a vector of 17 variables at time <span class="math inline">\(t\)</span>.</p>
+<p>Where N = 12 and <span class="math inline">\(y_{t}\)</span> is a vector of 12 variables at time <span class="math inline">\(t\)</span>:</p>
 <span class="math display">\[\begin{aligned}
 
 y_{t}=\begin{pmatrix}
-GoldETF_{t} \\
 GoldFutures_{t}\\
-BITUSD_{t} \\
 13WeekNotes_{t}\\
 Treasurybill(5Year)_{t} \\
 Treasurybill(10Year)_{t} \\
-Treasurybill(30Year)_{t} \\
 NasdaqIndex_{t} \\
 M2_{t} \\
 Inflation_{t} \\
 Unemployment_{t}\\
 CrudeOil_{t}\\
-PPI(industry)_{t} \\
-PPI(commodity)_{t}\\
 FFERs_{t} \\
 USDollarIndex_{t}\\
 VolatilityIndex_{t}\\
@@ -366,12 +356,12 @@ VolatilityIndex_{t}\\
 \end{aligned}\]</span>
 <p>For time <span class="math inline">\(t\)</span> = 1,2,…..,<span class="math inline">\(T\)</span>：</p>
 <ul>
-<li><span class="math inline">\(y_t\)</span> is a <span class="math inline">\(N(17)\times 1\)</span> vector of observations at time <span class="math inline">\(t\)</span></li>
-<li><span class="math inline">\(\mu_0\)</span> is a <span class="math inline">\(N(17)\times 1\)</span> vector of constant terms</li>
-<li><span class="math inline">\(A_i\)</span> is a <span class="math inline">\(N(17)\times N(17)\)</span> matrix of autoregressive slope parameters</li>
-<li><span class="math inline">\(\epsilon_t\)</span> is a <span class="math inline">\(N(17)\times 1\)</span> vector of error terms which is a multivariate white nose process(time invariant)</li>
+<li><span class="math inline">\(y_t\)</span> is a <span class="math inline">\(N(12)\times 1\)</span> vector of observations at time <span class="math inline">\(t\)</span></li>
+<li><span class="math inline">\(\mu_0\)</span> is a <span class="math inline">\(N(12)\times 1\)</span> vector of constant terms</li>
+<li><span class="math inline">\(A_i\)</span> is a <span class="math inline">\(N(12)\times N(12)\)</span> matrix of autoregressive slope parameters</li>
+<li><span class="math inline">\(\epsilon_t\)</span> is a <span class="math inline">\(N(12)\times 1\)</span> vector of error terms which is a multivariate white nose process(time invariant)</li>
 <li><span class="math inline">\(Y_{t-1}\)</span> is the information set collecting observations on y up to time <span class="math inline">\(t-1\)</span></li>
-<li><span class="math inline">\(\Sigma\)</span> is a <span class="math inline">\(N(17)\times N(17)\)</span> covariance matrix of the error term</li>
+<li><span class="math inline">\(\Sigma\)</span> is a <span class="math inline">\(N(12)\times N(12)\)</span> covariance matrix of the error term</li>
 </ul>
 <p>In matrix notation:</p>
 <p><span class="math display">\[
@@ -440,22 +430,32 @@ A|\Sigma &amp;\sim \mathcal{MN}_{K\times N}(\underline{A}, \Sigma,\underline{V})
 
 \end{aligned}\]</span>
 <p>Which is the posterior distribution is the proportion of likelihood function and prior.</p>
-<p>where <span class="math inline">\(A_{M \times N}\)</span> follow a matrix normal distribution: - <span class="math inline">\(\underline{A}\)</span> is the mean of matrix normal distribution - <span class="math inline">\(\Sigma_{N \times N}\)</span>is the row specific covariance matrix - <span class="math inline">\(\underline{V}_{M \times M}\)</span>is the column specific covariance matrix therefore, we have:</p>
+<p>where <span class="math inline">\(A_{M \times N}\)</span> follow a matrix normal distribution:</p>
+<ul>
+<li><p><span class="math inline">\(\underline{A}\)</span> is the mean of matrix normal distribution</p></li>
+<li><p><span class="math inline">\(\Sigma_{N \times N}\)</span>is the row specific covariance matrix</p></li>
+<li><p><span class="math inline">\(\underline{V}_{M \times M}\)</span> is the column specific covariance matrix</p></li>
+</ul>
+<p>therefore, we have:</p>
 <span class="math display">\[\begin{aligned}
 
 vec(A)\sim N_{MN}(vec(\underline{A}),\Sigma\otimes \underline{V})
 
 \end{aligned}\]</span>
-<p>where <span class="math inline">\(/Sigma\)</span> follow a Inverse Wishart distribution: - <span class="math inline">\(\underline{S}\)</span> is N × N positive definite symmetric matrix called the scale matrix - <span class="math inline">\(\underline{v}\)</span> &gt; N + 2 denotes degrees of freedom</p>
+<p>where <span class="math inline">\(\Sigma\)</span> follow a Inverse Wishart distribution:</p>
+<ul>
+<li><p><span class="math inline">\(\underline{S}\)</span> is N × N positive definite symmetric matrix called the scale matrix. -</p></li>
+<li><p><span class="math inline">\(\underline{v}\)</span> &gt; N + 2 denotes degrees of freedom.</p></li>
+</ul>
 <section id="first-benchmark-assumption-basic-model-with-minnesota-prior" class="level2">
 <h2 class="anchored" data-anchor-id="first-benchmark-assumption-basic-model-with-minnesota-prior">First Benchmark Assumption: Basic model with Minnesota prior</h2>
-<p>In real life, macroeconomic variables are more likely being unit-root non stationary and are well-characterized by a multivariate random walk process</p>
+<p>In real life, macroeconomic variables are more likely being unit-root non stationary and are well-characterized by a multivariate random walk process：</p>
 <span class="math display">\[\begin{aligned}
 
 y_{t} = y_{t-1} + \epsilon_t
 
 \end{aligned}\]</span>
-<p>-Therefore, we first use Minnesota prior(1984) for our Bayesian forecasting:</p>
+<p>Therefore, our benchmark model uses Minnesota prior(1984) based on random walk process for our Bayesian forecasting:</p>
 <p>Set the prior mean <span class="math inline">\(A\)</span> to:</p>
 <span class="math display">\[\begin{aligned}
 
@@ -466,15 +466,25 @@ y_{t} = y_{t-1} + \epsilon_t
 <p>Set the column specific prior covariance of <span class="math inline">\(A\)</span> (prior shrinkage)to:</p>
 <span class="math display">\[\begin{aligned}
 
-\underline{V} = diag\left[ \kappa_{2} \quad \kappa_{1}(\textbf{p} ^{-2}\otimes I^{'}_{N}) \right]
+\underline{V} = diag\left[ \kappa_{2} \quad \kappa_{1}(\textbf{P} ^{-2}\otimes \textbf{i}^{'}_{N}) \right]
 
 \end{aligned}\]</span>
 <p>where:</p>
+<ul>
+<li><p>-<span class="math inline">\(\textbf{P}\)</span> is the list of legs, <span class="math inline">\(\textbf{P} \ \ \ =\left[ 1 \quad 2 \quad 3\quad ... \quad p \right]\)</span></p></li>
+<li><p><span class="math inline">\(\textbf{i}^{'}_{N}\)</span> is a <span class="math inline">\(N \times 1\)</span> vector of ones</p></li>
+<li><p><span class="math inline">\(\kappa_{1}\)</span>: overall shrinkage level for autoregressive slopes</p></li>
+<li><p><span class="math inline">\(\kappa_{2}\)</span>: overall shrinkage for the constant term</p></li>
+</ul>
+<p>therefore, we could have the variance of <span class="math inline">\(A\)</span>: <span class="math display">\[
+VAR\left[ vec\left( A \right) \right]\quad = \quad \Sigma \ \ \otimes \ \ \underline{V}
+\]</span></p>
 <section id="function-proofing" class="level3">
 <h3 class="anchored" data-anchor-id="function-proofing">Function Proofing</h3>
 <p>Consider Bi-variate Gaussian random walk process:</p>
 <p><span class="math display">\[
-y_t =
+\begin{align}
+y_t &amp;=
 \begin{bmatrix}
 y_{t,1} \\
 y_{t,2}
@@ -486,11 +496,12 @@ y_{t-1,2}
 \begin{bmatrix}
 \epsilon_{t,1} \\
 \epsilon_{t,2}
-\end{bmatrix}
-, where   \  \
-\epsilon_{t,1} \sim \mathcal{N}(0,1)  \ and \
-\epsilon_{t,2} \sim \mathcal{N}(0,1)
-\]</span></p>
+\end{bmatrix} \\
+where \quad  
+\epsilon_{t,1} &amp;\sim \mathcal{N}(0,1)  \\
+\epsilon_{t,2} &amp;\sim \mathcal{N}(0,1)
+\end{align}
+\]</span> Variables in Matrix Notation:</p>
 <p><span class="math display">\[
 Y = \begin{bmatrix}
 y_2' \\
@@ -610,44 +621,53 @@ X = \begin{bmatrix}
 </section>
 <section id="the-extended-model-laplace-distribution-of-error-term" class="level2">
 <h2 class="anchored" data-anchor-id="the-extended-model-laplace-distribution-of-error-term">The extended model: Laplace distribution of error term</h2>
-<p>The <strong>Basic Model</strong> is the standard VARs model that assume the error terms <span class="math inline">\(U\)</span> are independent and identically distributed(<span class="math inline">\(iid\)</span>) as <span class="math inline">\(N\sim (0,\Sigma)\)</span>. In other formation, it could be presented as <span class="math inline">\(vec(U)\sim N(0,\Sigma\otimes I_{t})\)</span>. Where <span class="math inline">\(\Sigma\)</span> is a $n n $ covariance matrix, <span class="math inline">\(I_{t}\)</span> is a $ t t$ identity matrix, <span class="math inline">\(\otimes\)</span> is the Kronecker product and the operator <span class="math inline">\(vec(.)\)</span> is vectorization that inverts the matrix into the column vector by stacking the columns.</p>
+<p>The <strong>Basic Model</strong> is the standard VARs model that assume the error terms <span class="math inline">\(U\)</span> are independent and identically distributed(<span class="math inline">\(iid\)</span>) as <span class="math inline">\(U \ \sim N_{TN}(0 \ , \ \Sigma)\)</span>. In other formation, it could be presented as <span class="math inline">\(vec(U) \ \sim N(0 \ , \ \Sigma \ \otimes \  I_{T})\)</span>. Where <span class="math inline">\(\Sigma\)</span> is a <span class="math inline">\(N\times N\)</span> cross sectional covariance matrix, <span class="math inline">\(I_{t}\)</span> is a <span class="math inline">\(T\times T\)</span> identity matrix present serial covariance, <span class="math inline">\(\otimes\)</span> is the Kronecker product and the operator <span class="math inline">\(vec(.)\)</span> is vectorization that inverts the matrix into the column vector by stacking the columns.</p>
 <p>Therefore, we could consider a more general covariance structure:</p>
 <span class="math display">\[\begin{align}
 
-vec(U)\sim N(0,\Sigma\otimes I_{t})
+vec(U) \ \sim N(0 \ , \ \Sigma \ \otimes \  \Omega)\\
+where \quad \quad \Omega \ &amp;= \ \ diag\left[ \lambda_{1}, \lambda_{2},...,\lambda_{t}  \right]\\
+and \quad \quad \lambda \ &amp;\sim \ Exp \ (\alpha)\\
 
 \end{align}\]</span>
-<p>The extended model will be built based on the the change in distribution of the error to <strong>Laplace distribution</strong> instead of the normally distributed errors assumption. The Laplace distribution is suitable for describing financial anomalies due to its sharp peaks and thick tails and the use of this distribution improves the robustness of the model to anomalies and is particularly suitable for financial time series. As our variables are most financial time series data, a Laplace distribution is more suitable to apply to our error term.</p>
-<p>Following <a href="https://ieeexplore.ieee.org/document/1618702">Eltoft,Kim, and Lee 2006b</a>, for covariance with a general Kronecker structure, if each <span class="math inline">\({\lambda_t}\)</span> has an independent exponential distribution with mean <span class="math inline">\({\alpha}\)</span>, then marginally <span class="math inline">\({U_t}\)</span> has a multivariate Laplace distribution with mean vector 0 and covariance matrix <span class="math inline">\({\alpha\Sigma}\)</span>.</p>
+<p>And then, the distribution of error terms in extension model will be <strong>Laplace distribution</strong> instead of the normally distributed errors assumption. The Laplace distribution is well-suited for describing financial anomalies due to its sharp peaks and heavy tails. Utilizing this distribution enhances the model’s robustness against anomalies, making it particularly appropriate for financial time series analysis. Given that most of our variables are financial time series data, applying a Laplace distribution to the error term is more appropriate.</p>
+<p>Following <a href="https://ieeexplore.ieee.org/document/1618702">Eltoft,Kim, and Lee 2006b</a>, for covariance with a general Kronecker structure, if each <span class="math inline">\({\lambda}\)</span> has an independent exponential distribution with mean <span class="math inline">\({\alpha}\)</span>, then marginally <span class="math inline">\({U_t}\)</span> has a multivariate Laplace distribution with mean vector 0 and covariance matrix <span class="math inline">\({\alpha\Sigma}\)</span>.</p>
 <span class="math display">\[\begin{align}
-U_t &amp;\sim \text{Laplace}(0, \alpha\Sigma) \\
-U_t | \lambda_t &amp;\sim \mathcal{MN}(0, \Sigma, \lambda_t I_T) \\
-\lambda_t &amp;\sim \text{Exponential}(\frac{1}{\alpha})
+
+U &amp;\sim \ Laplace(0 \ , \  \alpha\Sigma) \\
+U|\lambda &amp;\sim \mathcal{MN}(0 \ , \  \Sigma \ , \ \Omega) \\
+\Omega \ &amp;= \ \ diag\left[ \lambda_{1}, \lambda_{2},...,\lambda_{t}  \right]\\
+\lambda &amp;\sim \ Exp(\alpha)
+
 \end{align}\]</span>
 <p>The kernel of the likelihood function:</p>
 <span class="math display">\[\begin{align}
-L(A,\Sigma,\lambda_t|Y,X) &amp;\propto \det(\Sigma)^{-\frac{T}{2}} \det(\lambda_t I_T)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' (\lambda_t I_T)^{-1} (Y-XA) ]\}
+L(A,\Sigma,\Omega|Y,X) &amp;\propto \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\}
 \end{align}\]</span>
 <p>For posteriors distribution, <span class="math inline">\(A\)</span>, <span class="math inline">\(\Sigma\)</span> and <span class="math inline">\(\lambda_t\)</span> can then be derived using the likelihood and the prior distributions as follows:</p>
 <span class="math display">\[\begin{align}
-p(A,\Sigma|Y,X) &amp;\propto L(A,\Sigma,\lambda_t|Y,X)p(A,\Sigma) \\
+
+p(A,\Sigma|Y,X) &amp;\propto L(A,\Sigma,\Omega|Y,X) \ p(A,\Sigma) \\
 \\
-&amp;= \det(\Sigma)^{-\frac{T}{2}} \det(\lambda_t I_T)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' (\lambda_t I_T)^{-1} (Y-XA) ]\} \\
+&amp;= \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\} \\
 &amp;\times \det(\Sigma)^{-\frac{N+k+\underline{\nu}+1}{2}} exp\{-\frac{1}{2}tr[\Sigma^{-1}(A-\underline{A})'(\underline{V})^{-1}(A-\underline{A})]\} \\
 &amp;\times exp\{-\frac{1}{2}tr[\Sigma^{-1}\underline{S}]\} \\
-&amp;= \det(\Sigma)^{-\frac{T+N+K+\underline{\nu}+1}{2}} \det(\lambda_t I_T)^{-\frac{N}{2}} \\
-&amp;\times exp\{-\frac{1}{2} tr[\Sigma^{-1}(Y'(\lambda_t I_T)^{-1}Y - 2A'X'(\lambda_t I_T)^{-1}Y + A'X'(\lambda_t I_T)^{-1}XA \\
+
+&amp;= \det(\Sigma)^{-\frac{T+N+K+\underline{\nu}+1}{2}} \det(\Omega)^{-\frac{N}{2}} \\
+&amp;\times exp\{-\frac{1}{2} tr[\Sigma^{-1}(Y'\Omega^{-1}Y - 2A'X'\Omega^{-1}Y + A'X'\Omega^{-1}XA \\
 &amp;+ A'\underline{V}^{-1}A -2A'\underline{V}^{-1}\underline{A} + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S})]\}
 
 \end{align}\]</span>
 <p>The kernel can be rearranged in the form of the <strong>Matrix-variate normal-inverse Wishart distribution</strong>.</p>
 <span class="math display">\[\begin{align}
+
 p(A,\Sigma|Y,X) &amp;\sim MNIW(\bar{A},\bar{V},\bar{S},\bar{\nu}) \\
 &amp;\\
-\bar{V} &amp;= (X'(\lambda_t I_T)^{-1}X + \underline{V}^{-1})^{-1} \\
-\bar{A} &amp;= \bar{V}(X'(\lambda_t I_T)^{-1}Y + \underline{V}^{-1}\underline{A}) \\
+\bar{V} &amp;= (X'\Omega^{-1}X + \underline{V}^{-1})^{-1} \\
+\bar{A} &amp;= \bar{V}(X'\Omega^{-1}Y + \underline{V}^{-1}\underline{A}) \\
 \bar{\nu} &amp;= T + \underline{\nu}\\
-\bar{S} &amp;= Y'(\lambda_t I_T)^{-1}Y + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S} - \bar{A}'\bar{V}^{-1}\bar{A}
+\bar{S} &amp;= Y'\Omega^{-1}Y + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S} - \bar{A}'\bar{V}^{-1}\bar{A}
+
 \end{align}\]</span>
 <p>The kernel of the fully conditional posterior distribution of <span class="math inline">\(\lambda_t\)</span> is then derived as follows:</p>
 <span class="math display">\[\begin{align}
@@ -671,7 +691,7 @@ p &amp;= -\frac{TN}{2}+1
 \end{align}\]</span>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <section id="proof-of-extended-model" class="level3">
@@ -810,50 +830,49 @@ p &amp;= -\frac{TN}{2}+1
 <h1>Empirical Analysis - Model Applying and Forecasing</h1>
 <section id="basic-model" class="level2">
 <h2 class="anchored" data-anchor-id="basic-model">Basic Model</h2>
-<p>Figure 6 presents a 3D visualization of the density intervals for the log CPI and inflation expectations. Inflation expectations show some fluctuations, while the log CPI exhibits a stable increase. as indicated by the narrow bounded confidence intervals (light blue for CPI and light green for inflation expectations). The varying heights of the intervals reflect the level of prediction certainty; as we project further into the future, the intervals become wider and more dispersed due to increased uncertainty.</p>
+<p>Figure 6 presents a 3D visualization of the density intervals for the log Gold Future Prices and Log Nasdaq Index points. From past trends we could clearly see that negative correlations between those two. When the market suffered from dot-com and global financial crisis during 2000 to 2012, Gold futures increase sharply as expectation of risks, market returns fluctuations a lot. For next 24 months forecasting based on benchmark model, we could see Log gold future price more sharply increase then Log Nasdaq Index points. The varying heights of the intervals reflect the level of prediction certainty; as we project further into the future, the intervals become wider and more dispersed due to increased uncertainty.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Figure 6 3D forecasting graph on basic model</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-25-2.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-26-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Figure 7 Basic Model Key Data Plot</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <section id="extension-model" class="level3">
 <h3 class="anchored" data-anchor-id="extension-model">Extension Model</h3>
-<p>Figure 8 presents a 3D visualization of the density intervals for the log CPI and inflation expectations calculated by the extension model. The results are generally similar to those of the basic model, with the only difference being that the log CPI shows a downward trend instead of an upward one.</p>
-<div class="cell">
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<p>Figure 8 3d forecasting graph on extension model</p>
-<div class="cell">
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-31-2.png" class="img-fluid" width="672"></p>
-</div>
-</div>
+<p>Figure 8 presents a 3D visualization of the density intervals for the log gold future price and Log Nasdaq Index points calculated by the extension model. The results are generally similar to those of the basic model, with the only difference being that the intervels are much smaller then basic ones.</p>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>For the analysis of key data, we can see that the extension model presents a more aggressive outlook compared to the basic model (Figure 9). The expected inflation rate continues to decline over the next eight quarters, reaching negative values by the end of 2024 (deflation). People’s inflation expectations are also volatile, fluctuating within the 0%-2% range.</p>
+<p>Figure 8 3d forecasting graph on extension model</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-33-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 </section>
 </section>
 </section>
