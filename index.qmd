@@ -570,7 +570,8 @@ where \quad
 \epsilon_{t,2} &\sim \mathcal{N}(0,1)
 \end{align}
 $$ Variables in Matrix Notation:
-
+ 
+<!-- please note the def below works only for $p=1$ -->
 $$ 
 Y = \begin{bmatrix}
 y_2' \\
@@ -587,13 +588,15 @@ X = \begin{bmatrix}
 \end{bmatrix}
 $$
 
+<!-- Please present the posterior -->
+
 Function below is `posterior.draws`:
 
 ```{r Basic Model, fig.align='center',fig.pos='H'}
 #| echo: true
 
 ## Posterior sample draw function for basic model(posterior.draws)
-posterior.draws       = function (S, Y, X){
+posterior.draws       = function (S, Y, X, A.prior, V.prior, S.prior, nu.prior){
   
     # normal-inverse Wishard posterior parameters
     V.bar.inv         = t(X)%*%X + diag(1/diag(V.prior))
@@ -647,7 +650,7 @@ S.prior             = diag(diag(Sigma.hat))
 nu.prior            = N+2
 I.matrix            = diag(1,nrow(Y),nrow(Y))
 # Applying function 
-posterior.sample.draws.p = posterior.draws(S=10000, Y=Y, X=X)
+posterior.sample.draws.p = posterior.draws(S=10000, Y=Y, X=X, A.prior, V.prior, S.prior, nu.prior)
 
 ```
 
@@ -779,17 +782,18 @@ p(A,\Sigma|Y,X) &\sim MNIW(\bar{A},\bar{V},\bar{S},\bar{\nu}) \\
 ```
 The kernel of the fully conditional posterior distribution of $\lambda_t$ is then derived as follows:
 
+
 ```{=tex}
 \begin{align}
 p(\lambda_t|Y,X,A,\Sigma) &\propto L(A,\Sigma,\lambda_t|Y,X)p(\lambda_t) \\
 \\
-&\propto \det(\lambda_t I_T)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' (\lambda_t I_T)^{-1} (Y-XA) ]\} \\
-&\times \frac{1}{\alpha}exp\{ -\frac{1}{\alpha}\lambda_t \}\\
+&\propto \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' (\lambda_t I_T)^{-1} (Y-XA) ]\} \\
+&\times (\prod_{t=1}^{T}\frac{1}{\alpha}exp\{ -\frac{1}{\alpha}\lambda_t \})\\
 
-&= \lambda_t^{-\frac{TN}{2}} exp\{-\frac{1}{2}\frac{1}{\lambda_t} tr[\Sigma^{-1}(Y-XA)'(Y-XA)]\}\\
-&\times exp\{-\frac{1}{\alpha}\lambda_t \}\\
+&= (\prod_{t=1}^{T}\lambda_t^{-\frac{N}{2}}) exp\{-\frac{1}{2}\sum_{t=1}^{T}\frac{1}{\lambda_t} \epsilon_t'\Sigma^{-1}\epsilon_t]\}\\
+&\times (\prod_{t=1}^{T}\frac{1}{\alpha}exp\{ -\frac{1}{\alpha}\lambda_t \})\\
 
-&= \lambda_t^{-\frac{TN}{2}+1-1} exp\{-\frac{1}{2}[\frac{[tr[\Sigma^{-1}(Y-XA)'(Y-XA)]}{\lambda_t} +\frac{2}{\alpha}\lambda_t]\} 
+&= (\prod_{t=1}^{T}\lambda_t^{-\frac{N}{2}+1-1}) exp\{-\frac{1}{2}\sum_{t=1}^{T}[\frac{\epsilon_t'\Sigma^{-1}\epsilon_t}{\lambda_t} +\frac{2}{\alpha}\lambda_t]\} 
 \end{align}
 ```
 ```{r}
