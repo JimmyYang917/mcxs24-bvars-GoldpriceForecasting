@@ -875,7 +875,7 @@ Output is $\left\{ {A^{(s)}, \Sigma^{(s)}}, \lambda_t^{(s)}\right\}^{S_1+S_2}_{s
 Function below is `posterior.draws.exten`:
 
 ```{r}
-
+# rewrite the function so that the elements A.posterior, Sigma.posterior, and lambda.posterior are defined inside of the function
 # setup 
 S1                = 500                            # determine the burn-in draws
 S2                = 9500                           # number of draws from the final simulation
@@ -898,7 +898,7 @@ lambda.priors = list(
 #| echo: true
 
 ## Posterior sample draw function for extended model(posterior.draws.exten)
-posterior.draws.exten = function (total_S, Y, X){
+posterior.draws.exten = function (total_S, Y, X, X=X, A.prior, V.prior, S.prior, nu.prior, lambda.priors){
 for (s in 1:total_S){
     # NIW posterior parameters
     
@@ -966,7 +966,7 @@ lambda.priors = list(
 )
 
 # Applying function 
-posterior.extend.draws.p = posterior.draws.exten(total_S = total_S, Y=Y, X=X)
+posterior.extend.draws.p = posterior.draws.exten(total_S = total_S, Y=Y, X=X, A.prior, V.prior, S.prior, nu.prior, lambda.priors)
 ```
 
 After fitting a model that includes a constant term and one lag with artificial data, just like the basic model, the extend model also shows that the posterior mean of both the autoregressive and covariance matrices closely identity matrix, and the posterior mean of the constant term is almost a vector of zeros.
@@ -1061,7 +1061,7 @@ I.matrix            = diag(1,nrow(Y),nrow(Y))
 ```{r}
 
 ## Function Applying
-posterior.sample.draws = posterior.draws(S=10000, Y=Y, X=X) # sample use S=10000
+posterior.sample.draws = posterior.draws(S=10000, Y=Y, X=X, A.prior, V.prior, S.prior, nu.prior) # sample use S=10000
 A.posterior.simu       = posterior.sample.draws$A.posterior
 Sigma.posterior.simu   = posterior.sample.draws$Sigma.posterior
 
@@ -1280,7 +1280,7 @@ lambda.priors = list(
 #| warning: false
 
 ## Function Applying
-posterior.extend.draws     = posterior.draws.exten(total_S = total_S, Y=Y, X=X)
+posterior.extend.draws     = posterior.draws.exten(total_S = total_S, Y=Y, X=X, A.prior, V.prior, S.prior, nu.prior, lambda.priors)
 A.posterior.ext.simu       = posterior.extend.draws[["A.posterior.exten"]]
 Sigma.posterior.ext.simu   = posterior.extend.draws[["Sigma.posterior.exten"]]
 
