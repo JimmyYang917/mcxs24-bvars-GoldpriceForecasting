@@ -8,9 +8,9 @@ execute:
 bibliography: references.bib
 ---
 
-> **Abstract.** This research aims to explore future trends in Gold prices as a traditonal safe-haven investment using a Bayesian VARs model. In the wake of the 2008 financial crisis and especially the 2019 global Covid-19 pandemic, the world economy appears to be on the brink of a looming risk: a world-wide economic recession. The concern over the risk of investment returns has become a primary focus for global investors and financial institutions. This unease has been further exacerbated by geopolitical conflicts such as the Russia-Ukraine war (2022) and the Israeli-Palestinian conflict (2023). Consequently, this research aims to provide a briefly discussion and data-driven forecast of traditional safe-haven assets: Gold, under current circumstances. Factors considered include emerging safe-haven investments, risk-free investment assets, comparable investments, market returns, inflation on both demand and supply sides, broad money supply (M2), interest rates, unemployment rates and market volatility.
+> **Abstract.** This research aims to explore future trends in Gold prices as a traditional safe-haven investment using a Bayesian VARs model. In the wake of the 2008 financial crisis and especially the 2019 global Covid-19 pandemic, the world economy appears to be on the brink of a looming risk: a world-wide economic recession. The concern over the risk of investment returns has become a primary focus for global investors and financial institutions. This unease has been further exacerbated by geopolitical conflicts such as the Russia-Ukraine war (2022) and the Israeli-Palestinian conflict (2023). Consequently, this research aims to provide a briefly discussion and data-driven forecast of traditional safe-haven assets: Gold, under current circumstances. Factors considered include emerging safe-haven investments, risk-free investment assets, comparable investments, market returns, inflation on both demand and supply sides, broad money supply (M2), interest rates, unemployment rates and market volatility.
 >
-> **Keywords.** Bayesian VARs, Gold price, Inflation, Interset rate, Unemployments, US Bond Yeild, Safe-haven Assets, Forecasting, Volatility, R, Quarto.
+> **Keywords.** Bayesian VARs, Gold price, Inflation, Interest rate, Unemployment, US Bond Yield, Safe-haven Assets, Forecasting, Volatility, R, Quarto.
 
 # Introduction
 
@@ -43,9 +43,7 @@ To enhance the accuracy of gold price predictions, a total selection of 12 varia
         -   $Tbill(5Year)_{t}$ : Considering as mid-term risk free assets return.
         -   $Tbill(10Year)_{t}$ : Considering as long-term risk free assets return.
 
--   Market returns as opposed to safe-haven investments：
-
-    -   $NasdaqIndex_{t}$ ：Index that include all stocks available in NASDAQ to present the market returns.
+-   Market returns as opposed to safe-haven investments： - $NasdaqIndex_{t}$ ：Index that include all stocks available in NASDAQ to present the market returns.
 
 -   Macro environment：
 
@@ -87,6 +85,7 @@ library(mvtnorm)      # Bvars forecast
 library(plot3D)
 library(HDInterval)   # hdi plot
 library(grDevices)
+library(gridExtra)
 set.seed(123)#set random seed for test
 ```
 
@@ -394,17 +393,9 @@ For time $t$ = 1,2,.....,$T$：
 -   $Y_{t-1}$ is the information set collecting observations on y up to time $t-1$
 -   $\Sigma$ is a $N(12)\times N(12)$ covariance matrix of the error term
 
-In matrix notation:
+## Matrix Notation for the model:
 
-$$
-\begin{align}
-Y &= X A +E 
-\\
-E|X &\sim \mathcal{MN}_{T\times N}(\textbf{0},\Sigma,I_T)
-\\
-Y|X &\sim \mathcal{MN}_{T\times N}(XA,\Sigma,I_T)
-\end{align} 
-$$
+Matrix form are used to simplify the notation and the derivations. Let $T$ be the available sample size for the variable $y$ and $K$ be the sum of lags and constant term ($K = 1 + pN$). Define a identity matrix of order $T$, $I_T$, as well as following matrix:
 
 ```{=tex}
 \begin{aligned}
@@ -441,65 +432,169 @@ E=
 
 \end{aligned}
 ```
-where K = 1 + pN
+Then the model can be written in a concise notation as:
 
+```{=tex}
+\begin{aligned}
+
+Y &= X A +E 
+\\
+\\
+E|X &\sim \mathcal{MN}_{T\times N}(\textbf{0},\Sigma,I_T)
+
+\end{aligned}
+```
+Given that the density function of Matrix-variate Normal distribution $Z\sim \mathcal{MN}_{T\times N}(M,Q,P)$ is:
+
+```{=tex}
+\begin{aligned}
+
+\mathcal{MN}_{T\times N}(M,Q,P) & =c^{-1}_{mn}exp\left\{ -\frac{1}{2}\textbf{tr}\left[ Q^{-1}\left( Z-M \right)'P^{-1}\left( Z-M \right) \right] \right\}\\
+c_{mn} & = \left( 2\pi \right)^{\frac{TN}{2}}det\left( Q \right)^{\frac{T}{2}}det\left( P \right)^{\frac{N}{2}}
+
+\end{aligned}
+```
 Base on the model above, we could first turn B Vars(p) model into B Vars(1) model and easily regress to have the parameter matrix. Then we could have a $t+h$ period forward forecasting with increase of variance, in this case: $h$ = 24.
 
 The main focus of estimate output is the conditional mean of Gold price, which base on current information set $Y_{t-1}$. It provide the average mean prediction of Gold price which investors and financial institutions interested in. Moreover, 1 standard deviation and 2 standard deviation will also produced in forecasting process to provide a 68% and 95% of confidence intervals of future Gold price movements in $h$ periods base on current information set.
 
-Furthermore, different prior distribution might be used to provide different level of uncertainty of current environment(information set). Compare the difference of Gold price under different priors could help to prove the Gold as a high quality safe-haven investment and increase investors and financial institutions confidence and further expectations. ( Competitors for golds might also be used under different priors, such as BIT-USD, Nasdaq Index and short to mid-term treasury bills. )
+Furthermore, different prior distribution might be used to provide different level of uncertainty of current environment(information set). Compare the difference of Gold price under different priors could help to prove the Gold as a high quality safe-haven investment and increase investors and financial institutions confidence and further expectations. (Competitors for golds might also be used under different priors, such as Nasdaq Index and short to mid-term treasury bills.)
 
-Based on Bayes' Theorem:
+## Likelihood Function
+
+The model equation imply the predictive density of the data vector $Y$. We could consider the model equation is the linear transformation of the matrix-variate normal distribution $E$. Therefore, the data vector also follows a matrix-variate normal distribution given by:
 
 ```{=tex}
 \begin{aligned}
 
-P(A|B) & =\frac{P(B|A)P(A)}{P(B)} \\
-P(A|B) & \propto P(B|A)P(A)
+Y|X,A,\Sigma &\sim \mathcal{MN}_{T\times N}(XA,\Sigma,I_T)
 
 \end{aligned}
 ```
-Therefore we have:
+This distribution determines the shape of the likelihood function that is defined as the sampling data density:
 
 ```{=tex}
 \begin{aligned}
 
-P(A,\Sigma|Y,X) &= \frac{P(Y|X,A,\Sigma) \ P(A,\Sigma)}{P(Y)}\\
-&\propto P(Y|X,A,\Sigma) \ P(A,\Sigma)\\
-&= L(A,\Sigma | Y,X) \ P(A|\Sigma) \ P(\Sigma) \\\\
+L(A,\Sigma | Y,X)\equiv P(Y|X,A,\Sigma)
 
-A|\Sigma &\sim \mathcal{MN}_{K\times N}(\underline{A}, \Sigma,\underline{V}) 
+\end{aligned}
+```
+The likelihood function for the parameters estimation ($A,\Sigma$), and after plugging in data in place of $Y,X$, is considered a function of parameters $A$ and $\Sigma$ is given by:
+
+```{=tex}
+\begin{aligned}
+
+L(A,\Sigma | Y,X) &= \left( 2\pi \right)^{-\frac{TN}{2}}det\left( \Sigma \right)^{-\frac{T}{2}}exp\left\{ -\frac{1}{2}\sum_{t=1}^{T}\epsilon_{t}'\Sigma^{-1}\epsilon_{t} \right\}
+\\
+&= \left( 2\pi \right)^{-\frac{TN}{2}}det\left( \Sigma \right)^{-\frac{T}{2}}exp\left\{ -\frac{1}{2}\sum_{t=1}^{T} \left( y_{t}-A'x_{t} \right)'\Sigma^{-1}\left( y_{t}-A'x_{t} \right)\right\}
 \\ 
-\Sigma &\sim \mathcal{IW}_{N}(\underline{S}, \underline{v})
+&= \left( 2\pi \right)^{-\frac{TN}{2}}det\left( \Sigma \right)^{-\frac{T}{2}}exp\left\{ -\frac{1}{2}vec\left(\left( Y-XA \right)'\right)' \left( I_T\otimes \Sigma^{-1} vec\left(\left( Y-XA \right)'\right)\right)\right\}
+\\
+&= \left( 2\pi \right)^{-\frac{TN}{2}}det\left( \Sigma \right)^{-\frac{T}{2}}exp\left\{ -\frac{1}{2}\textbf{tr}\left[\Sigma^{-1}\left( Y-XA \right)'I^{-1}_T\left(Y-XA \right) \right] \right\}
+\\
+&= \left( 2\pi \right)^{-\frac{TN}{2}}det\left( \Sigma \right)^{-\frac{T}{2}}exp\left\{ -\frac{1}{2}\textbf{tr}\left[\Sigma^{-1}\left(Y-XA\right)'\left(Y-XA\right) \right] \right\}
 
 \end{aligned}
 ```
-Which is the posterior distribution is the proportion of likelihood function and prior.
+Given that the trace:
 
-where $A_{M \times N}$ follow a matrix normal distribution:
+-   $\textbf{tr}\left( X \right) = \sum_{n=1}^{N}X_{nn} \ \ \ \ \text{for a }N \times N\text{ matrix }X$
+-   $\textbf{tr}\left( ABCD \right) = vec(D')'\left( C'\otimes A \right)vec(B)$
 
--    $\underline{A}$ is the mean of matrix normal distribution
+## Prior Distribution
 
--    $\Sigma_{N \times N}$is the row specific covariance matrix
-
--   $\underline{V}_{M \times M}$ is the column specific covariance matrix
-
-therefore, we have:
+For the given model, we assume that unknown parameters have following distributions:
 
 ```{=tex}
 \begin{aligned}
 
-vec(A)\sim N_{MN}(vec(\underline{A}),\Sigma\otimes \underline{V})
+A|\Sigma &\sim \mathcal{MN}_{K\times N}(M,\Sigma,P) 
+\\ 
+\Sigma &\sim \mathcal{IW}_{N}(S,\nu)
 
 \end{aligned}
 ```
-where $\Sigma$ follow a Inverse Wishart distribution:
+where $A_{K \times N}|\Sigma$ follow a matrix-variate normal distribution:
 
--    $\underline{S}$ is N × N positive definite symmetric matrix called the scale matrix. -
+\- $M$ is the mean of matrix normal distribution
 
--    $\underline{v}$ \> N + 2 denotes degrees of freedom.
+\- $\Sigma_{N \times N}$is the row specific covariance matrix
 
-## First Benchmark Assumption: Basic model with Minnesota prior
+\- $P_{K \times K}$ is the column specific covariance matrix with the density given by:
+
+```{=tex}
+\begin{aligned}
+
+\mathcal{MN}_{K\times N}(M,\Sigma,P) & =c^{-1}_{mn}exp\left\{ -\frac{1}{2}\textbf{tr}\left[ \Sigma^{-1}\left( A-M \right)'P^{-1}\left( A-M \right) \right] \right\}\\
+c_{mn} & = \left( 2\pi \right)^{\frac{KN}{2}}det\left( \Sigma \right)^{\frac{K}{2}}det\left( P \right)^{\frac{N}{2}}
+
+\end{aligned}
+```
+And $\Sigma$ follow a Inverse Wishart distribution:
+
+\- $S$ is N × N positive definite symmetric matrix called the scale matrix.
+
+\- $\nu$ \> N + 2 denotes degrees of freedom. with the density given by:
+
+```{=tex}
+\begin{aligned}
+
+\mathcal{IW}_{N}(S,\nu) &= c^{-1}_{iw}det(\Sigma)^{-\frac{\nu + N+1}{2}}exp\left\{ -\frac{1}{2} \textbf{tr}\left[ \Sigma^{-1} S\right]\right\}\\
+c_{iw} &= 2^{\frac{\nu N}{2}}\pi^{\frac{N(N-1)}{4}}\prod_{n=1}^{N}\Gamma\left( \frac{\nu + n + 1}{2} \right)det(S)^{-\frac{\nu}{2}}
+
+\end{aligned}
+```
+Then the joint distribution of ($A,\Sigma$) is Normal-Inverse Wishart:
+
+```{=tex}
+\begin{aligned}
+
+P(A,\Sigma) & \sim \mathcal{NIW}_{K \times N}(M,P,S,\nu)
+
+\end{aligned}
+```
+with the density given by:
+
+```{=tex}
+\begin{aligned}
+
+P(A,\Sigma) &= c^{-1}_{nw}det(\Sigma)^{-\frac{\nu + N + K + 1}{2}}\\
+&\times exp\left\{ -\frac{1}{2}\textbf{tr}\left[ \Sigma^{-1}\left( A-M \right)'P^{-1}\left( A-M \right) \right] \right\}\\
+&\times exp\left\{ -\frac{1}{2} \textbf{tr}\left[ \Sigma^{-1} S\right]\right\}
+\\
+\\
+c_{nw} &= 2^{\frac{N(K + \nu)}{2}}\pi^{\frac{N(N + 2K -1)}{4}}[\prod_{n=1}^{N}\Gamma\left( \frac{\nu + 1 - n}{2} \right)]det\left( P \right)^{\frac{N}{2}}det(S)^{-\frac{\nu}{2}}
+
+\end{aligned}
+```
+### Natural-conjugate prior distribution
+
+Leads to joint posterior distribution for ($A,\Sigma$) has the same form as prior:
+
+```{=tex}
+\begin{aligned}
+
+P(A,\Sigma) &= P(A|\Sigma)P(\Sigma)
+\\
+A|\Sigma &\sim \mathcal{MN}_{K\times N}(\underline{A},\Sigma,\underline{V}) 
+\\ 
+\Sigma &\sim \mathcal{IW}_{N}(\underline{S}, \underline{\nu})
+
+\end{aligned}
+```
+with the **kernel** given by:
+
+```{=tex}
+\begin{aligned}
+
+P(A,\Sigma) &\propto \det(\Sigma)^{-\frac{N+K+\underline{\nu}+1}{2}} \\
+&\times exp\{-\frac{1}{2}tr[\Sigma^{-1}(A-\underline{A}) \underline{V}^{-1}(A-\underline{A})]\} \\
+&\times exp\{-\frac{1}{2}tr[\Sigma^{-1}\underline{S}]\}
+
+\end{aligned}
+```
+## Benchmark model with Minnesota prior
 
 In real life, macroeconomic variables are more likely being unit-root non stationary and are well-characterized by a multivariate random walk process：
 
@@ -510,7 +605,7 @@ y_{t} = y_{t-1} + \epsilon_t
 
 \end{aligned}
 ```
-Therefore, our benchmark model uses Minnesota prior(1984) based on random walk process for our Bayesian forecasting:
+Therefore, our benchmark model uses Minnesota prior(1984) based on random walk process for our Bayesian forecasting.
 
 Set the prior mean $A$ to:
 
@@ -521,7 +616,7 @@ Set the prior mean $A$ to:
 
 \end{aligned}
 ```
-where the mean of first lag equal to 1 and mean of constant term and other lags are 0.
+which means the mean of first lag equal to 1 and mean of constant term and other lags are 0.
 
 Set the column specific prior covariance of $A$ (prior shrinkage)to:
 
@@ -534,7 +629,7 @@ Set the column specific prior covariance of $A$ (prior shrinkage)to:
 ```
 where:
 
--   \-$\textbf{P}$ is the list of legs, $\textbf{P} \ \ \ =\left[ 1 \quad 2 \quad 3\quad ... \quad p \right]$
+-   $\textbf{P}$ is the list of legs, $\textbf{P} \ \ \ =\left[ 1 \quad 2 \quad 3\quad ... \quad p \right]$
 
 -   $\textbf{i}^{'}_{N}$ is a $N \times 1$ vector of ones
 
@@ -542,11 +637,64 @@ where:
 
 -   $\kappa_{2}$: overall shrinkage for the constant term
 
-therefore, we could have the variance of $A$: $$
+therefore, we could have the variance of $A$:
+
+$$
 VAR\left[ vec\left( A \right) \right]\quad = \quad \Sigma \ \ \otimes \ \ \underline{V}
 $$
 
-### Function Proofing
+### Bayesian Estimations
+
+Based on Bayes' Theorem:
+
+```{=tex}
+\begin{aligned}
+
+P(A|B) & =\frac{P(B|A)P(A)}{P(B)}
+
+\end{aligned}
+```
+We could have the kernel of conditional joint posterior distribution $P(A,\Sigma|Y,X)$, which is the proportion of the product between conditional distribution of data $P(Y|X,A,\Sigma)$ and joint prior distribution $P(A,\Sigma)$:
+
+```{=tex}
+\begin{aligned}
+
+P(A,\Sigma|Y,X) &= \frac{P(Y|X,A,\Sigma) \ P(A,\Sigma)}{P(Y)}\\
+&\propto P(Y|X,A,\Sigma) \ P(A,\Sigma)\\
+&\propto L(A,\Sigma | Y,X) \ P(A|\Sigma) \ P(\Sigma) \\\\
+
+\end{aligned}
+```
+And the kernel of conditional joint posterior distribution is given by:
+
+```{=tex}
+\begin{aligned}
+
+P(A,\Sigma|Y,X) &\propto L(A,\Sigma | Y,X) \ P(A,\Sigma)\\
+&\propto det(\Sigma)^{-\frac{T}{2}} \\
+&\times exp\{-\frac{1}{2}tr[\Sigma^{-1}(Y-XA)'(Y-XA)]\} \\
+&\times \det(\Sigma)^{-\frac{N+K+\underline{\nu}+1}{2}} \\
+&\times exp\{-\frac{1}{2}tr[\Sigma^{-1}(A-\underline{A}) \underline{V}^{-1}(A-\underline{A})]\} \\
+&\times exp\{-\frac{1}{2}tr[\Sigma^{-1}\underline{S}]\}
+
+\end{aligned}
+```
+Then, the kernel could be represent as the normal-inverse Wishart distribution:
+
+```{=tex}
+\begin{aligned}
+
+P(A,\Sigma|Y,X) &\sim \mathcal{NIW}_{K\times N}(\bar{A},\bar{V},\bar{S},\bar{\nu})
+\\
+\\
+\bar{V} &= (X'X + \underline{V}^{-1})^{-1} \\
+\bar{A} &= \bar{V}(X'Y + \underline{V}^{-1}\underline{A}) \\
+\bar{\nu} &= T + \underline{\nu}\\
+\bar{S} &= \underline{S} + Y'Y + \underline{A}'\underline{V}^{-1}\underline{A} - \bar{A}'\bar{V}^{-1}\bar{A}
+
+\end{aligned}
+```
+### Gibbs sampler: Function Proofing
 
 Consider Bi-variate Gaussian random walk process:
 
@@ -565,11 +713,12 @@ y_{t-1,2}
 \epsilon_{t,1} \\
 \epsilon_{t,2}
 \end{bmatrix} \\
-where \quad  
 \epsilon_{t,1} &\sim \mathcal{N}(0,1)  \\ 
 \epsilon_{t,2} &\sim \mathcal{N}(0,1)
 \end{align}
-$$ Variables in Matrix Notation:
+$$
+
+Variables in Matrix Notation:
 
 $$ 
 Y = \begin{bmatrix}
@@ -586,6 +735,57 @@ X = \begin{bmatrix}
 1 \quad y_{n-1}'
 \end{bmatrix}
 $$
+
+Therefore, we could basic set up for this Bi-variate Gaussian random walk process with Minnesota prior:
+
+```{r Basic Model proof set up, fig.align='center',fig.pos='H'}
+#| echo: true
+
+e1 = cumsum(rnorm(1000, 0, sd=1))
+e2 = cumsum(rnorm(1000, 0, sd=1))
+e  = cbind(e1,e2)
+
+## Define data X, Y 
+Y = ts(e[2:nrow(e),], frequency=1)
+X = matrix(1,nrow(Y),1)
+X = cbind(X,e[2:nrow(e)-1,])
+
+
+## Test on basic model
+N           = ncol(Y)                          # N=2
+p           = frequency(Y)
+A.hat       = solve(t(X)%*%X)%*%t(X)%*%Y
+Sigma.hat   = t(Y-X%*%A.hat)%*%(Y-X%*%A.hat)/nrow(Y)
+
+# Prior distribution (with Minnesota prior)
+kappa.1             = 0.02^2                              # shrinkage for A1 to Ap
+kappa.2             = 200                                  # shrinkage for constant 
+A.prior             = matrix(0,nrow(A.hat),ncol(A.hat))
+A.prior[2:(N + 1),] = diag(N)
+V.prior             = diag(c(kappa.2,kappa.1*((1:p)^(-2))%x%rep(1,N)))
+S.prior             = diag(diag(Sigma.hat))
+nu.prior            = N+2
+I.matrix            = diag(1,nrow(Y),nrow(Y))
+
+```
+
+```{r}
+df <- data.frame(Time = 1:nrow(Y), e1 = Y[,1], e2 = Y[,2])
+
+p1 <- ggplot(df, aes(x = Time, y = e1)) + 
+  geom_line(color = "blue") + 
+  ggtitle("Time Series e1") + 
+  xlab("Time") + 
+  ylab("e1")
+
+p2 <- ggplot(df, aes(x = Time, y = e2)) + 
+  geom_line(color = "red") + 
+  ggtitle("Time Series e2") + 
+  xlab("Time") + 
+  ylab("e2")
+
+grid.arrange(p1, p2, ncol = 1)
+```
 
 Function below is `posterior.draws`:
 
@@ -621,31 +821,6 @@ posterior.draws       = function (S, Y, X){
 
 ```{r Basic Model Function Proof, fig.align='center',fig.pos='H'}
 
-e1 = cumsum(rnorm(1000, 0, sd=1))
-e2 = cumsum(rnorm(1000, 0, sd=1))
-e  = cbind(e1,e2)
-
-## Define data X, Y 
-Y = ts(e[2:nrow(e),], frequency=1)
-X = matrix(1,nrow(Y),1)
-X = cbind(X,e[2:nrow(e)-1,])
-
-
-## Test on basic model
-N           = ncol(Y)                          # N=2
-p           = frequency(Y)
-A.hat       = solve(t(X)%*%X)%*%t(X)%*%Y
-Sigma.hat   = t(Y-X%*%A.hat)%*%(Y-X%*%A.hat)/nrow(Y)
-
-# Prior distribution (with Minnesota prior)
-kappa.1             = 1                                    # shrinkage for A1 to Ap
-kappa.2             = 100                                  # shrinkage for constant 
-A.prior             = matrix(0,nrow(A.hat),ncol(A.hat))
-A.prior[2:(N + 1),] = diag(N)
-V.prior             = diag(c(kappa.2,kappa.1*((1:p)^(-2))%x%rep(1,N)))
-S.prior             = diag(diag(Sigma.hat))
-nu.prior            = N+2
-I.matrix            = diag(1,nrow(Y),nrow(Y))
 # Applying function 
 posterior.sample.draws.p = posterior.draws(S=10000, Y=Y, X=X)
 
@@ -679,8 +854,6 @@ kable(basic.model.proof.A, align = "c") %>%
 
 ```
 
-Table 2 Basic Model Proofing Simulation for $A$
-
 -   The posterior mean of the $\Sigma$ is:
 
 ```{r}
@@ -706,22 +879,26 @@ kable(basic.model.proof.Sigma, align = "c") %>%
 
 ```
 
-Table 3 Basic Model Proofing Simulation for $\Sigma$
-
-Extension Model:
-
 ## The extended model: Laplace distribution of error term
 
 The **Basic Model** is the standard VARs model that assume the error terms $U$ are independent and identically distributed($iid$) as $U \ \sim N_{TN}(0 \ , \ \Sigma)$. In other formation, it could be presented as $vec(U) \ \sim N(0 \ , \ \Sigma \ \otimes \  I_{T})$. Where $\Sigma$ is a $N\times N$ cross sectional covariance matrix, $I_{t}$ is a $T\times T$ identity matrix present serial covariance, $\otimes$ is the Kronecker product and the operator $vec(.)$ is vectorization that inverts the matrix into the column vector by stacking the columns.
 
-Therefore, we could consider a more general covariance structure:
+Therefore, we could consider a more general serial covariance structure:
 
 ```{=tex}
 \begin{align}
 
 vec(U) \ \sim N(0 \ , \ \Sigma \ \otimes \  \Omega)\\
-where \quad \quad \Omega \ &= \ \ diag\left[ \lambda_{1}, \lambda_{2},...,\lambda_{t}  \right]\\
-and \quad \quad \lambda \ &\sim \ Exp \ (\alpha)\\
+
+\end{align}
+```
+Where:
+
+```{=tex}
+\begin{align}
+
+\Omega \ &= \ \ diag\left[ \lambda_{1}, \lambda_{2},...,\lambda_{t}  \right]\\
+\lambda \ &\sim \ Exp \ (\alpha)\\
 
 \end{align}
 ```
@@ -733,83 +910,24 @@ Following [Eltoft,Kim, and Lee 2006b](https://ieeexplore.ieee.org/document/16187
 \begin{align}
 
 U &\sim \ Laplace(0 \ , \  \alpha\Sigma) \\
-U|\lambda &\sim \mathcal{MN}(0 \ , \  \Sigma \ , \ \Omega) \\
-\Omega \ &= \ \ diag\left[ \lambda_{1}, \lambda_{2},...,\lambda_{t}  \right]\\
-\lambda &\sim \ Exp(\alpha)
+U_t|\lambda_t &\sim \mathcal{MN}(0 \ , \  \Sigma \ , \ \Omega) \\
+\Omega \ &= \ \ diag\left[ \lambda_{1}, \lambda_{2},...,\lambda_{t}  \right] \ = \ \lambda_t \times \textbf{I}_T\\
+\lambda_t &\sim \ Exp(\alpha)
 
 \end{align}
 ```
-The kernel of the likelihood function:
-
-```{=tex}
-\begin{align}
-L(A,\Sigma,\Omega|Y,X) &\propto \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\}
-\end{align}
-```
-For posteriors distribution, $A$, $\Sigma$ and $\lambda_t$ can then be derived using the likelihood and the prior distributions as follows:
+Therefore, the prior distribution of lambda which is following exponential distribution defined as:
 
 ```{=tex}
 \begin{align}
 
-p(A,\Sigma|Y,X) &\propto L(A,\Sigma,\Omega|Y,X) \ p(A,\Sigma) \\
-\\
-&= \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\} \\
-&\times \det(\Sigma)^{-\frac{N+k+\underline{\nu}+1}{2}} exp\{-\frac{1}{2}tr[\Sigma^{-1}(A-\underline{A})'(\underline{V})^{-1}(A-\underline{A})]\} \\
-&\times exp\{-\frac{1}{2}tr[\Sigma^{-1}\underline{S}]\} \\
+P(\lambda_t|\alpha) &= \frac{1}{\alpha}exp\{ -\frac{1}{\alpha}\lambda_t \}\\
 
-&= \det(\Sigma)^{-\frac{T+N+K+\underline{\nu}+1}{2}} \det(\Omega)^{-\frac{N}{2}} \\
-&\times exp\{-\frac{1}{2} tr[\Sigma^{-1}(Y'\Omega^{-1}Y - 2A'X'\Omega^{-1}Y + A'X'\Omega^{-1}XA \\
-&+ A'\underline{V}^{-1}A -2A'\underline{V}^{-1}\underline{A} + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S})]\}
-
-\end{align}
-```
-The kernel can be rearranged in the form of the **Matrix-variate normal-inverse Wishart distribution**.
-
-```{=tex}
-\begin{align}
-
-p(A,\Sigma|Y,X) &\sim MNIW(\bar{A},\bar{V},\bar{S},\bar{\nu}) \\
-&\\
-\bar{V} &= (X'\Omega^{-1}X + \underline{V}^{-1})^{-1} \\
-\bar{A} &= \bar{V}(X'\Omega^{-1}Y + \underline{V}^{-1}\underline{A}) \\
-\bar{\nu} &= T + \underline{\nu}\\
-\bar{S} &= Y'\Omega^{-1}Y + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S} - \bar{A}'\bar{V}^{-1}\bar{A}
-
-\end{align}
-```
-The kernel of the fully conditional posterior distribution of $\lambda_t$ is then derived as follows:
-
-```{=tex}
-\begin{align}
-p(\lambda_t|Y,X,A,\Sigma) &\propto L(A,\Sigma,\lambda_t|Y,X)p(\lambda_t) \\
-\\
-&\propto \det(\lambda_t I_T)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' (\lambda_t I_T)^{-1} (Y-XA) ]\} \\
-&\times \frac{1}{\alpha}exp\{ -\frac{1}{\alpha}\lambda_t \}\\
-
-&= \lambda_t^{-\frac{TN}{2}} exp\{-\frac{1}{2}\frac{1}{\lambda_t} tr[\Sigma^{-1}(Y-XA)'(Y-XA)]\}\\
-&\times exp\{-\frac{1}{\alpha}\lambda_t \}\\
-
-&= \lambda_t^{-\frac{TN}{2}+1-1} exp\{-\frac{1}{2}[\frac{[tr[\Sigma^{-1}(Y-XA)'(Y-XA)]}{\lambda_t} +\frac{2}{\alpha}\lambda_t]\} 
-\end{align}
-```
-```{r}
-# the following extension equations will be update latter due to the change of lambda,
-# the extension will be separate into two parts
-# 1: the independent lambda
-# 2: estimate lambda's mean, alpha, still use gibbs sampler
+\end{align} 
 ```
 
-The above expression can be rearranged in the form of a Generalized inverse Gaussian distribution kernel as follows:
+>>Following graphs describe the difference between alpha values, we could see that as the mean, alpha, increase. The rates of exponetial function decrease.
 
-```{=tex}
-\begin{align}
-\lambda_t|Y,A,\Sigma &\sim GIG(a,b,p) \\
-\\
-a &=\frac{2}{\alpha} \\
-b &= tr[\Sigma^{-1}(Y-XA)'(Y-XA)] \\
-p &= -\frac{TN}{2}+1
-\end{align}
-```
 ```{r}
 
 par(mfrow = c(1, 2), mar = c(4, 2, 4, 2))  
@@ -854,7 +972,89 @@ legend("topright", legend = sapply(parameters, function(p) paste("mean =", p$mea
        col = colors, lty = 1, lwd = 2, bty = "n", cex = 0.6)
 ```
 
-### Proof of extended model
+### Bayesian Estimations
+
+Then, the kernel of the likelihood function could be rewritten as to:
+
+```{=tex}
+\begin{align}
+
+L(A,\Sigma,\Omega |Y,X) &\propto \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2}\textbf{tr}[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\}\\
+&= \det(\Sigma)^{-\frac{T}{2}} \det(\left[ \lambda_{1}, \lambda_{2},...,\lambda_{t} \right])^{-\frac{N}{2}} exp\{-\frac{1}{2} \textbf{tr}[\Sigma^{-1} (Y-XA)' (\left[ \lambda_{1}, \lambda_{2},...,\lambda_{t} \right])^{-1} (Y-XA) ]\}\\
+&=\det(\Sigma)^{-\frac{T}{2}}(\prod^{T}_{t = 1} \lambda_t)^{-\frac{N}{2}} exp\left\{{-\frac{1}{2}}\sum^{T}_{t =1}{\frac{1}{\lambda_t}} \textbf{tr}[(Y_t-X_tA)' \Sigma^{-1}(Y_t-X_tA)]\right\}\\
+&=\det(\Sigma)^{-\frac{T}{2}}\prod^{T}_{t = 1} \lambda_t^{-\frac{N}{2}} exp\left\{{-\frac{1}{2}}\sum^{T}_{t =1}{\frac{1}{\lambda_t}} \textbf{tr}[\epsilon_t' \Sigma^{-1}\epsilon_t)]\right\}\\
+&=\det(\Sigma)^{-\frac{T}{2}}\prod^{T}_{t = 1}(\lambda_t^{-\frac{N}{2}} exp\left\{{-\frac{1}{2}}{\frac{1}{\lambda_t}} \textbf{tr}[\epsilon_t' \Sigma^{-1}\epsilon_t])\right\})
+
+\end{align}
+```
+Therefore at each time t, we have the likelihood function be a proportion of lambda:
+
+```{=tex}
+\begin{align}
+
+\propto\det(\Sigma)^{-\frac{T}{2}}\lambda_t^{-\frac{N}{2}} exp\left\{{-\frac{1}{2}}{\frac{1}{\lambda_t}} \textbf{tr}[\epsilon_t' \Sigma^{-1}\epsilon_t])\right\}
+
+\end{align}
+```
+For joint posteriors distribution, $A$, $\Sigma$ can then be derived using the likelihood and the prior distributions as follows:
+
+```{=tex}
+\begin{align}
+
+P(A,\Sigma|Y,X) &\propto L(A,\Sigma,\Omega|Y,X) \ P(A,\Sigma) \\
+\\
+&= \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2} \textbf{tr}[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\} \\
+&\times \det(\Sigma)^{-\frac{N+k+\underline{\nu}+1}{2}} exp\{-\frac{1}{2}\textbf{tr}[\Sigma^{-1}(A-\underline{A})'(\underline{V})^{-1}(A-\underline{A})]\} \\
+&\times exp\{-\frac{1}{2}\textbf{tr}[\Sigma^{-1}\underline{S}]\} \\
+
+&= \det(\Sigma)^{-\frac{T+N+K+\underline{\nu}+1}{2}} \det(\Omega)^{-\frac{N}{2}} \\
+&\times exp\{-\frac{1}{2} \textbf{tr}[\Sigma^{-1}(Y'\Omega^{-1}Y - 2A'X'\Omega^{-1}Y + A'X'\Omega^{-1}XA \\
+&+ A'\underline{V}^{-1}A -2A'\underline{V}^{-1}\underline{A} + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S})]\}
+
+\end{align}
+```
+The kernel also could be rearranged in the form of the **Normal-inverse Wishart distribution** and given by:
+
+```{=tex}
+\begin{align}
+
+P(A,\Sigma|Y,X,\Omega) &\sim \mathcal{NIW}(\bar{A},\bar{V},\bar{S},\bar{\nu}) \\
+&\\
+\bar{V} &= (X'\Omega^{-1}X + \underline{V}^{-1})^{-1} \\
+\bar{A} &= \bar{V}(X'\Omega^{-1}Y + \underline{V}^{-1}\underline{A}) \\
+\bar{\nu} &= T + \underline{\nu}\\
+\bar{S} &= \underline{S} + Y'\Omega^{-1}Y + \underline{A}'\underline{V}^{-1}\underline{A} - \bar{A}'\bar{V}^{-1}\bar{A}
+
+\end{align}
+```
+The kernel of the fully conditional posterior distribution of $\lambda_t$ is then derived as follows:
+
+```{=tex}
+\begin{align}
+
+P(\lambda_t|Y,X,A,\Sigma) &\propto L(A,\Sigma,\lambda_t|Y,X)P(\lambda_t) \\
+\\
+&\propto \lambda_t^{-\frac{N}{2}}exp({-\frac{1}{2}}{\frac{1}{\lambda_t}}\textbf{tr}[\epsilon_t' \Sigma^{-1}\epsilon_t]) \\
+&\times \frac{1}{\alpha}exp\{ -\frac{1}{\alpha}\lambda_t \}\\
+&\propto \lambda_t^{-\frac{N}{2}+1-1} exp\{-\frac{1}{2}[\frac{\textbf{tr}[
+\epsilon_t' \Sigma^{-1}\epsilon_t]} {\lambda_t} +\frac{2}{\alpha}\lambda_t]\} 
+
+\end{align}
+```
+The above expression can be rearranged in the form of a Generalized inverse Gaussian distribution kernel as follows:
+
+```{=tex}
+\begin{align}
+
+\lambda_t|Y,A,\Sigma &\sim \mathcal{GIG}(a,b,p) \\
+\\
+a &=\frac{2}{\alpha} \\
+b &= \textbf{tr}[\epsilon_t' \Sigma^{-1}\epsilon_t] \\
+p &= -\frac{N}{2}+1
+
+\end{align}
+```
+### Gibbs Sampler: Function proving
 
 The Gibbs sampler method will be applied to generate random draws from the full conditional posterior distribution:
 
@@ -868,10 +1068,9 @@ Discard the first draws that allowed the algorithm to converge to the stationary
 
 Output is $\left\{ {A^{(s)}, \Sigma^{(s)}}, \lambda_t^{(s)}\right\}^{S_1+S_2}_{s=S_1+1}$.
 
-Function below is `posterior.draws.exten`:
+Function below is `posterior.draws.extended`:
 
 ```{r}
-
 # setup 
 S1                = 500                            # determine the burn-in draws
 S2                = 9500                           # number of draws from the final simulation
@@ -879,147 +1078,467 @@ total_S           = S1+S2
 A.posterior       = array(NA, dim = c((1+N*p),N,S1+S2))
 Sigma.posterior   = array(NA, dim = c(N,N,S1+S2))
 lambda.posterior  = matrix(NA, S1+S2, 1)
-
-# initial value of lambda
-lambda.posterior[1] = 2                               # set lambda0 
-
-# Prior distribution: alpha
-lambda.priors = list(
-  alpha = 2
-)
-
 ```
 
 ```{r}
-#| echo: true
-
-## Posterior sample draw function for extended model(posterior.draws.exten)
-posterior.draws.exten = function (total_S, Y, X){
-for (s in 1:total_S){
-    # NIW posterior parameters
-    
-    V.bar.inv              = t(X)%*%solve(lambda.posterior[s]*I.matrix)%*%X + diag(1/diag(V.prior)) 
-    V.bar                  = solve(V.bar.inv)
-    A.bar                  = V.bar%*%(t(X)%*%solve(lambda.posterior[s]*I.matrix)%*%Y + diag(1/diag(V.prior))%*%A.prior)
-    nu.bar                 = nrow(Y) + nu.prior
-    S.bar                  = S.prior + t(Y)%*%solve(lambda.posterior[s]*I.matrix)%*%Y + t(A.prior)%*%diag(1/diag(V.prior))%*%A.prior - t(A.bar)%*%V.bar.inv%*%A.bar
-    S.bar.inv              = solve(S.bar)
+posterior.draws.extended <- function(total_S,Y, X){
+  S=total_S
+  T <- nrow(Y)
+  K = 1 + (p*N)
+  alpha <- 2
+  lambda.0 <- rexp(T, rate = 1/alpha)
+  lambda.priors = list(alpha = 2)
   
-    # posterior draws for A and Sigma
-    Sigma.posterior.IW     = rWishart(1, df=nu.bar, Sigma=S.bar.inv)
-    Sigma.posterior.draw   = apply(Sigma.posterior.IW,3,solve)
-    Sigma.posterior[,,s]   = Sigma.posterior.draw
-    A.posterior[,,s]       = array(rnorm(prod(c(dim(A.bar),1))),c(dim(A.bar),1))
-    L                      = t(chol(V.bar))
-    A.posterior[,,s]       = A.bar + L%*%A.posterior[,,s]%*%chol(Sigma.posterior[,,s])
+  # Initialize arrays to store posterior draws
+  Sigma.posterior.draws = array(NA, c(N,N,S))
+  A.posterior.draws = array(NA, c((1+p*N),N,S))
+  
+  lambda.posterior.draws = array(NA,c(T,S+1))
+  b = array(NA,c(T,S))
+  
+  #lambda.posterior.draws <- array(NA,c(T,S+1))
+   for (s in 1:S){
     
-    
-    # Update parameters for lambda posterior
-    p                      = 1-0.5*nrow(Y)*ncol(Y)             # N=10
-    diff_A                 = Y - X%*%A.posterior[,,s]
-    product                = t(diff_A) %*% diff_A
-    b                      = sum(diag(solve(Sigma.posterior[,,s]) %*% product))
-    a                      = 2 / lambda.priors$alhpa
-    
-    # Draw next period value for lambda from GIG distribution
-    if (s!=total_S){
-       lambda.posterior[s+1] = GIGrvg::rgig(n=1, lambda = p, chi = b, psi = a)
+    if (s == 1) {
+      lambda.s = lambda.0
+    } else {
+      lambda.s    = lambda.posterior.draws[,s]
     }
-  }
+    
+    Omega.inv = diag(1/lambda.s)
+    
+    V.bar.inv.ext   = t(X)%*%Omega.inv%*%X + solve(V.prior)
+    V.bar.ext       = solve(V.bar.inv.ext)
+    A.bar.ext       = V.bar.ext%*%(t(X)%*%Omega.inv%*%Y + diag(1/diag(V.prior))%*%A.prior)
+    nu.bar.ext      = T + nu.prior
+    S.bar.ext       = S.prior + t(Y)%*%Omega.inv%*%Y + t(A.prior)%*%diag(1/diag(V.prior))%*%A.prior - t(A.bar.ext)%*%V.bar.inv.ext%*%A.bar.ext
+    S.bar.ext.inv   = solve(S.bar.ext)
+    
+    Sigma.inv.draw = rWishart(1, df = nu.bar.ext, Sigma = S.bar.ext.inv)[,,1]
+    Sigma.posterior.draws[,,s] = solve(Sigma.inv.draw)
+    A.posterior.draws[,,s] = matrix(mvtnorm::rmvnorm(1, mean=as.vector(A.bar.ext), sigma = Sigma.posterior.draws[,,s] %x% V.bar.ext), ncol=N)
+    
+    u.t = Y-X%*%A.posterior.draws[,,s]
+    #    ---- loop lambda posterior ----   #
+    c                      = -N/2 + 1          # N=13
+    a                      = 2 / lambda.priors$alpha
+    for (x in 1:T){
+      b                  = sum(diag(t((u.t)[x,])%*%Sigma.inv.draw%*%(u.t)[x,]))
+      lambda.posterior.draws[x,s+1] = GIGrvg::rgig(1, lambda = c, chi = b, psi = a)
+    } # END x loop
+  } # END s loop
+  #}
   
-    output                 = list(A.posterior.exten = A.posterior[,,(S1+1):S2], 
-                                  Sigma.posterior.exten = Sigma.posterior[,,(S1+1):S2], 
-                                  lambda.posterior.exten = lambda.posterior[(S1+1):S2,])
-
-    return(output)
+  output                 = (list(A.posterior.exten = A.posterior.draws[,,S1:total_S], 
+                                Sigma.posterior.exten = Sigma.posterior.draws[,,S1:total_S], 
+                                lambda.posterior.exten = lambda.posterior.draws[,(S1+1):(S+1)]))
+  
 }
 
-
+# conduct simulation
+posterior.extended = posterior.draws.extended(total_S = total_S, Y=Y, X=X)
 ```
-
-#### Function Proofing
 
 ```{r}
+A_posterior_means <- apply(posterior.extended$A.posterior.exten, 1:2, mean)
 
-# setup 
-kappa.1           = 1                                # shrinkage for A1 to Ap
-kappa.2           = 100                              # shrinkage for constant 
-S1                = 5                              # determine the burn-in draws
-S2                = 95                             # number of draws from the final simulation
-total_S           = S1+S2
-A.posterior       = array(NA, dim = c((1+N*p),N,S1+S2))
-Sigma.posterior   = array(NA, dim = c(N,N,S1+S2))
-
-#lambda.posterior     = diag(5,nrow(Y),nrow(Y))
-lambda.posterior  = matrix(NA, S1+S2, 1)
-
-# initial value of lambda
-lambda.posterior[1] = 2                               # set lambda0 
-
-# Prior Gamma distribution: k, theta
-lambda.priors = list(
-    alpha = 2
-)
-
-# Applying function 
-posterior.extend.draws.p = posterior.draws.exten(total_S = total_S, Y=Y, X=X)
+A_df <- as.data.frame(A_posterior_means)
+colnames(A_df) <- c("Simulation_Y1", "Simulation_Y2")
+rownames(A_df) <- c("Constant", "Y1-Lag", "Y2-Lag")
+knitr::kable(A_df, caption = "Posterior mean of the autoregressive coefficient matrix A")
 ```
-
-After fitting a model that includes a constant term and one lag with artificial data, just like the basic model, the extend model also shows that the posterior mean of both the autoregressive and covariance matrices closely identity matrix, and the posterior mean of the constant term is almost a vector of zeros.
-
--   The posterior mean of the $A$ is:
 
 ```{r}
+Sigma_posterior_mean <- apply(posterior.extended$Sigma.posterior.exten, 1:2, mean)
 
-extend.model.proof.A <-
-  tibble( "A" = c("Constant term", "Y1 lag","Y2 lag"),
-          "Simulation Parameter Y1" 
-          = c(round(mean(posterior.extend.draws.p[["A.posterior.exten"]][1,1,]),4),
-              round(mean(posterior.extend.draws.p[["A.posterior.exten"]][2,1,]),4),
-              round(mean(posterior.extend.draws.p[["A.posterior.exten"]][3,1,]),4)),
-           "Simulation Parameter Y2" 
-          = c(round(mean(posterior.extend.draws.p[["A.posterior.exten"]][1,2,]),4),
-              round(mean(posterior.extend.draws.p[["A.posterior.exten"]][2,2,]),4),
-              round(mean(posterior.extend.draws.p[["A.posterior.exten"]][3,2,]),4))
-  )
-
-kable(extend.model.proof.A, align = "c") %>% 
-  kable_styling(font_size = 8, 
-                fixed_thead = TRUE, 
-                full_width = FALSE, 
-                position = "center",
-                latex_options = c("HOLD_position"),
-                bootstrap_options = c("striped", "hover", "bordered", "responsive", "dark"))
-
+Sigma_df <- as.data.frame(Sigma_posterior_mean)
+colnames(Sigma_df) <- c("Simulation_Y1", "Simulation_Y2")
+rownames(Sigma_df) <- c("Y1-Lag", "Y2-Lag")
+knitr::kable(Sigma_df, caption = "Posterior mean of the covariance matrix Sigma")
 ```
 
-Table 4 Extend Model Proofing Simulation for $A$
+## Stochastic Volatility Heteroskedasticity
 
--   The posterior mean of the $\Sigma$ is:
+Therefore, for the same general serial covariance structure:
 
-```{r}
+```{=tex}
+\begin{align}
 
-extend.model.proof.Sigma <-
-  tibble( "Sigma" = c("Y1 lag","Y2 lag"),
-          "Simulation Parameter Y1" 
-          = c(round(mean(posterior.extend.draws.p[["Sigma.posterior.exten"]][1,1,]),4),
-              round(mean(posterior.extend.draws.p[["Sigma.posterior.exten"]][2,1,]),4)),
-           "Simulation Parameter Y2" 
-          = c(round(mean(posterior.extend.draws.p[["Sigma.posterior.exten"]][1,2,]),4),
-              round(mean(posterior.extend.draws.p[["Sigma.posterior.exten"]][2,2,]),4))
-  )
+vec(U) \ \sim N(0 \ , \ \Sigma \ \otimes \  \Omega)\\
 
-kable(extend.model.proof.Sigma, align = "c") %>% 
-  kable_styling(font_size = 8, 
-                fixed_thead = TRUE, 
-                full_width = FALSE, 
-                position = "center",
-                latex_options = c("HOLD_position"),
-                bootstrap_options = c("striped", "hover", "bordered", "responsive", "dark"))
+\end{align}
+```
+However, this time we have $h_t$ follows a simple stochastic volatility process:
 
+```{=tex}
+\begin{align}
+
+\Omega \ &= diag\left[ \sigma^2_1,..., \sigma^2_T\right]\\ 
+&=\ diag\left[ exp\left\{ h_1 \right\},exp\left\{ h_2 \right\},...,exp\left\{ h_T \right\}  \right]\\
+h_t &= h_{t-1}+v_t\\
+
+\end{align}
+```
+Then, the kernel of the likelihood function could be rewritten as to:
+
+```{=tex}
+\begin{align}
+
+L(A,\Sigma,\Omega |Y,X) &\propto \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2}\textbf{tr}[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\}\\
+&=\det(\Sigma)^{-\frac{T}{2}}\left( \prod^{T}_{t = 1} exp\left\{ h_t \right\} \right)^{-\frac{N}{2}} exp\left\{{-\frac{1}{2}}\sum^{T}_{t =1}exp\left\{ h_t \right\}^{-1} \textbf{tr}[\epsilon_t' \Sigma^{-1}\epsilon_t)]\right\}\\
+&=\det(\Sigma)^{-\frac{T}{2}}exp\left\{{-\frac{N}{2}}\sum^{T}_{t =1}h_t{-\frac{1}{2}}\sum^{T}_{t =1}exp\left\{ h_t \right\}^{-1} \textbf{tr}[\epsilon_t' \Sigma^{-1}\epsilon_t)]\right\}\\
+
+\end{align}
+```
+### Matrix Notation for Stochastic Volatility model
+
+Recall the matrix notation:
+
+```{=tex}
+\begin{align}
+
+Y&=XA \  +  \ E\\
+E|X &\sim MN(0,\Sigma,\Omega) \\
+\Omega \ &=\ diag\left[ exp\left\{ h_1 \right\},exp\left\{ h_2 \right\},...,exp\left\{h_T \right\}  \right]\\
+h_t &= h_{t-1}+v_t\\
+
+\end{align}
+```
+Given that:
+
+```{=tex}
+\begin{align}
+
+\epsilon_t &\sim N(0,1)\\
+v_t&\sim N(0,1)\\
+
+\end{align}
+```
+We could rewrite the equation as:
+
+```{=tex}
+\begin{align}
+
+y_t &= y_{t-1}A_1 \ \ + ...+y_{t-p}A_p+\ \ exp\left\{ \frac{1}{2} h_t\right\}\epsilon_t\\
+y_t - y_{t-1}A_1 \ \ + ...+y_{t-p}A_p &= exp\left\{ \frac{1}{2} h_t\right\}\epsilon_t\\
+y_{u.t}&=exp\left\{ \frac{1}{2} h_t\right\}\epsilon_t\\
+
+\end{align}
+```
+Then, taking the square and the logarithm of both sides of the equation, we could have:
+
+```{=tex}
+\begin{align}
+
+y_{u.t}&=exp\left\{ \frac{1}{2} h_t\right\}\epsilon_t\\
+log \ y_{u.t}^2&=h_t + log \ \epsilon_t^2\\
+\tilde{y}_t&=h_t+\tilde{\epsilon}_t
+
+\end{align}
+```
+And then:
+
+```{=tex}
+\begin{align}
+
+\tilde{\epsilon}_t&\sim \log \chi^2_1
+
+\end{align}
+```
+Define the following $T × 1$ matrices:
+
+```{=tex}
+\begin{aligned}
+
+\tilde{y}=
+\begin{bmatrix}
+\tilde{y}_1'\\ \tilde{y}_2'
+\\.\\.\\.\\\tilde{y}'_T
+\end{bmatrix}_{T \times 1}
+
+h=
+\begin{bmatrix}
+h_{1} \\ h_{2} \\
+.\\.\\.\\h_{T}
+\end{bmatrix}_{T \times 1}
+
+\tilde{\epsilon}=
+\begin{bmatrix}
+\tilde{\epsilon}_1'\\ \tilde{\epsilon}_2' \\
+.\\.\\.\\\tilde{\epsilon}_T'
+\end{bmatrix}_{T \times 1}
+
+v=
+\begin{bmatrix}
+v_{1} \\ v_{2} \\
+.\\.\\.\\v_{T}
+\end{bmatrix}_{T \times 1}
+
+e_{1.T}=
+\begin{bmatrix}
+1 \\ 0 \\
+.\\.\\.\\0
+\end{bmatrix}_{T \times 1}
+
+\end{aligned}
+```
+And a $T × T$ matrix, H:
+
+```{=tex}
+\begin{align}
+
+H = \begin{pmatrix}
+1 &  &  &  &  & \\
+-1 & 1 &  &  &  & \\
+0 & -1 & 1 &  &  & \\
+\vdots & \ddots & \ddots & \ddots &  & \\
+0 & \cdots & 0 & -1 & 1 \\
+\end{pmatrix}_{T \times T}
+
+\end{align}
+```
+Therefore, we could have the simple matrix notation for Stochastic Volatility model:
+
+```{=tex}
+\begin{align}
+
+\tilde{y}=h+\tilde{\varepsilon}\\
+Hh=h_0e_{1.T}+\sigma_vv\\
+\tilde{\epsilon}\sim \log \chi^2_1\\
+v\sim\mathcal{N}_T(0_T,I_T)\\ 
+
+\end{align}
+```
+And approximate the $\log \chi^2_1$ distribution by a mixture of ten normal distributions given by:
+
+```{=tex}
+\begin{align}
+
+\log \chi^2_1\approx \sum_{m=1}^{10}Pr(s_t = m)\mathcal{N}(\mu_m,\sigma^2_m)
+
+\end{align}
+```
+where:
+
+-   s_t ∈ {1, . . . , 10} is a discrete-valued random indicator of the mixture component
+
+-   $\mu_m,\sigma^2_m$ ,Pr(st = m) are predetermined
+
+Therefore, we could rewrite $\tilde{\epsilon}$ in a **Normal distribution**:
+```{=tex}
+\begin{align}
+
+\tilde{\epsilon}|s \sim\mathcal{N}(\mu_s,diag(\sigma^2_s))
+
+\end{align}
 ```
 
-Table 5 Extend Model Proofing Simulation for $\Sigma$
+
+### Priors distribution
+
+Hierarchical prior structure is given by:
+```{=tex}
+\begin{align}
+
+P(h,s,h_0,\sigma^2_v)=P(h|h_0,\sigma^2_v)P(h_0)P(\sigma^2_v)P(s)
+
+\end{align}
+```
+
+Therefore, conditional prior distribution for $h$ is:
+```{=tex}
+\begin{align}
+
+P(h|h_0,\sigma^2_v)\sim\mathcal{N}(h_0H^{-1}e_{1.T},\sigma^2_v(H'H)^{-1})
+
+\end{align}
+```
+with kernel given by:
+```{=tex}
+\begin{align}
+
+\propto det(\sigma^2_v\textbf{I}_T)^{-\frac{1}{2}}exp\left( -\frac{1}{2}\sigma^{-2}_v\left( Hh-h_0e_{1.T} \right)'\left( Hh-h_0e_{1.T} \right) \right)
+
+\end{align}
+```
+Prior distribution for $h_0$ is:
+```{=tex}
+\begin{align}
+
+P(h_0)\sim\mathcal{N}(0,\underline{\sigma}^2_h)
+
+\end{align}
+```
+with kernel given by:
+```{=tex}
+\begin{align}
+
+\propto \left( \underline{\sigma}^2_h \right)^{-\frac{1}{2}}exp\left( -\frac{1}{2}\underline{\sigma}^{-2}_hh_0h_0 \right)
+
+\end{align}
+```
+Prior distribution for $\sigma^2_v$ is:
+```{=tex}
+\begin{align}
+
+P(\sigma^2_v)\sim\mathcal{IG2}(\underline{s},\underline{\nu})
+
+\end{align}
+```
+with kernel given by:
+```{=tex}
+\begin{align}
+
+\propto \left( \underline{\sigma}^2_v \right)^{-\frac{\underline{\nu}+2}{2}}exp\left( -\frac{1}{2}\frac{\underline{s}}{\underline{\sigma}^{2}_v} \right)
+
+\end{align}
+```
+Prior distribution for $s$ is:
+```{=tex}
+\begin{align}
+
+P(s_t)\sim\mathcal{Multinomial}(\mathrm{\left\{ m \right\}}_{m=1}^{10},\mathrm{\left\{Pr(s_t=m) \right\}}_{m=1}^{10})
+
+\end{align}
+```
+
+### Bayesian Estimations
+
+For joint posteriors distribution, $A$, $\Sigma$ can then be derived using the likelihood and the prior distributions as follows:
+
+```{=tex}
+\begin{align}
+
+P(A,\Sigma|Y,X,\Omega) &\propto L(A,\Sigma,\Omega|Y,X) \ P(A,\Sigma) \\
+\\
+&= \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2} \textbf{tr}[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\} \\
+&\times \det(\Sigma)^{-\frac{N+k+\underline{\nu}+1}{2}} exp\{-\frac{1}{2}\textbf{tr}[\Sigma^{-1}(A-\underline{A})'(\underline{V})^{-1}(A-\underline{A})]\} \\
+&\times exp\{-\frac{1}{2}\textbf{tr}[\Sigma^{-1}\underline{S}]\} \\
+
+&= \det(\Sigma)^{-\frac{T+N+K+\underline{\nu}+1}{2}} \det(\Omega)^{-\frac{N}{2}} \\
+&\times exp\{-\frac{1}{2} \textbf{tr}[\Sigma^{-1}(Y'\Omega^{-1}Y - 2A'X'\Omega^{-1}Y + A'X'\Omega^{-1}XA \\
+&+ A'\underline{V}^{-1}A -2A'\underline{V}^{-1}\underline{A} + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S})]\}
+
+\end{align}
+```
+Then, we have same kernel presentation as **Laplace Distribution** and could be rearranged in the form of the **Normal-inverse Wishart distribution** and given by:
+
+```{=tex}
+\begin{align}
+
+P(A,\Sigma|Y,X,\Omega) &\sim \mathcal{NIW}(\bar{A},\bar{V},\bar{S},\bar{\nu}) \\
+&\\
+\bar{V} &= (X'\Omega^{-1}X + \underline{V}^{-1})^{-1} \\
+\bar{A} &= \bar{V}(X'\Omega^{-1}Y + \underline{V}^{-1}\underline{A}) \\
+\bar{\nu} &= T + \underline{\nu}\\
+\bar{S} &= \underline{S} + Y'\Omega^{-1}Y + \underline{A}'\underline{V}^{-1}\underline{A} - \bar{A}'\bar{V}^{-1}\bar{A}
+
+\end{align}
+```
+
+The kernel of the fully conditional posterior distribution of $h$ is then derived as follows:
+
+```{=tex}
+\begin{align}
+
+P(h|h_0,\sigma^2_v,s,\tilde{y}) &\propto L(h,h_0,\sigma^2_v,s|\tilde{y})P(h) \\
+&\propto exp\left( -\frac{1}{2}\left( h-(\tilde{y}-\mu_s) \right)'diag\left(\sigma^2_s  \right)^{-1}\left( h-(\tilde{y}-\mu_s) \right) \right)\\
+&\times exp\left( -\frac{1}{2}\sigma^{-2}_v\left( Hh-h_0e_{1.T} \right)'\left( Hh-h_0e_{1.T} \right) \right)\\ 
+
+\end{align}
+```
+The above expression can be rearranged in the form of a Normal distribution kernel as follows:
+
+```{=tex}
+\begin{align}
+
+P(h|h_0,\sigma^2_v,s,\tilde{y}) &\sim \mathcal{N}(\overline{h},\overline{V}_h)\\
+\overline{V}_h&=\left[ diag\left(\sigma^2_s \right)^{-1}+ \sigma^{-2}_vH'H\right]^{-1}\\
+\overline{h}&=\overline{V}_h\left[ diag\left(\sigma^2_s \right)^{-1}(\tilde{y}-\mu_s)+ \sigma^{-2}_vh_0e_{1.T}\right]\\
+
+\end{align}
+```
+The kernel of the fully conditional posterior distribution of $h_0$ is then derived as follows:
+
+```{=tex}
+\begin{align}
+
+P(h_0|h,\sigma^2_v,s,\tilde{y}) &\propto L(h_0,\sigma^2_v|h)P(h_0) \\
+&\propto exp\left( -\frac{1}{2}\sigma^{-2}_v\left( Hh-h_0e_{1.T} \right)'\left( Hh-h_0e_{1.T} \right) \right)\\
+&\times exp\left( -\frac{1}{2}\underline{\sigma}^{-2}_hh_0h_0 \right)
+
+\end{align}
+```
+The above expression can be rearranged in the form of a Normal distribution kernel as follows:
+
+```{=tex}
+\begin{align}
+
+P(h_0|h,\sigma^2_v,s,\tilde{y}) &\sim \mathcal{N}(\overline{h}_0,\overline{\sigma}^2_h)\\
+\overline{\sigma}^2_h&=\left(\underline{\sigma}^{-2}_h+ \sigma^{-2}_v\right)^{-1}\\
+\overline{h}_0&=\overline{\sigma}^2_h\left(\sigma^{-2}_ve_{1.T}'Hh\right)^{-1}\\
+
+\end{align}
+```
+The kernel of the fully conditional posterior distribution of $\sigma^2_v$ is then derived as follows:
+
+```{=tex}
+\begin{align}
+
+P(\sigma^2_v|h,h_0,s,\tilde{y}) &\propto L(h_0,\sigma^2_v|h)P(\sigma^2_v) \\
+&\propto exp\left( -\frac{1}{2}\sigma^{-2}_v\left( Hh-h_0e_{1.T} \right)'\left( Hh-h_0e_{1.T} \right) \right)\\
+&\times \left( \underline{\sigma}^2_v \right)^{-\frac{\underline{\nu}+2}{2}}exp\left( -\frac{1}{2}\frac{\underline{s}}{\underline{\sigma}^{2}_v} \right)
+
+\end{align}
+```
+The above expression can be rearranged in the form of a Inverse-Gamma 2 distribution kernel as follows:
+
+```{=tex}
+\begin{align}
+
+P(\sigma^2_v|h,h_0,s,\tilde{y}) &\sim \mathcal{IG2}(\overline{s},\overline{\nu})\\
+\overline{\nu}&=\underline{\nu}+ T\\
+\overline{s}&=\underline{s}+\left( Hh-h_0e_{1.T} \right)'\left( Hh-h_0e_{1.T} \right)\\
+
+\end{align}
+```
+The fully conditional posterior distribution of $s$ is a multinomial distribution with the probabilities proportional to:
+
+```{=tex}
+\begin{align}
+
+\omega_{m.t} = Pr[s_t=m]p(\tilde{y}|h_t,s_t=m),\text{for} \ m=1,...,10
+
+\end{align}
+```
+For each $t$ and $m$ obtain $\omega_{m.t}$ using parallel computations and compute the probabilities of the multinomial full conditional posterior distribution by:
+
+```{=tex}
+\begin{align}
+
+Pr[s_t=m|\tilde{y},h_t]=\frac{\omega_{m.t}}{\sum_{i=1}^{10}\omega_{m.t}}
+
+\end{align}
+```
+### Gibbs Sampler
+
+Considering draws from this posterior involves a Gibbs sampler, which follows the following algorithm:
+
+1.  Initialize $h^{(0)}$, $s^{(0)}$, and $\sigma^{2(0)}_v$
+
+2.  Draw $h_0^{(s)}\sim\mathcal{N}(\bar{h}_0,\bar{\sigma}^2_h)$ 
+
+3.  Draw $\sigma_v^{2(s)}\sim\mathcal{IG2}(\bar{s},\bar{\nu})$
+
+4.  Draw $s_t^{(s)}\sim\mathcal{Multiomial}(\{m\}^{10}_{m=1},\{Pr[s_t=m|\tilde{y},h_t^{(s)}]\}^{10}_{m=1})$ for all $s_t$ in $s$. 
+
+5.  Draw $h^{(s)}\sim\mathcal{N}_T(\bar{h},\bar{V}_h)$ 
+
+6.  Draw $(A,\Sigma)\sim\mathcal{MNIW}(\bar{A},\bar{V},\bar{S},\bar{\nu})$ 
+
+Steps 2 to 7 are repeated for $S=S_1+S_2$ draws, where $S_1$ draws are discarded as burn-in and the latter $S_2$ draws are kept as posterior draws.
+
+## Combinations of Extension
 
 # Empirical Analysis - Model Applying and Forecasing
 
@@ -1248,195 +1767,6 @@ abline(v=284, col=green6)
 
 ### Extension Model
 
-```{r}
 
-# setup 
-kappa.1           = 0.01                                # shrinkage for A1 to Ap
-kappa.2           = 100                              # shrinkage for constant 
-S1                = 500                              # determine the burn-in draws
-S2                = 9500                             # number of draws from the final simulation
-total_S           = S1+S2
-A.posterior       = array(NA, dim = c((1+N*p),N,S1+S2))
-Sigma.posterior   = array(NA, dim = c(N,N,S1+S2))
-
-#lambda.posterior     = diag(5,nrow(Y),nrow(Y))
-lambda.posterior  = matrix(NA, S1+S2, 1)
-
-lambda.posterior[1] = 2
-# Prior Gamma distribution: k, theta
-lambda.priors = list(
-  alpha = 2
-)
-
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
-## Function Applying
-posterior.extend.draws     = posterior.draws.exten(total_S = total_S, Y=Y, X=X)
-A.posterior.ext.simu       = posterior.extend.draws[["A.posterior.exten"]]
-Sigma.posterior.ext.simu   = posterior.extend.draws[["Sigma.posterior.exten"]]
-
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-## two-year ahead forecasting h=8
-# set up
-h                 = 24
-S                 = 9000
-Y.h.ext           = array(NA,c(h,N,S))
-
-
-# sampling predictive density
-for (s in 1:S){
-  A.posterior.draw         = A.posterior.ext.simu[,,s]
-  Sigma.posterior.draw     = Sigma.posterior.ext.simu[,,s]
-    x.Ti                   = Y[(nrow(Y)-p+1):nrow(Y),]
-    x.Ti                   = x.Ti[p:1,]
-  for (i in 1:h){
-    x.T                    = c(1,as.vector(t(x.Ti)))
-    Y.f                    = rmvnorm(1, mean = x.T%*%A.posterior.draw, sigma=Sigma.posterior.draw)
-      x.Ti                 = rbind(Y.f,x.Ti[1:(p-1),])
-    Y.h.ext[i,,s]          = Y.f[1:N]
-  }
-}
-```
-
-Figure 8 presents a 3D visualization of the density intervals for the log gold future price and Log Nasdaq Index points calculated by the extension model. The results are generally similar to those of the basic model, with the only difference being that the intervels are much smaller then basic ones.
-
-```{r}
-# Need recheck coding latter
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
-par(mfcol = c(1, 2), mar=c(2,2,2,2)-0.1)
-
-# Log CPI forecasting 
-limits.lcpi.ext      = range(Y.h.ext[,1,])
-point.lcpi.f.ext     = apply(Y.h.ext[,1,],1,mean)
-
-interval.lcpi.f.ext  = apply(Y.h.ext[,1,],1,hdi,credMass=0.90)
-
-x                = seq(from=limits.lcpi.ext[1], to=limits.lcpi.ext[2], length.out=100)
-z                = matrix(NA,h,99)
-for (i in 1:h){
-  z[i,]          = hist(Y.h.ext[i,1,], breaks=x, plot=FALSE)$density
-}
-x                = hist(Y.h.ext[i,1,], breaks=x, plot=FALSE)$mids
-yy               = 1:h
-z                = t(z)
-
-f4               = persp3D(x=x, y=yy, z=z, phi=phi, theta=theta, 
-                           xlab="\ncpi[t+h|t]", ylab="h", zlab="\npredictive densities of cpi",
-                           shade=NA, border=NA, ticktype="detailed", nticks=3,cex.lab=1,
-                           col=NA,plot=FALSE)
-perspbox (x=x, y=yy, z=z, bty="f", col.axis="black", phi=phi, theta=theta, 
-          xlab="\nlog.cpi[t+h|t]", ylab="h", zlab="\npredictive densities of cpi", 
-          ticktype="detailed", nticks=3,cex.lab=1, col = NULL, plot = TRUE)
-
-polygon3D(x=c(interval.lcpi.f.ext[1,],interval.lcpi.f.ext[2,h:1]), 
-           y=c(1:h,h:1), 
-          z=rep(0,2*h), 
-          col = blue2, NAcol = blue5, border = NA, add = TRUE, plot = TRUE)
-
-for (i in 1:h){
-  f4.l = trans3d(x=x, y=yy[i], z=z[,i], pmat=f4)
-  lines(f4.l, lwd=1, col=blue3)
-}
-f4.l1 = trans3d(x=point.lcpi.f.ext, y=yy, z=0, pmat=f4)
-lines(f4.l1, lwd=1.5, col=green1)
-
-# Expected inflation rate forecasting 
-limits.infexp.ext      = range(Y.h.ext[,2,])
-point.infexp.f.ext     = apply(Y.h.ext[,2,],1,mean)
-
-interval.infexp.f.ext  = apply(Y.h.ext[,2,],1,hdi,credMass=0.90)
-
-x                = seq(from=limits.infexp.ext[1], to=limits.infexp.ext[2], length.out=100)
-z                = matrix(NA,h,99)
-for (i in 1:h){
-  z[i,]          = hist(Y.h.ext[i,2,], breaks=x, plot=FALSE)$density
-}
-x                = hist(Y.h.ext[i,2,], breaks=x, plot=FALSE)$mids
-yy               = 1:h
-z                = t(z)
-
-f4               = persp3D(x=x, y=yy, z=z, phi=phi, theta=theta, 
-                           xlab="\ninfexp[t+h|t]", ylab="h", zlab="\npredictive densities of infexp",
-                           shade=NA, border=NA, ticktype="detailed", nticks=3,cex.lab=1,
-                           col=NA,plot=FALSE)
-perspbox (x=x, y=yy, z=z, bty="f", col.axis="black", phi=phi, theta=theta, 
-          xlab="\ninfexp[t+h|t]", ylab="h", zlab="\npredictive densities of infexp", 
-          ticktype="detailed", nticks=3,cex.lab=1, col = NULL, plot = TRUE)
-
-polygon3D(x=c(interval.infexp.f.ext[1,],interval.infexp.f.ext[2,h:1]), 
-          y=c(1:h,h:1), z=rep(0,2*h), 
-          col = green5, NAcol = green2, border = NA, add = TRUE, plot = TRUE)
-
-for (i in 1:h){
-  f4.l = trans3d(x=x, y=yy[i], z=z[,i], pmat=f4)
-  lines(f4.l, lwd=1, col=green6)
-}
-f4.l1 = trans3d(x=point.infexp.f.ext, y=yy, z=0, pmat=f4)
-lines(f4.l1, lwd=1.5, col=green1)
-```
-
-Figure 8 3d forecasting graph on extension model
-
-```{r}
-lgold.point.f    = apply(Y.h.ext[,1,],1,mean)
-lgold.interval.f = apply(Y.h.ext[,1,],1,hdi,credMass=0.90)
-lgold.range      = range(y[,1],lgold.interval.f)
-
-par(mfrow=c(1,1), mar=rep(3,4),cex.axis=1.5)
-plot(1:(length(y[,1])+h),c(y[,1],lgold.point.f), type="l", ylim=lgold.range, axes=FALSE, xlab="", ylab="", lwd=2, col=blue1)
-axis(1,c(3,51,111,171,231,267,nrow(y),nrow(y)+h),c("2000","2005","2010","2015","2020","2023","",""), col=blue1)
-axis(2,c(lgold.range[1],mean(lgold.range),lgold.range[2]),c("","lgold",""), col=blue1)
-abline(v=284, col=blue1)
-polygon(c(length(y[,1]):(length(y[,1])+h),(length(y[,1]):(length(y[,1])+h))[21:1]),
-        c(y[284,1],lgold.interval.f[1,],lgold.interval.f[2,20:1],y[284,1]),
-        col=blue1.shade1, border=blue1.shade1)
-
-LNasIndex.point.f    = apply(Y.h.ext[,5,],1,mean)
-LNasIndex.interval.f = apply(Y.h.ext[,5,],1,hdi,credMass=0.90)
-LNasIndex.range      = range(y[,5],LNasIndex.interval.f)
-
-par(mfrow=c(1,1), mar=rep(3,4),cex.axis=1.5)
-plot(1:(length(y[,5])+h),c(y[,5],LNasIndex.point.f), type="l", ylim=LNasIndex.range, axes=FALSE, xlab="", ylab="", lwd=2, col=blue1)
-axis(1,c(3,51,111,171,231,267,nrow(y),nrow(y)+h),c("2000","2005","2010","2015","2020","2023","",""), col=blue1)
-axis(2,c(LNasIndex.range[1],mean(LNasIndex.range),LNasIndex.range[2]),c("","LNasIndex",""), col=blue1)
-abline(v=284, col=blue1)
-polygon(c(length(y[,5]):(length(y[,5])+h),(length(y[,5]):(length(y[,5])+h))[21:1]),
-        c(y[284,1],LNasIndex.interval.f[1,],LNasIndex.interval.f[2,20:1],y[284,1]),
-        col=blue1.shade1, border=blue1.shade1)
-```
-
-```{r}
-combined_range = range(c(y[,1], y[,5], lgold.interval.f, LNasIndex.interval.f))
-
-par(mfrow=c(1,1), mar=rep(3,4), cex.axis=1.5)
-
-plot(1:(length(y[,1])+h), c(y[,1], lgold.point.f), type="l", ylim=combined_range, col="blue", lwd=2, xlab="", ylab="")
-polygon(c(length(y[,1]):(length(y[,1])+h), (length(y[,1]):(length(y[,1])+h))[21:1]),
-        c(y[284,1], lgold.interval.f[1,], lgold.interval.f[2,20:1], y[284,1]),
-        col=rgb(0, 0, 255, 100, max=255), border=rgb(0, 0, 255, 100, max=255))
-
-lines(1:(length(y[,5])+h), c(y[,5], LNasIndex.point.f), type="l", ylim=combined_range, col="red", lwd=2, xlab="", ylab="")
-polygon(c(length(y[,5]):(length(y[,5])+h), (length(y[,5]):(length(y[,5])+h))[21:1]),
-        c(y[284,5], LNasIndex.interval.f[1,], LNasIndex.interval.f[2,20:1], y[284,5]),
-        col=rgb(255, 0, 0, 100, max=255), border=rgb(255, 0, 0, 100, max=255))
-abline(v=284, col=green6)
-
-```
 
 # References {.unnumbered}
