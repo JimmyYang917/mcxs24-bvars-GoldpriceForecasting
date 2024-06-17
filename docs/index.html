@@ -134,14 +134,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#plots-of-all-variables" id="toc-plots-of-all-variables" class="nav-link" data-scroll-target="#plots-of-all-variables">Plots of all variables</a></li>
   <li><a href="#modeling-and-hypothesis" id="toc-modeling-and-hypothesis" class="nav-link" data-scroll-target="#modeling-and-hypothesis">Modeling and Hypothesis</a>
   <ul class="collapse">
-  <li><a href="#first-benchmark-assumption-basic-model-with-minnesota-prior" id="toc-first-benchmark-assumption-basic-model-with-minnesota-prior" class="nav-link" data-scroll-target="#first-benchmark-assumption-basic-model-with-minnesota-prior">First Benchmark Assumption: Basic model with Minnesota prior</a>
+  <li><a href="#matrix-notation-for-the-model" id="toc-matrix-notation-for-the-model" class="nav-link" data-scroll-target="#matrix-notation-for-the-model">Matrix Notation for the model:</a></li>
+  <li><a href="#likelihood-function" id="toc-likelihood-function" class="nav-link" data-scroll-target="#likelihood-function">Likelihood Function</a></li>
+  <li><a href="#prior-distribution" id="toc-prior-distribution" class="nav-link" data-scroll-target="#prior-distribution">Prior Distribution</a>
   <ul class="collapse">
-  <li><a href="#function-proofing" id="toc-function-proofing" class="nav-link" data-scroll-target="#function-proofing">Function Proofing</a></li>
+  <li><a href="#natural-conjugate-prior-distribution" id="toc-natural-conjugate-prior-distribution" class="nav-link" data-scroll-target="#natural-conjugate-prior-distribution">Natural-conjugate prior distribution</a></li>
+  </ul></li>
+  <li><a href="#benchmark-model-with-minnesota-prior" id="toc-benchmark-model-with-minnesota-prior" class="nav-link" data-scroll-target="#benchmark-model-with-minnesota-prior">Benchmark model with Minnesota prior</a>
+  <ul class="collapse">
+  <li><a href="#bayesian-estimations" id="toc-bayesian-estimations" class="nav-link" data-scroll-target="#bayesian-estimations">Bayesian Estimations</a></li>
+  <li><a href="#gibbs-sampler-function-proofing" id="toc-gibbs-sampler-function-proofing" class="nav-link" data-scroll-target="#gibbs-sampler-function-proofing">Gibbs sampler: Function Proofing</a></li>
   </ul></li>
   <li><a href="#the-extended-model-laplace-distribution-of-error-term" id="toc-the-extended-model-laplace-distribution-of-error-term" class="nav-link" data-scroll-target="#the-extended-model-laplace-distribution-of-error-term">The extended model: Laplace distribution of error term</a>
   <ul class="collapse">
-  <li><a href="#proof-of-extended-model" id="toc-proof-of-extended-model" class="nav-link" data-scroll-target="#proof-of-extended-model">Proof of extended model</a></li>
+  <li><a href="#bayesian-estimations-1" id="toc-bayesian-estimations-1" class="nav-link" data-scroll-target="#bayesian-estimations-1">Bayesian Estimations</a></li>
+  <li><a href="#gibbs-sampler-function-proving" id="toc-gibbs-sampler-function-proving" class="nav-link" data-scroll-target="#gibbs-sampler-function-proving">Gibbs Sampler: Function proving</a></li>
   </ul></li>
+  <li><a href="#stochastic-volatility-heteroskedasticity" id="toc-stochastic-volatility-heteroskedasticity" class="nav-link" data-scroll-target="#stochastic-volatility-heteroskedasticity">Stochastic Volatility Heteroskedasticity</a>
+  <ul class="collapse">
+  <li><a href="#matrix-notation-for-stochastic-volatility-model" id="toc-matrix-notation-for-stochastic-volatility-model" class="nav-link" data-scroll-target="#matrix-notation-for-stochastic-volatility-model">Matrix Notation for Stochastic Volatility model</a></li>
+  <li><a href="#priors-distribution" id="toc-priors-distribution" class="nav-link" data-scroll-target="#priors-distribution">Priors distribution</a></li>
+  <li><a href="#bayesian-estimations-2" id="toc-bayesian-estimations-2" class="nav-link" data-scroll-target="#bayesian-estimations-2">Bayesian Estimations</a></li>
+  <li><a href="#gibbs-sampler" id="toc-gibbs-sampler" class="nav-link" data-scroll-target="#gibbs-sampler">Gibbs Sampler</a></li>
+  </ul></li>
+  <li><a href="#combinations-of-extension" id="toc-combinations-of-extension" class="nav-link" data-scroll-target="#combinations-of-extension">Combinations of Extension</a></li>
   </ul></li>
   <li><a href="#empirical-analysis---model-applying-and-forecasing" id="toc-empirical-analysis---model-applying-and-forecasing" class="nav-link" data-scroll-target="#empirical-analysis---model-applying-and-forecasing">Empirical Analysis - Model Applying and Forecasing</a>
   <ul class="collapse">
@@ -181,8 +197,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 <blockquote class="blockquote">
-<p><strong>Abstract.</strong> This research aims to explore future trends in Gold prices as a traditonal safe-haven investment using a Bayesian VARs model. In the wake of the 2008 financial crisis and especially the 2019 global Covid-19 pandemic, the world economy appears to be on the brink of a looming risk: a world-wide economic recession. The concern over the risk of investment returns has become a primary focus for global investors and financial institutions. This unease has been further exacerbated by geopolitical conflicts such as the Russia-Ukraine war (2022) and the Israeli-Palestinian conflict (2023). Consequently, this research aims to provide a briefly discussion and data-driven forecast of traditional safe-haven assets: Gold, under current circumstances. Factors considered include emerging safe-haven investments, risk-free investment assets, comparable investments, market returns, inflation on both demand and supply sides, broad money supply (M2), interest rates, unemployment rates and market volatility.</p>
-<p><strong>Keywords.</strong> Bayesian VARs, Gold price, Inflation, Interset rate, Unemployments, US Bond Yeild, Safe-haven Assets, Forecasting, Volatility, R, Quarto.</p>
+<p><strong>Abstract.</strong> This research aims to explore future trends in Gold prices as a traditional safe-haven investment using a Bayesian VARs model. In the wake of the 2008 financial crisis and especially the 2019 global Covid-19 pandemic, the world economy appears to be on the brink of a looming risk: a world-wide economic recession. The concern over the risk of investment returns has become a primary focus for global investors and financial institutions. This unease has been further exacerbated by geopolitical conflicts such as the Russia-Ukraine war (2022) and the Israeli-Palestinian conflict (2023). Consequently, this research aims to provide a briefly discussion and data-driven forecast of traditional safe-haven assets: Gold, under current circumstances. Factors considered include emerging safe-haven investments, risk-free investment assets, comparable investments, market returns, inflation on both demand and supply sides, broad money supply (M2), interest rates, unemployment rates and market volatility.</p>
+<p><strong>Keywords.</strong> Bayesian VARs, Gold price, Inflation, Interest rate, Unemployment, US Bond Yield, Safe-haven Assets, Forecasting, Volatility, R, Quarto.</p>
 </blockquote>
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
@@ -209,10 +225,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><span class="math inline">\(Tbill(10Year)_{t}\)</span> : Considering as long-term risk free assets return.</li>
 </ul></li>
 </ul></li>
-<li><p>Market returns as opposed to safe-haven investments：</p>
-<ul>
-<li><span class="math inline">\(NasdaqIndex_{t}\)</span> ：Index that include all stocks available in NASDAQ to present the market returns.</li>
-</ul></li>
+<li><p>Market returns as opposed to safe-haven investments： - <span class="math inline">\(NasdaqIndex_{t}\)</span> ：Index that include all stocks available in NASDAQ to present the market returns.</p></li>
 <li><p>Macro environment：</p>
 <ul>
 <li><span class="math inline">\(M2_{t}\)</span> : the Board money supply of United States cause price index goes up.</li>
@@ -363,16 +376,9 @@ VolatilityIndex_{t}\\
 <li><span class="math inline">\(Y_{t-1}\)</span> is the information set collecting observations on y up to time <span class="math inline">\(t-1\)</span></li>
 <li><span class="math inline">\(\Sigma\)</span> is a <span class="math inline">\(N(12)\times N(12)\)</span> covariance matrix of the error term</li>
 </ul>
-<p>In matrix notation:</p>
-<p><span class="math display">\[
-\begin{align}
-Y &amp;= X A +E
-\\
-E|X &amp;\sim \mathcal{MN}_{T\times N}(\textbf{0},\Sigma,I_T)
-\\
-Y|X &amp;\sim \mathcal{MN}_{T\times N}(XA,\Sigma,I_T)
-\end{align}
-\]</span></p>
+<section id="matrix-notation-for-the-model" class="level2">
+<h2 class="anchored" data-anchor-id="matrix-notation-for-the-model">Matrix Notation for the model:</h2>
+<p>Matrix form are used to simplify the notation and the derivations. Let <span class="math inline">\(T\)</span> be the available sample size for the variable <span class="math inline">\(y\)</span> and <span class="math inline">\(K\)</span> be the sum of lags and constant term (<span class="math inline">\(K = 1 + pN\)</span>). Define a identity matrix of order <span class="math inline">\(T\)</span>, <span class="math inline">\(I_T\)</span>, as well as following matrix:</p>
 <span class="math display">\[\begin{aligned}
 
 A=
@@ -406,63 +412,144 @@ E=
 \end{bmatrix}_{T \times N}
 
 \end{aligned}\]</span>
-<p>where K = 1 + pN</p>
+<p>Then the model can be written in a concise notation as:</p>
+<span class="math display">\[\begin{aligned}
+
+Y &amp;= X A +E
+\\
+\\
+E|X &amp;\sim \mathcal{MN}_{T\times N}(\textbf{0},\Sigma,I_T)
+
+\end{aligned}\]</span>
+<p>Given that the density function of Matrix-variate Normal distribution <span class="math inline">\(Z\sim \mathcal{MN}_{T\times N}(M,Q,P)\)</span> is:</p>
+<span class="math display">\[\begin{aligned}
+
+\mathcal{MN}_{T\times N}(M,Q,P) &amp; =c^{-1}_{mn}exp\left\{ -\frac{1}{2}\textbf{tr}\left[ Q^{-1}\left( Z-M \right)'P^{-1}\left( Z-M \right) \right] \right\}\\
+c_{mn} &amp; = \left( 2\pi \right)^{\frac{TN}{2}}det\left( Q \right)^{\frac{T}{2}}det\left( P \right)^{\frac{N}{2}}
+
+\end{aligned}\]</span>
 <p>Base on the model above, we could first turn B Vars(p) model into B Vars(1) model and easily regress to have the parameter matrix. Then we could have a <span class="math inline">\(t+h\)</span> period forward forecasting with increase of variance, in this case: <span class="math inline">\(h\)</span> = 24.</p>
 <p>The main focus of estimate output is the conditional mean of Gold price, which base on current information set <span class="math inline">\(Y_{t-1}\)</span>. It provide the average mean prediction of Gold price which investors and financial institutions interested in. Moreover, 1 standard deviation and 2 standard deviation will also produced in forecasting process to provide a 68% and 95% of confidence intervals of future Gold price movements in <span class="math inline">\(h\)</span> periods base on current information set.</p>
-<p>Furthermore, different prior distribution might be used to provide different level of uncertainty of current environment(information set). Compare the difference of Gold price under different priors could help to prove the Gold as a high quality safe-haven investment and increase investors and financial institutions confidence and further expectations. ( Competitors for golds might also be used under different priors, such as BIT-USD, Nasdaq Index and short to mid-term treasury bills. )</p>
-<p>Based on Bayes’ Theorem:</p>
+<p>Furthermore, different prior distribution might be used to provide different level of uncertainty of current environment(information set). Compare the difference of Gold price under different priors could help to prove the Gold as a high quality safe-haven investment and increase investors and financial institutions confidence and further expectations. (Competitors for golds might also be used under different priors, such as Nasdaq Index and short to mid-term treasury bills.)</p>
+</section>
+<section id="likelihood-function" class="level2">
+<h2 class="anchored" data-anchor-id="likelihood-function">Likelihood Function</h2>
+<p>The model equation imply the predictive density of the data vector <span class="math inline">\(Y\)</span>. We could consider the model equation is the linear transformation of the matrix-variate normal distribution <span class="math inline">\(E\)</span>. Therefore, the data vector also follows a matrix-variate normal distribution given by:</p>
 <span class="math display">\[\begin{aligned}
 
-P(A|B) &amp; =\frac{P(B|A)P(A)}{P(B)} \\
-P(A|B) &amp; \propto P(B|A)P(A)
+Y|X,A,\Sigma &amp;\sim \mathcal{MN}_{T\times N}(XA,\Sigma,I_T)
 
 \end{aligned}\]</span>
-<p>Therefore we have:</p>
+<p>This distribution determines the shape of the likelihood function that is defined as the sampling data density:</p>
 <span class="math display">\[\begin{aligned}
 
-P(A,\Sigma|Y,X) &amp;= \frac{P(Y|X,A,\Sigma) \ P(A,\Sigma)}{P(Y)}\\
-&amp;\propto P(Y|X,A,\Sigma) \ P(A,\Sigma)\\
-&amp;= L(A,\Sigma | Y,X) \ P(A|\Sigma) \ P(\Sigma) \\\\
+L(A,\Sigma | Y,X)\equiv P(Y|X,A,\Sigma)
 
-A|\Sigma &amp;\sim \mathcal{MN}_{K\times N}(\underline{A}, \Sigma,\underline{V})
+\end{aligned}\]</span>
+<p>The likelihood function for the parameters estimation (<span class="math inline">\(A,\Sigma\)</span>), and after plugging in data in place of <span class="math inline">\(Y,X\)</span>, is considered a function of parameters <span class="math inline">\(A\)</span> and <span class="math inline">\(\Sigma\)</span> is given by:</p>
+<span class="math display">\[\begin{aligned}
+
+L(A,\Sigma | Y,X) &amp;= \left( 2\pi \right)^{-\frac{TN}{2}}det\left( \Sigma \right)^{-\frac{T}{2}}exp\left\{ -\frac{1}{2}\sum_{t=1}^{T}\epsilon_{t}'\Sigma^{-1}\epsilon_{t} \right\}
 \\
-\Sigma &amp;\sim \mathcal{IW}_{N}(\underline{S}, \underline{v})
+&amp;= \left( 2\pi \right)^{-\frac{TN}{2}}det\left( \Sigma \right)^{-\frac{T}{2}}exp\left\{ -\frac{1}{2}\sum_{t=1}^{T} \left( y_{t}-A'x_{t} \right)'\Sigma^{-1}\left( y_{t}-A'x_{t} \right)\right\}
+\\
+&amp;= \left( 2\pi \right)^{-\frac{TN}{2}}det\left( \Sigma \right)^{-\frac{T}{2}}exp\left\{ -\frac{1}{2}vec\left(\left( Y-XA \right)'\right)' \left( I_T\otimes \Sigma^{-1} vec\left(\left( Y-XA \right)'\right)\right)\right\}
+\\
+&amp;= \left( 2\pi \right)^{-\frac{TN}{2}}det\left( \Sigma \right)^{-\frac{T}{2}}exp\left\{ -\frac{1}{2}\textbf{tr}\left[\Sigma^{-1}\left( Y-XA \right)'I^{-1}_T\left(Y-XA \right) \right] \right\}
+\\
+&amp;= \left( 2\pi \right)^{-\frac{TN}{2}}det\left( \Sigma \right)^{-\frac{T}{2}}exp\left\{ -\frac{1}{2}\textbf{tr}\left[\Sigma^{-1}\left(Y-XA\right)'\left(Y-XA\right) \right] \right\}
 
 \end{aligned}\]</span>
-<p>Which is the posterior distribution is the proportion of likelihood function and prior.</p>
-<p>where <span class="math inline">\(A_{M \times N}\)</span> follow a matrix normal distribution:</p>
+<p>Given that the trace:</p>
 <ul>
-<li><p><span class="math inline">\(\underline{A}\)</span> is the mean of matrix normal distribution</p></li>
-<li><p><span class="math inline">\(\Sigma_{N \times N}\)</span>is the row specific covariance matrix</p></li>
-<li><p><span class="math inline">\(\underline{V}_{M \times M}\)</span> is the column specific covariance matrix</p></li>
+<li><span class="math inline">\(\textbf{tr}\left( X \right) = \sum_{n=1}^{N}X_{nn} \ \ \ \ \text{for a }N \times N\text{ matrix }X\)</span></li>
+<li><span class="math inline">\(\textbf{tr}\left( ABCD \right) = vec(D')'\left( C'\otimes A \right)vec(B)\)</span></li>
 </ul>
-<p>therefore, we have:</p>
+</section>
+<section id="prior-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="prior-distribution">Prior Distribution</h2>
+<p>For the given model, we assume that unknown parameters have following distributions:</p>
 <span class="math display">\[\begin{aligned}
 
-vec(A)\sim N_{MN}(vec(\underline{A}),\Sigma\otimes \underline{V})
+A|\Sigma &amp;\sim \mathcal{MN}_{K\times N}(M,\Sigma,P)
+\\
+\Sigma &amp;\sim \mathcal{IW}_{N}(S,\nu)
 
 \end{aligned}\]</span>
-<p>where <span class="math inline">\(\Sigma\)</span> follow a Inverse Wishart distribution:</p>
-<ul>
-<li><p><span class="math inline">\(\underline{S}\)</span> is N × N positive definite symmetric matrix called the scale matrix. -</p></li>
-<li><p><span class="math inline">\(\underline{v}\)</span> &gt; N + 2 denotes degrees of freedom.</p></li>
-</ul>
-<section id="first-benchmark-assumption-basic-model-with-minnesota-prior" class="level2">
-<h2 class="anchored" data-anchor-id="first-benchmark-assumption-basic-model-with-minnesota-prior">First Benchmark Assumption: Basic model with Minnesota prior</h2>
+<p>where <span class="math inline">\(A_{K \times N}|\Sigma\)</span> follow a matrix-variate normal distribution:</p>
+<p>- <span class="math inline">\(M\)</span> is the mean of matrix normal distribution</p>
+<p>- <span class="math inline">\(\Sigma_{N \times N}\)</span>is the row specific covariance matrix</p>
+<p>- <span class="math inline">\(P_{K \times K}\)</span> is the column specific covariance matrix with the density given by:</p>
+<span class="math display">\[\begin{aligned}
+
+\mathcal{MN}_{K\times N}(M,\Sigma,P) &amp; =c^{-1}_{mn}exp\left\{ -\frac{1}{2}\textbf{tr}\left[ \Sigma^{-1}\left( A-M \right)'P^{-1}\left( A-M \right) \right] \right\}\\
+c_{mn} &amp; = \left( 2\pi \right)^{\frac{KN}{2}}det\left( \Sigma \right)^{\frac{K}{2}}det\left( P \right)^{\frac{N}{2}}
+
+\end{aligned}\]</span>
+<p>And <span class="math inline">\(\Sigma\)</span> follow a Inverse Wishart distribution:</p>
+<p>- <span class="math inline">\(S\)</span> is N × N positive definite symmetric matrix called the scale matrix.</p>
+<p>- <span class="math inline">\(\nu\)</span> &gt; N + 2 denotes degrees of freedom. with the density given by:</p>
+<span class="math display">\[\begin{aligned}
+
+\mathcal{IW}_{N}(S,\nu) &amp;= c^{-1}_{iw}det(\Sigma)^{-\frac{\nu + N+1}{2}}exp\left\{ -\frac{1}{2} \textbf{tr}\left[ \Sigma^{-1} S\right]\right\}\\
+c_{iw} &amp;= 2^{\frac{\nu N}{2}}\pi^{\frac{N(N-1)}{4}}\prod_{n=1}^{N}\Gamma\left( \frac{\nu + n + 1}{2} \right)det(S)^{-\frac{\nu}{2}}
+
+\end{aligned}\]</span>
+<p>Then the joint distribution of (<span class="math inline">\(A,\Sigma\)</span>) is Normal-Inverse Wishart:</p>
+<span class="math display">\[\begin{aligned}
+
+P(A,\Sigma) &amp; \sim \mathcal{NIW}_{K \times N}(M,P,S,\nu)
+
+\end{aligned}\]</span>
+<p>with the density given by:</p>
+<span class="math display">\[\begin{aligned}
+
+P(A,\Sigma) &amp;= c^{-1}_{nw}det(\Sigma)^{-\frac{\nu + N + K + 1}{2}}\\
+&amp;\times exp\left\{ -\frac{1}{2}\textbf{tr}\left[ \Sigma^{-1}\left( A-M \right)'P^{-1}\left( A-M \right) \right] \right\}\\
+&amp;\times exp\left\{ -\frac{1}{2} \textbf{tr}\left[ \Sigma^{-1} S\right]\right\}
+\\
+\\
+c_{nw} &amp;= 2^{\frac{N(K + \nu)}{2}}\pi^{\frac{N(N + 2K -1)}{4}}[\prod_{n=1}^{N}\Gamma\left( \frac{\nu + 1 - n}{2} \right)]det\left( P \right)^{\frac{N}{2}}det(S)^{-\frac{\nu}{2}}
+
+\end{aligned}\]</span>
+<section id="natural-conjugate-prior-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="natural-conjugate-prior-distribution">Natural-conjugate prior distribution</h3>
+<p>Leads to joint posterior distribution for (<span class="math inline">\(A,\Sigma\)</span>) has the same form as prior:</p>
+<span class="math display">\[\begin{aligned}
+
+P(A,\Sigma) &amp;= P(A|\Sigma)P(\Sigma)
+\\
+A|\Sigma &amp;\sim \mathcal{MN}_{K\times N}(\underline{A},\Sigma,\underline{V})
+\\
+\Sigma &amp;\sim \mathcal{IW}_{N}(\underline{S}, \underline{\nu})
+
+\end{aligned}\]</span>
+<p>with the <strong>kernel</strong> given by:</p>
+<span class="math display">\[\begin{aligned}
+
+P(A,\Sigma) &amp;\propto \det(\Sigma)^{-\frac{N+K+\underline{\nu}+1}{2}} \\
+&amp;\times exp\{-\frac{1}{2}tr[\Sigma^{-1}(A-\underline{A}) \underline{V}^{-1}(A-\underline{A})]\} \\
+&amp;\times exp\{-\frac{1}{2}tr[\Sigma^{-1}\underline{S}]\}
+
+\end{aligned}\]</span>
+</section>
+</section>
+<section id="benchmark-model-with-minnesota-prior" class="level2">
+<h2 class="anchored" data-anchor-id="benchmark-model-with-minnesota-prior">Benchmark model with Minnesota prior</h2>
 <p>In real life, macroeconomic variables are more likely being unit-root non stationary and are well-characterized by a multivariate random walk process：</p>
 <span class="math display">\[\begin{aligned}
 
 y_{t} = y_{t-1} + \epsilon_t
 
 \end{aligned}\]</span>
-<p>Therefore, our benchmark model uses Minnesota prior(1984) based on random walk process for our Bayesian forecasting:</p>
+<p>Therefore, our benchmark model uses Minnesota prior(1984) based on random walk process for our Bayesian forecasting.</p>
 <p>Set the prior mean <span class="math inline">\(A\)</span> to:</p>
 <span class="math display">\[\begin{aligned}
 
 \underline{A}=\left[ 0_{N\times1} \ \ \ \  I_{N} \ \ \ \ \ 0_{N\times(p-1)N} \right]'
 
 \end{aligned}\]</span>
-<p>where the mean of first lag equal to 1 and mean of constant term and other lags are 0.</p>
+<p>which means the mean of first lag equal to 1 and mean of constant term and other lags are 0.</p>
 <p>Set the column specific prior covariance of <span class="math inline">\(A\)</span> (prior shrinkage)to:</p>
 <span class="math display">\[\begin{aligned}
 
@@ -471,16 +558,57 @@ y_{t} = y_{t-1} + \epsilon_t
 \end{aligned}\]</span>
 <p>where:</p>
 <ul>
-<li><p>-<span class="math inline">\(\textbf{P}\)</span> is the list of legs, <span class="math inline">\(\textbf{P} \ \ \ =\left[ 1 \quad 2 \quad 3\quad ... \quad p \right]\)</span></p></li>
+<li><p><span class="math inline">\(\textbf{P}\)</span> is the list of legs, <span class="math inline">\(\textbf{P} \ \ \ =\left[ 1 \quad 2 \quad 3\quad ... \quad p \right]\)</span></p></li>
 <li><p><span class="math inline">\(\textbf{i}^{'}_{N}\)</span> is a <span class="math inline">\(N \times 1\)</span> vector of ones</p></li>
 <li><p><span class="math inline">\(\kappa_{1}\)</span>: overall shrinkage level for autoregressive slopes</p></li>
 <li><p><span class="math inline">\(\kappa_{2}\)</span>: overall shrinkage for the constant term</p></li>
 </ul>
-<p>therefore, we could have the variance of <span class="math inline">\(A\)</span>: <span class="math display">\[
+<p>therefore, we could have the variance of <span class="math inline">\(A\)</span>:</p>
+<p><span class="math display">\[
 VAR\left[ vec\left( A \right) \right]\quad = \quad \Sigma \ \ \otimes \ \ \underline{V}
 \]</span></p>
-<section id="function-proofing" class="level3">
-<h3 class="anchored" data-anchor-id="function-proofing">Function Proofing</h3>
+<section id="bayesian-estimations" class="level3">
+<h3 class="anchored" data-anchor-id="bayesian-estimations">Bayesian Estimations</h3>
+<p>Based on Bayes’ Theorem:</p>
+<span class="math display">\[\begin{aligned}
+
+P(A|B) &amp; =\frac{P(B|A)P(A)}{P(B)}
+
+\end{aligned}\]</span>
+<p>We could have the kernel of conditional joint posterior distribution <span class="math inline">\(P(A,\Sigma|Y,X)\)</span>, which is the proportion of the product between conditional distribution of data <span class="math inline">\(P(Y|X,A,\Sigma)\)</span> and joint prior distribution <span class="math inline">\(P(A,\Sigma)\)</span>:</p>
+<span class="math display">\[\begin{aligned}
+
+P(A,\Sigma|Y,X) &amp;= \frac{P(Y|X,A,\Sigma) \ P(A,\Sigma)}{P(Y)}\\
+&amp;\propto P(Y|X,A,\Sigma) \ P(A,\Sigma)\\
+&amp;\propto L(A,\Sigma | Y,X) \ P(A|\Sigma) \ P(\Sigma) \\\\
+
+\end{aligned}\]</span>
+<p>And the kernel of conditional joint posterior distribution is given by:</p>
+<span class="math display">\[\begin{aligned}
+
+P(A,\Sigma|Y,X) &amp;\propto L(A,\Sigma | Y,X) \ P(A,\Sigma)\\
+&amp;\propto det(\Sigma)^{-\frac{T}{2}} \\
+&amp;\times exp\{-\frac{1}{2}tr[\Sigma^{-1}(Y-XA)'(Y-XA)]\} \\
+&amp;\times \det(\Sigma)^{-\frac{N+K+\underline{\nu}+1}{2}} \\
+&amp;\times exp\{-\frac{1}{2}tr[\Sigma^{-1}(A-\underline{A}) \underline{V}^{-1}(A-\underline{A})]\} \\
+&amp;\times exp\{-\frac{1}{2}tr[\Sigma^{-1}\underline{S}]\}
+
+\end{aligned}\]</span>
+<p>Then, the kernel could be represent as the normal-inverse Wishart distribution:</p>
+<span class="math display">\[\begin{aligned}
+
+P(A,\Sigma|Y,X) &amp;\sim \mathcal{NIW}_{K\times N}(\bar{A},\bar{V},\bar{S},\bar{\nu})
+\\
+\\
+\bar{V} &amp;= (X'X + \underline{V}^{-1})^{-1} \\
+\bar{A} &amp;= \bar{V}(X'Y + \underline{V}^{-1}\underline{A}) \\
+\bar{\nu} &amp;= T + \underline{\nu}\\
+\bar{S} &amp;= \underline{S} + Y'Y + \underline{A}'\underline{V}^{-1}\underline{A} - \bar{A}'\bar{V}^{-1}\bar{A}
+
+\end{aligned}\]</span>
+</section>
+<section id="gibbs-sampler-function-proofing" class="level3">
+<h3 class="anchored" data-anchor-id="gibbs-sampler-function-proofing">Gibbs sampler: Function Proofing</h3>
 <p>Consider Bi-variate Gaussian random walk process:</p>
 <p><span class="math display">\[
 \begin{align}
@@ -497,11 +625,11 @@ y_{t-1,2}
 \epsilon_{t,1} \\
 \epsilon_{t,2}
 \end{bmatrix} \\
-where \quad  
 \epsilon_{t,1} &amp;\sim \mathcal{N}(0,1)  \\
 \epsilon_{t,2} &amp;\sim \mathcal{N}(0,1)
 \end{align}
-\]</span> Variables in Matrix Notation:</p>
+\]</span></p>
+<p>Variables in Matrix Notation:</p>
 <p><span class="math display">\[
 Y = \begin{bmatrix}
 y_2' \\
@@ -517,33 +645,66 @@ X = \begin{bmatrix}
 1 \quad y_{n-1}'
 \end{bmatrix}
 \]</span></p>
+<p>Therefore, we could basic set up for this Bi-variate Gaussian random walk process with Minnesota prior:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>e1 <span class="ot">=</span> <span class="fu">cumsum</span>(<span class="fu">rnorm</span>(<span class="dv">1000</span>, <span class="dv">0</span>, <span class="at">sd=</span><span class="dv">1</span>))</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>e2 <span class="ot">=</span> <span class="fu">cumsum</span>(<span class="fu">rnorm</span>(<span class="dv">1000</span>, <span class="dv">0</span>, <span class="at">sd=</span><span class="dv">1</span>))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>e  <span class="ot">=</span> <span class="fu">cbind</span>(e1,e2)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Define data X, Y </span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">=</span> <span class="fu">ts</span>(e[<span class="dv">2</span><span class="sc">:</span><span class="fu">nrow</span>(e),], <span class="at">frequency=</span><span class="dv">1</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">1</span>,<span class="fu">nrow</span>(Y),<span class="dv">1</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">cbind</span>(X,e[<span class="dv">2</span><span class="sc">:</span><span class="fu">nrow</span>(e)<span class="sc">-</span><span class="dv">1</span>,])</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="do">## Test on basic model</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>N           <span class="ot">=</span> <span class="fu">ncol</span>(Y)                          <span class="co"># N=2</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>p           <span class="ot">=</span> <span class="fu">frequency</span>(Y)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>A.hat       <span class="ot">=</span> <span class="fu">solve</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>X)<span class="sc">%*%</span><span class="fu">t</span>(X)<span class="sc">%*%</span>Y</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>Sigma.hat   <span class="ot">=</span> <span class="fu">t</span>(Y<span class="sc">-</span>X<span class="sc">%*%</span>A.hat)<span class="sc">%*%</span>(Y<span class="sc">-</span>X<span class="sc">%*%</span>A.hat)<span class="sc">/</span><span class="fu">nrow</span>(Y)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Prior distribution (with Minnesota prior)</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>kappa<span class="fl">.1</span>             <span class="ot">=</span> <span class="fl">0.02</span><span class="sc">^</span><span class="dv">2</span>                              <span class="co"># shrinkage for A1 to Ap</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>kappa<span class="fl">.2</span>             <span class="ot">=</span> <span class="dv">200</span>                                  <span class="co"># shrinkage for constant </span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>A.prior             <span class="ot">=</span> <span class="fu">matrix</span>(<span class="dv">0</span>,<span class="fu">nrow</span>(A.hat),<span class="fu">ncol</span>(A.hat))</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>A.prior[<span class="dv">2</span><span class="sc">:</span>(N <span class="sc">+</span> <span class="dv">1</span>),] <span class="ot">=</span> <span class="fu">diag</span>(N)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>V.prior             <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">c</span>(kappa<span class="fl">.2</span>,kappa<span class="fl">.1</span><span class="sc">*</span>((<span class="dv">1</span><span class="sc">:</span>p)<span class="sc">^</span>(<span class="sc">-</span><span class="dv">2</span>))<span class="sc">%x%</span><span class="fu">rep</span>(<span class="dv">1</span>,N)))</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>S.prior             <span class="ot">=</span> <span class="fu">diag</span>(<span class="fu">diag</span>(Sigma.hat))</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>nu.prior            <span class="ot">=</span> N<span class="sc">+</span><span class="dv">2</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>I.matrix            <span class="ot">=</span> <span class="fu">diag</span>(<span class="dv">1</span>,<span class="fu">nrow</span>(Y),<span class="fu">nrow</span>(Y))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 <p>Function below is <code>posterior.draws</code>:</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Posterior sample draw function for basic model(posterior.draws)</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>posterior.draws       <span class="ot">=</span> <span class="cf">function</span> (S, Y, X){</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># normal-inverse Wishard posterior parameters</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    V.bar.inv         <span class="ot">=</span> <span class="fu">t</span>(X)<span class="sc">%*%</span>X <span class="sc">+</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    V.bar             <span class="ot">=</span> <span class="fu">solve</span>(V.bar.inv)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    A.bar             <span class="ot">=</span> V.bar<span class="sc">%*%</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>Y <span class="sc">+</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))<span class="sc">%*%</span>A.prior)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    nu.bar            <span class="ot">=</span> <span class="fu">nrow</span>(Y) <span class="sc">+</span> nu.prior</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    S.bar             <span class="ot">=</span> S.prior <span class="sc">+</span> <span class="fu">t</span>(Y)<span class="sc">%*%</span>Y <span class="sc">+</span> <span class="fu">t</span>(A.prior)<span class="sc">%*%</span><span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))<span class="sc">%*%</span>A.prior <span class="sc">-</span> <span class="fu">t</span>(A.bar)<span class="sc">%*%</span>V.bar.inv<span class="sc">%*%</span>A.bar</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    S.bar.inv         <span class="ot">=</span> <span class="fu">solve</span>(S.bar)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># posterior draws </span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior   <span class="ot">=</span> <span class="fu">rWishart</span>(<span class="dv">1</span>, <span class="at">df=</span>nu.bar, <span class="at">Sigma=</span>S.bar.inv)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior   <span class="ot">=</span> <span class="fu">apply</span>(Sigma.posterior,<span class="dv">3</span>,solve)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior   <span class="ot">=</span> <span class="fu">array</span>(Sigma.posterior,<span class="fu">c</span>(N,N,S))</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    A.posterior       <span class="ot">=</span> <span class="fu">array</span>(<span class="fu">rnorm</span>(<span class="fu">prod</span>(<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),S))),<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),S))</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    L                 <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">chol</span>(V.bar))</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S){</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>      A.posterior[,,s]<span class="ot">=</span> A.bar <span class="sc">+</span> L<span class="sc">%*%</span>A.posterior[,,s]<span class="sc">%*%</span><span class="fu">chol</span>(Sigma.posterior[,,s])</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    output            <span class="ot">=</span> <span class="fu">list</span>(<span class="at">A.posterior=</span>A.posterior, <span class="at">Sigma.posterior=</span>Sigma.posterior)</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(output)</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Posterior sample draw function for basic model(posterior.draws)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>posterior.draws       <span class="ot">=</span> <span class="cf">function</span> (S, Y, X){</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># normal-inverse Wishard posterior parameters</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    V.bar.inv         <span class="ot">=</span> <span class="fu">t</span>(X)<span class="sc">%*%</span>X <span class="sc">+</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    V.bar             <span class="ot">=</span> <span class="fu">solve</span>(V.bar.inv)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    A.bar             <span class="ot">=</span> V.bar<span class="sc">%*%</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span>Y <span class="sc">+</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))<span class="sc">%*%</span>A.prior)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    nu.bar            <span class="ot">=</span> <span class="fu">nrow</span>(Y) <span class="sc">+</span> nu.prior</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    S.bar             <span class="ot">=</span> S.prior <span class="sc">+</span> <span class="fu">t</span>(Y)<span class="sc">%*%</span>Y <span class="sc">+</span> <span class="fu">t</span>(A.prior)<span class="sc">%*%</span><span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))<span class="sc">%*%</span>A.prior <span class="sc">-</span> <span class="fu">t</span>(A.bar)<span class="sc">%*%</span>V.bar.inv<span class="sc">%*%</span>A.bar</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    S.bar.inv         <span class="ot">=</span> <span class="fu">solve</span>(S.bar)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># posterior draws </span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior   <span class="ot">=</span> <span class="fu">rWishart</span>(<span class="dv">1</span>, <span class="at">df=</span>nu.bar, <span class="at">Sigma=</span>S.bar.inv)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior   <span class="ot">=</span> <span class="fu">apply</span>(Sigma.posterior,<span class="dv">3</span>,solve)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior   <span class="ot">=</span> <span class="fu">array</span>(Sigma.posterior,<span class="fu">c</span>(N,N,S))</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    A.posterior       <span class="ot">=</span> <span class="fu">array</span>(<span class="fu">rnorm</span>(<span class="fu">prod</span>(<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),S))),<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),S))</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    L                 <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">chol</span>(V.bar))</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>S){</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>      A.posterior[,,s]<span class="ot">=</span> A.bar <span class="sc">+</span> L<span class="sc">%*%</span>A.posterior[,,s]<span class="sc">%*%</span><span class="fu">chol</span>(Sigma.posterior[,,s])</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    output            <span class="ot">=</span> <span class="fu">list</span>(<span class="at">A.posterior=</span>A.posterior, <span class="at">Sigma.posterior=</span>Sigma.posterior)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(output)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li>The posterior mean of the <span class="math inline">\(A\)</span> is:</li>
@@ -562,18 +723,18 @@ X = \begin{bmatrix}
 <tbody>
 <tr class="odd">
 <td style="text-align: center;">Constant term</td>
-<td style="text-align: center;">0.0619</td>
-<td style="text-align: center;">0.0812</td>
+<td style="text-align: center;">0.0610</td>
+<td style="text-align: center;">0.0807</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">Y1 lag</td>
-<td style="text-align: center;">0.9885</td>
-<td style="text-align: center;">0.0051</td>
+<td style="text-align: center;">0.9893</td>
+<td style="text-align: center;">0.0048</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">Y2 lag</td>
-<td style="text-align: center;">0.0026</td>
-<td style="text-align: center;">0.9955</td>
+<td style="text-align: center;">0.0024</td>
+<td style="text-align: center;">0.9957</td>
 </tr>
 </tbody>
 </table>
@@ -582,7 +743,6 @@ X = \begin{bmatrix}
 
 </div>
 </div>
-<p>Table 2 Basic Model Proofing Simulation for <span class="math inline">\(A\)</span></p>
 <ul>
 <li>The posterior mean of the <span class="math inline">\(\Sigma\)</span> is:</li>
 </ul>
@@ -600,13 +760,13 @@ X = \begin{bmatrix}
 <tbody>
 <tr class="odd">
 <td style="text-align: center;">Y1 lag</td>
-<td style="text-align: center;">1.0049</td>
-<td style="text-align: center;">0.1173</td>
+<td style="text-align: center;">1.0052</td>
+<td style="text-align: center;">0.1171</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">Y2 lag</td>
-<td style="text-align: center;">0.1173</td>
-<td style="text-align: center;">0.9770</td>
+<td style="text-align: center;">0.1171</td>
+<td style="text-align: center;">0.9771</td>
 </tr>
 </tbody>
 </table>
@@ -615,19 +775,22 @@ X = \begin{bmatrix}
 
 </div>
 </div>
-<p>Table 3 Basic Model Proofing Simulation for <span class="math inline">\(\Sigma\)</span></p>
-<p>Extension Model:</p>
 </section>
 </section>
 <section id="the-extended-model-laplace-distribution-of-error-term" class="level2">
 <h2 class="anchored" data-anchor-id="the-extended-model-laplace-distribution-of-error-term">The extended model: Laplace distribution of error term</h2>
 <p>The <strong>Basic Model</strong> is the standard VARs model that assume the error terms <span class="math inline">\(U\)</span> are independent and identically distributed(<span class="math inline">\(iid\)</span>) as <span class="math inline">\(U \ \sim N_{TN}(0 \ , \ \Sigma)\)</span>. In other formation, it could be presented as <span class="math inline">\(vec(U) \ \sim N(0 \ , \ \Sigma \ \otimes \  I_{T})\)</span>. Where <span class="math inline">\(\Sigma\)</span> is a <span class="math inline">\(N\times N\)</span> cross sectional covariance matrix, <span class="math inline">\(I_{t}\)</span> is a <span class="math inline">\(T\times T\)</span> identity matrix present serial covariance, <span class="math inline">\(\otimes\)</span> is the Kronecker product and the operator <span class="math inline">\(vec(.)\)</span> is vectorization that inverts the matrix into the column vector by stacking the columns.</p>
-<p>Therefore, we could consider a more general covariance structure:</p>
+<p>Therefore, we could consider a more general serial covariance structure:</p>
 <span class="math display">\[\begin{align}
 
 vec(U) \ \sim N(0 \ , \ \Sigma \ \otimes \  \Omega)\\
-where \quad \quad \Omega \ &amp;= \ \ diag\left[ \lambda_{1}, \lambda_{2},...,\lambda_{t}  \right]\\
-and \quad \quad \lambda \ &amp;\sim \ Exp \ (\alpha)\\
+
+\end{align}\]</span>
+<p>Where:</p>
+<span class="math display">\[\begin{align}
+
+\Omega \ &amp;= \ \ diag\left[ \lambda_{1}, \lambda_{2},...,\lambda_{t}  \right]\\
+\lambda \ &amp;\sim \ Exp \ (\alpha)\\
 
 \end{align}\]</span>
 <p>And then, the distribution of error terms in extension model will be <strong>Laplace distribution</strong> instead of the normally distributed errors assumption. The Laplace distribution is well-suited for describing financial anomalies due to its sharp peaks and heavy tails. Utilizing this distribution enhances the model’s robustness against anomalies, making it particularly appropriate for financial time series analysis. Given that most of our variables are financial time series data, applying a Laplace distribution to the error term is more appropriate.</p>
@@ -635,67 +798,94 @@ and \quad \quad \lambda \ &amp;\sim \ Exp \ (\alpha)\\
 <span class="math display">\[\begin{align}
 
 U &amp;\sim \ Laplace(0 \ , \  \alpha\Sigma) \\
-U|\lambda &amp;\sim \mathcal{MN}(0 \ , \  \Sigma \ , \ \Omega) \\
-\Omega \ &amp;= \ \ diag\left[ \lambda_{1}, \lambda_{2},...,\lambda_{t}  \right]\\
-\lambda &amp;\sim \ Exp(\alpha)
+U_t|\lambda_t &amp;\sim \mathcal{MN}(0 \ , \  \Sigma \ , \ \Omega) \\
+\Omega \ &amp;= \ \ diag\left[ \lambda_{1}, \lambda_{2},...,\lambda_{t}  \right] \ = \ \lambda_t \times \textbf{I}_T\\
+\lambda_t &amp;\sim \ Exp(\alpha)
 
 \end{align}\]</span>
-<p>The kernel of the likelihood function:</p>
-<span class="math display">\[\begin{align}
-L(A,\Sigma,\Omega|Y,X) &amp;\propto \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\}
-\end{align}\]</span>
-<p>For posteriors distribution, <span class="math inline">\(A\)</span>, <span class="math inline">\(\Sigma\)</span> and <span class="math inline">\(\lambda_t\)</span> can then be derived using the likelihood and the prior distributions as follows:</p>
+<p>Therefore, the prior distribution of lambda which is following exponential distribution defined as:</p>
 <span class="math display">\[\begin{align}
 
-p(A,\Sigma|Y,X) &amp;\propto L(A,\Sigma,\Omega|Y,X) \ p(A,\Sigma) \\
-\\
-&amp;= \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\} \\
-&amp;\times \det(\Sigma)^{-\frac{N+k+\underline{\nu}+1}{2}} exp\{-\frac{1}{2}tr[\Sigma^{-1}(A-\underline{A})'(\underline{V})^{-1}(A-\underline{A})]\} \\
-&amp;\times exp\{-\frac{1}{2}tr[\Sigma^{-1}\underline{S}]\} \\
+P(\lambda_t|\alpha) &amp;= \frac{1}{\alpha}exp\{ -\frac{1}{\alpha}\lambda_t \}\\
 
-&amp;= \det(\Sigma)^{-\frac{T+N+K+\underline{\nu}+1}{2}} \det(\Omega)^{-\frac{N}{2}} \\
-&amp;\times exp\{-\frac{1}{2} tr[\Sigma^{-1}(Y'\Omega^{-1}Y - 2A'X'\Omega^{-1}Y + A'X'\Omega^{-1}XA \\
-&amp;+ A'\underline{V}^{-1}A -2A'\underline{V}^{-1}\underline{A} + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S})]\}
-
-\end{align}\]</span>
-<p>The kernel can be rearranged in the form of the <strong>Matrix-variate normal-inverse Wishart distribution</strong>.</p>
-<span class="math display">\[\begin{align}
-
-p(A,\Sigma|Y,X) &amp;\sim MNIW(\bar{A},\bar{V},\bar{S},\bar{\nu}) \\
-&amp;\\
-\bar{V} &amp;= (X'\Omega^{-1}X + \underline{V}^{-1})^{-1} \\
-\bar{A} &amp;= \bar{V}(X'\Omega^{-1}Y + \underline{V}^{-1}\underline{A}) \\
-\bar{\nu} &amp;= T + \underline{\nu}\\
-\bar{S} &amp;= Y'\Omega^{-1}Y + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S} - \bar{A}'\bar{V}^{-1}\bar{A}
-
-\end{align}\]</span>
-<p>The kernel of the fully conditional posterior distribution of <span class="math inline">\(\lambda_t\)</span> is then derived as follows:</p>
-<span class="math display">\[\begin{align}
-p(\lambda_t|Y,X,A,\Sigma) &amp;\propto L(A,\Sigma,\lambda_t|Y,X)p(\lambda_t) \\
-\\
-&amp;\propto \det(\lambda_t I_T)^{-\frac{N}{2}} exp\{-\frac{1}{2} tr[\Sigma^{-1} (Y-XA)' (\lambda_t I_T)^{-1} (Y-XA) ]\} \\
-&amp;\times \frac{1}{\alpha}exp\{ -\frac{1}{\alpha}\lambda_t \}\\
-
-&amp;= \lambda_t^{-\frac{TN}{2}} exp\{-\frac{1}{2}\frac{1}{\lambda_t} tr[\Sigma^{-1}(Y-XA)'(Y-XA)]\}\\
-&amp;\times exp\{-\frac{1}{\alpha}\lambda_t \}\\
-
-&amp;= \lambda_t^{-\frac{TN}{2}+1-1} exp\{-\frac{1}{2}[\frac{[tr[\Sigma^{-1}(Y-XA)'(Y-XA)]}{\lambda_t} +\frac{2}{\alpha}\lambda_t]\}
-\end{align}\]</span>
-<p>The above expression can be rearranged in the form of a Generalized inverse Gaussian distribution kernel as follows:</p>
-<span class="math display">\[\begin{align}
-\lambda_t|Y,A,\Sigma &amp;\sim GIG(a,b,p) \\
-\\
-a &amp;=\frac{2}{\alpha} \\
-b &amp;= tr[\Sigma^{-1}(Y-XA)'(Y-XA)] \\
-p &amp;= -\frac{TN}{2}+1
-\end{align}\]</span>
+\end{align} \]</span>
+<blockquote class="blockquote">
+<blockquote class="blockquote">
+<p>Following graphs describe the difference between alpha values, we could see that as the mean, alpha, increase. The rates of exponetial function decrease.</p>
+</blockquote>
+</blockquote>
 <div class="cell">
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<section id="proof-of-extended-model" class="level3">
-<h3 class="anchored" data-anchor-id="proof-of-extended-model">Proof of extended model</h3>
+<section id="bayesian-estimations-1" class="level3">
+<h3 class="anchored" data-anchor-id="bayesian-estimations-1">Bayesian Estimations</h3>
+<p>Then, the kernel of the likelihood function could be rewritten as to:</p>
+<span class="math display">\[\begin{align}
+
+L(A,\Sigma,\Omega |Y,X) &amp;\propto \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2}\textbf{tr}[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\}\\
+&amp;= \det(\Sigma)^{-\frac{T}{2}} \det(\left[ \lambda_{1}, \lambda_{2},...,\lambda_{t} \right])^{-\frac{N}{2}} exp\{-\frac{1}{2} \textbf{tr}[\Sigma^{-1} (Y-XA)' (\left[ \lambda_{1}, \lambda_{2},...,\lambda_{t} \right])^{-1} (Y-XA) ]\}\\
+&amp;=\det(\Sigma)^{-\frac{T}{2}}(\prod^{T}_{t = 1} \lambda_t)^{-\frac{N}{2}} exp\left\{{-\frac{1}{2}}\sum^{T}_{t =1}{\frac{1}{\lambda_t}} \textbf{tr}[(Y_t-X_tA)' \Sigma^{-1}(Y_t-X_tA)]\right\}\\
+&amp;=\det(\Sigma)^{-\frac{T}{2}}\prod^{T}_{t = 1} \lambda_t^{-\frac{N}{2}} exp\left\{{-\frac{1}{2}}\sum^{T}_{t =1}{\frac{1}{\lambda_t}} \textbf{tr}[\epsilon_t' \Sigma^{-1}\epsilon_t)]\right\}\\
+&amp;=\det(\Sigma)^{-\frac{T}{2}}\prod^{T}_{t = 1}(\lambda_t^{-\frac{N}{2}} exp\left\{{-\frac{1}{2}}{\frac{1}{\lambda_t}} \textbf{tr}[\epsilon_t' \Sigma^{-1}\epsilon_t])\right\})
+
+\end{align}\]</span>
+<p>Therefore at each time t, we have the likelihood function be a proportion of lambda:</p>
+<span class="math display">\[\begin{align}
+
+\propto\det(\Sigma)^{-\frac{T}{2}}\lambda_t^{-\frac{N}{2}} exp\left\{{-\frac{1}{2}}{\frac{1}{\lambda_t}} \textbf{tr}[\epsilon_t' \Sigma^{-1}\epsilon_t])\right\}
+
+\end{align}\]</span>
+<p>For joint posteriors distribution, <span class="math inline">\(A\)</span>, <span class="math inline">\(\Sigma\)</span> can then be derived using the likelihood and the prior distributions as follows:</p>
+<span class="math display">\[\begin{align}
+
+P(A,\Sigma|Y,X) &amp;\propto L(A,\Sigma,\Omega|Y,X) \ P(A,\Sigma) \\
+\\
+&amp;= \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2} \textbf{tr}[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\} \\
+&amp;\times \det(\Sigma)^{-\frac{N+k+\underline{\nu}+1}{2}} exp\{-\frac{1}{2}\textbf{tr}[\Sigma^{-1}(A-\underline{A})'(\underline{V})^{-1}(A-\underline{A})]\} \\
+&amp;\times exp\{-\frac{1}{2}\textbf{tr}[\Sigma^{-1}\underline{S}]\} \\
+
+&amp;= \det(\Sigma)^{-\frac{T+N+K+\underline{\nu}+1}{2}} \det(\Omega)^{-\frac{N}{2}} \\
+&amp;\times exp\{-\frac{1}{2} \textbf{tr}[\Sigma^{-1}(Y'\Omega^{-1}Y - 2A'X'\Omega^{-1}Y + A'X'\Omega^{-1}XA \\
+&amp;+ A'\underline{V}^{-1}A -2A'\underline{V}^{-1}\underline{A} + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S})]\}
+
+\end{align}\]</span>
+<p>The kernel also could be rearranged in the form of the <strong>Normal-inverse Wishart distribution</strong> and given by:</p>
+<span class="math display">\[\begin{align}
+
+P(A,\Sigma|Y,X,\Omega) &amp;\sim \mathcal{NIW}(\bar{A},\bar{V},\bar{S},\bar{\nu}) \\
+&amp;\\
+\bar{V} &amp;= (X'\Omega^{-1}X + \underline{V}^{-1})^{-1} \\
+\bar{A} &amp;= \bar{V}(X'\Omega^{-1}Y + \underline{V}^{-1}\underline{A}) \\
+\bar{\nu} &amp;= T + \underline{\nu}\\
+\bar{S} &amp;= \underline{S} + Y'\Omega^{-1}Y + \underline{A}'\underline{V}^{-1}\underline{A} - \bar{A}'\bar{V}^{-1}\bar{A}
+
+\end{align}\]</span>
+<p>The kernel of the fully conditional posterior distribution of <span class="math inline">\(\lambda_t\)</span> is then derived as follows:</p>
+<span class="math display">\[\begin{align}
+
+P(\lambda_t|Y,X,A,\Sigma) &amp;\propto L(A,\Sigma,\lambda_t|Y,X)P(\lambda_t) \\
+\\
+&amp;\propto \lambda_t^{-\frac{N}{2}}exp({-\frac{1}{2}}{\frac{1}{\lambda_t}}\textbf{tr}[\epsilon_t' \Sigma^{-1}\epsilon_t]) \\
+&amp;\times \frac{1}{\alpha}exp\{ -\frac{1}{\alpha}\lambda_t \}\\
+&amp;\propto \lambda_t^{-\frac{N}{2}+1-1} exp\{-\frac{1}{2}[\frac{\textbf{tr}[
+\epsilon_t' \Sigma^{-1}\epsilon_t]} {\lambda_t} +\frac{2}{\alpha}\lambda_t]\}
+
+\end{align}\]</span>
+<p>The above expression can be rearranged in the form of a Generalized inverse Gaussian distribution kernel as follows:</p>
+<span class="math display">\[\begin{align}
+
+\lambda_t|Y,A,\Sigma &amp;\sim \mathcal{GIG}(a,b,p) \\
+\\
+a &amp;=\frac{2}{\alpha} \\
+b &amp;= \textbf{tr}[\epsilon_t' \Sigma^{-1}\epsilon_t] \\
+p &amp;= -\frac{N}{2}+1
+
+\end{align}\]</span>
+</section>
+<section id="gibbs-sampler-function-proving" class="level3">
+<h3 class="anchored" data-anchor-id="gibbs-sampler-function-proving">Gibbs Sampler: Function proving</h3>
 <p>The Gibbs sampler method will be applied to generate random draws from the full conditional posterior distribution:</p>
 <ol type="1">
 <li>Draw <span class="math inline">\(\Sigma^{(s)}\)</span> from the <span class="math inline">\(IW(\bar{S},\bar{\nu})\)</span> distribution.</li>
@@ -705,125 +895,358 @@ p &amp;= -\frac{TN}{2}+1
 <p>Repeat steps 1, step 2 and 3 for <span class="math inline">\(S_1\)</span>+<span class="math inline">\(S_2\)</span>times.</p>
 <p>Discard the first draws that allowed the algorithm to converge to the stationary posterior distribution.</p>
 <p>Output is <span class="math inline">\(\left\{ {A^{(s)}, \Sigma^{(s)}}, \lambda_t^{(s)}\right\}^{S_1+S_2}_{s=S_1+1}\)</span>.</p>
-<p>Function below is <code>posterior.draws.exten</code>:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Posterior sample draw function for extended model(posterior.draws.exten)</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>posterior.draws.exten <span class="ot">=</span> <span class="cf">function</span> (total_S, Y, X){</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (s <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>total_S){</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># NIW posterior parameters</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    V.bar.inv              <span class="ot">=</span> <span class="fu">t</span>(X)<span class="sc">%*%</span><span class="fu">solve</span>(lambda.posterior[s]<span class="sc">*</span>I.matrix)<span class="sc">%*%</span>X <span class="sc">+</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior)) </span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    V.bar                  <span class="ot">=</span> <span class="fu">solve</span>(V.bar.inv)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    A.bar                  <span class="ot">=</span> V.bar<span class="sc">%*%</span>(<span class="fu">t</span>(X)<span class="sc">%*%</span><span class="fu">solve</span>(lambda.posterior[s]<span class="sc">*</span>I.matrix)<span class="sc">%*%</span>Y <span class="sc">+</span> <span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))<span class="sc">%*%</span>A.prior)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    nu.bar                 <span class="ot">=</span> <span class="fu">nrow</span>(Y) <span class="sc">+</span> nu.prior</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    S.bar                  <span class="ot">=</span> S.prior <span class="sc">+</span> <span class="fu">t</span>(Y)<span class="sc">%*%</span><span class="fu">solve</span>(lambda.posterior[s]<span class="sc">*</span>I.matrix)<span class="sc">%*%</span>Y <span class="sc">+</span> <span class="fu">t</span>(A.prior)<span class="sc">%*%</span><span class="fu">diag</span>(<span class="dv">1</span><span class="sc">/</span><span class="fu">diag</span>(V.prior))<span class="sc">%*%</span>A.prior <span class="sc">-</span> <span class="fu">t</span>(A.bar)<span class="sc">%*%</span>V.bar.inv<span class="sc">%*%</span>A.bar</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    S.bar.inv              <span class="ot">=</span> <span class="fu">solve</span>(S.bar)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># posterior draws for A and Sigma</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior.IW     <span class="ot">=</span> <span class="fu">rWishart</span>(<span class="dv">1</span>, <span class="at">df=</span>nu.bar, <span class="at">Sigma=</span>S.bar.inv)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior.draw   <span class="ot">=</span> <span class="fu">apply</span>(Sigma.posterior.IW,<span class="dv">3</span>,solve)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    Sigma.posterior[,,s]   <span class="ot">=</span> Sigma.posterior.draw</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    A.posterior[,,s]       <span class="ot">=</span> <span class="fu">array</span>(<span class="fu">rnorm</span>(<span class="fu">prod</span>(<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),<span class="dv">1</span>))),<span class="fu">c</span>(<span class="fu">dim</span>(A.bar),<span class="dv">1</span>))</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    L                      <span class="ot">=</span> <span class="fu">t</span>(<span class="fu">chol</span>(V.bar))</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    A.posterior[,,s]       <span class="ot">=</span> A.bar <span class="sc">+</span> L<span class="sc">%*%</span>A.posterior[,,s]<span class="sc">%*%</span><span class="fu">chol</span>(Sigma.posterior[,,s])</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update parameters for lambda posterior</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    p                      <span class="ot">=</span> <span class="dv">1</span><span class="fl">-0.5</span><span class="sc">*</span><span class="fu">nrow</span>(Y)<span class="sc">*</span><span class="fu">ncol</span>(Y)             <span class="co"># N=10</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    diff_A                 <span class="ot">=</span> Y <span class="sc">-</span> X<span class="sc">%*%</span>A.posterior[,,s]</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    product                <span class="ot">=</span> <span class="fu">t</span>(diff_A) <span class="sc">%*%</span> diff_A</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    b                      <span class="ot">=</span> <span class="fu">sum</span>(<span class="fu">diag</span>(<span class="fu">solve</span>(Sigma.posterior[,,s]) <span class="sc">%*%</span> product))</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    a                      <span class="ot">=</span> <span class="dv">2</span> <span class="sc">/</span> lambda.priors<span class="sc">$</span>alhpa</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Draw next period value for lambda from GIG distribution</span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (s<span class="sc">!=</span>total_S){</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>       lambda.posterior[s<span class="sc">+</span><span class="dv">1</span>] <span class="ot">=</span> GIGrvg<span class="sc">::</span><span class="fu">rgig</span>(<span class="at">n=</span><span class="dv">1</span>, <span class="at">lambda =</span> p, <span class="at">chi =</span> b, <span class="at">psi =</span> a)</span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    output                 <span class="ot">=</span> <span class="fu">list</span>(<span class="at">A.posterior.exten =</span> A.posterior[,,(S1<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>S2], </span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">Sigma.posterior.exten =</span> Sigma.posterior[,,(S1<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>S2], </span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">lambda.posterior.exten =</span> lambda.posterior[(S1<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>S2,])</span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(output)</span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<section id="function-proofing-1" class="level4">
-<h4 class="anchored" data-anchor-id="function-proofing-1">Function Proofing</h4>
-<p>After fitting a model that includes a constant term and one lag with artificial data, just like the basic model, the extend model also shows that the posterior mean of both the autoregressive and covariance matrices closely identity matrix, and the posterior mean of the constant term is almost a vector of zeros.</p>
-<ul>
-<li>The posterior mean of the <span class="math inline">\(A\)</span> is:</li>
-</ul>
+<p>Function below is <code>posterior.draws.extended</code>:</p>
 <div class="cell">
 <div class="cell-output-display">
-<div class="table-responsive">
-<table class="table table-striped table-hover table-bordered table-sm small" data-quarto-postprocess="true">
+<table class="table table-sm table-striped small">
+<caption>Posterior mean of the autoregressive coefficient matrix A</caption>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">A</th>
-<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">Simulation Parameter Y1</th>
-<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">Simulation Parameter Y2</th>
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Simulation_Y1</th>
+<th style="text-align: right;">Simulation_Y2</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: center;">Constant term</td>
-<td style="text-align: center;">0.0586</td>
-<td style="text-align: center;">0.0824</td>
+<td style="text-align: left;">Constant</td>
+<td style="text-align: right;">0.0536249</td>
+<td style="text-align: right;">0.1065899</td>
 </tr>
 <tr class="even">
-<td style="text-align: center;">Y1 lag</td>
-<td style="text-align: center;">0.9890</td>
-<td style="text-align: center;">0.0049</td>
+<td style="text-align: left;">Y1-Lag</td>
+<td style="text-align: right;">0.9909827</td>
+<td style="text-align: right;">0.0086799</td>
 </tr>
 <tr class="odd">
-<td style="text-align: center;">Y2 lag</td>
-<td style="text-align: center;">0.0028</td>
-<td style="text-align: center;">0.9956</td>
+<td style="text-align: left;">Y2-Lag</td>
+<td style="text-align: right;">0.0025720</td>
+<td style="text-align: right;">0.9939169</td>
 </tr>
 </tbody>
 </table>
 </div>
-
-
 </div>
-</div>
-<p>Table 4 Extend Model Proofing Simulation for <span class="math inline">\(A\)</span></p>
-<ul>
-<li>The posterior mean of the <span class="math inline">\(\Sigma\)</span> is:</li>
-</ul>
 <div class="cell">
 <div class="cell-output-display">
-<div class="table-responsive">
-<table class="table table-striped table-hover table-bordered table-sm small" data-quarto-postprocess="true">
+<table class="table table-sm table-striped small">
+<caption>Posterior mean of the covariance matrix Sigma</caption>
 <thead>
 <tr class="header">
-<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">Sigma</th>
-<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">Simulation Parameter Y1</th>
-<th data-quarto-table-cell-role="th" style="text-align: center; position: sticky; top: 0; background-color: #FFFFFF;">Simulation Parameter Y2</th>
+<th style="text-align: left;"></th>
+<th style="text-align: right;">Simulation_Y1</th>
+<th style="text-align: right;">Simulation_Y2</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: center;">Y1 lag</td>
-<td style="text-align: center;">0.2560</td>
-<td style="text-align: center;">0.0213</td>
+<td style="text-align: left;">Y1-Lag</td>
+<td style="text-align: right;">0.6165036</td>
+<td style="text-align: right;">0.0538747</td>
 </tr>
 <tr class="even">
-<td style="text-align: center;">Y2 lag</td>
-<td style="text-align: center;">0.0213</td>
-<td style="text-align: center;">0.2670</td>
+<td style="text-align: left;">Y2-Lag</td>
+<td style="text-align: right;">0.0538747</td>
+<td style="text-align: right;">0.6587449</td>
 </tr>
 </tbody>
 </table>
 </div>
-
-
 </div>
-</div>
-<p>Table 5 Extend Model Proofing Simulation for <span class="math inline">\(\Sigma\)</span></p>
 </section>
 </section>
+<section id="stochastic-volatility-heteroskedasticity" class="level2">
+<h2 class="anchored" data-anchor-id="stochastic-volatility-heteroskedasticity">Stochastic Volatility Heteroskedasticity</h2>
+<p>Therefore, for the same general serial covariance structure:</p>
+<span class="math display">\[\begin{align}
+
+vec(U) \ \sim N(0 \ , \ \Sigma \ \otimes \  \Omega)\\
+
+\end{align}\]</span>
+<p>However, this time we have <span class="math inline">\(h_t\)</span> follows a simple stochastic volatility process:</p>
+<span class="math display">\[\begin{align}
+
+\Omega \ &amp;= diag\left[ \sigma^2_1,..., \sigma^2_T\right]\\
+&amp;=\ diag\left[ exp\left\{ h_1 \right\},exp\left\{ h_2 \right\},...,exp\left\{ h_T \right\}  \right]\\
+h_t &amp;= h_{t-1}+v_t\\
+
+\end{align}\]</span>
+<p>Then, the kernel of the likelihood function could be rewritten as to:</p>
+<span class="math display">\[\begin{align}
+
+L(A,\Sigma,\Omega |Y,X) &amp;\propto \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2}\textbf{tr}[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\}\\
+&amp;=\det(\Sigma)^{-\frac{T}{2}}\left( \prod^{T}_{t = 1} exp\left\{ h_t \right\} \right)^{-\frac{N}{2}} exp\left\{{-\frac{1}{2}}\sum^{T}_{t =1}exp\left\{ h_t \right\}^{-1} \textbf{tr}[\epsilon_t' \Sigma^{-1}\epsilon_t)]\right\}\\
+&amp;=\det(\Sigma)^{-\frac{T}{2}}exp\left\{{-\frac{N}{2}}\sum^{T}_{t =1}h_t{-\frac{1}{2}}\sum^{T}_{t =1}exp\left\{ h_t \right\}^{-1} \textbf{tr}[\epsilon_t' \Sigma^{-1}\epsilon_t)]\right\}\\
+
+\end{align}\]</span>
+<section id="matrix-notation-for-stochastic-volatility-model" class="level3">
+<h3 class="anchored" data-anchor-id="matrix-notation-for-stochastic-volatility-model">Matrix Notation for Stochastic Volatility model</h3>
+<p>Recall the matrix notation:</p>
+<span class="math display">\[\begin{align}
+
+Y&amp;=XA \  +  \ E\\
+E|X &amp;\sim MN(0,\Sigma,\Omega) \\
+\Omega \ &amp;=\ diag\left[ exp\left\{ h_1 \right\},exp\left\{ h_2 \right\},...,exp\left\{h_T \right\}  \right]\\
+h_t &amp;= h_{t-1}+v_t\\
+
+\end{align}\]</span>
+<p>Given that:</p>
+<span class="math display">\[\begin{align}
+
+\epsilon_t &amp;\sim N(0,1)\\
+v_t&amp;\sim N(0,1)\\
+
+\end{align}\]</span>
+<p>We could rewrite the equation as:</p>
+<span class="math display">\[\begin{align}
+
+y_t &amp;= y_{t-1}A_1 \ \ + ...+y_{t-p}A_p+\ \ exp\left\{ \frac{1}{2} h_t\right\}\epsilon_t\\
+y_t - y_{t-1}A_1 \ \ + ...+y_{t-p}A_p &amp;= exp\left\{ \frac{1}{2} h_t\right\}\epsilon_t\\
+y_{u.t}&amp;=exp\left\{ \frac{1}{2} h_t\right\}\epsilon_t\\
+
+\end{align}\]</span>
+<p>Then, taking the square and the logarithm of both sides of the equation, we could have:</p>
+<span class="math display">\[\begin{align}
+
+y_{u.t}&amp;=exp\left\{ \frac{1}{2} h_t\right\}\epsilon_t\\
+log \ y_{u.t}^2&amp;=h_t + log \ \epsilon_t^2\\
+\tilde{y}_t&amp;=h_t+\tilde{\epsilon}_t
+
+\end{align}\]</span>
+<p>And then:</p>
+<span class="math display">\[\begin{align}
+
+\tilde{\epsilon}_t&amp;\sim \log \chi^2_1
+
+\end{align}\]</span>
+<p>Define the following <span class="math inline">\(T × 1\)</span> matrices:</p>
+<span class="math display">\[\begin{aligned}
+
+\tilde{y}=
+\begin{bmatrix}
+\tilde{y}_1'\\ \tilde{y}_2'
+\\.\\.\\.\\\tilde{y}'_T
+\end{bmatrix}_{T \times 1}
+
+h=
+\begin{bmatrix}
+h_{1} \\ h_{2} \\
+.\\.\\.\\h_{T}
+\end{bmatrix}_{T \times 1}
+
+\tilde{\epsilon}=
+\begin{bmatrix}
+\tilde{\epsilon}_1'\\ \tilde{\epsilon}_2' \\
+.\\.\\.\\\tilde{\epsilon}_T'
+\end{bmatrix}_{T \times 1}
+
+v=
+\begin{bmatrix}
+v_{1} \\ v_{2} \\
+.\\.\\.\\v_{T}
+\end{bmatrix}_{T \times 1}
+
+e_{1.T}=
+\begin{bmatrix}
+1 \\ 0 \\
+.\\.\\.\\0
+\end{bmatrix}_{T \times 1}
+
+\end{aligned}\]</span>
+<p>And a <span class="math inline">\(T × T\)</span> matrix, H:</p>
+<span class="math display">\[\begin{align}
+
+H = \begin{pmatrix}
+1 &amp;  &amp;  &amp;  &amp;  &amp; \\
+-1 &amp; 1 &amp;  &amp;  &amp;  &amp; \\
+0 &amp; -1 &amp; 1 &amp;  &amp;  &amp; \\
+\vdots &amp; \ddots &amp; \ddots &amp; \ddots &amp;  &amp; \\
+0 &amp; \cdots &amp; 0 &amp; -1 &amp; 1 \\
+\end{pmatrix}_{T \times T}
+
+\end{align}\]</span>
+<p>Therefore, we could have the simple matrix notation for Stochastic Volatility model:</p>
+<span class="math display">\[\begin{align}
+
+\tilde{y}=h+\tilde{\varepsilon}\\
+Hh=h_0e_{1.T}+\sigma_vv\\
+\tilde{\epsilon}\sim \log \chi^2_1\\
+v\sim\mathcal{N}_T(0_T,I_T)\\
+
+\end{align}\]</span>
+<p>And approximate the <span class="math inline">\(\log \chi^2_1\)</span> distribution by a mixture of ten normal distributions given by:</p>
+<span class="math display">\[\begin{align}
+
+\log \chi^2_1\approx \sum_{m=1}^{10}Pr(s_t = m)\mathcal{N}(\mu_m,\sigma^2_m)
+
+\end{align}\]</span>
+<p>where:</p>
+<ul>
+<li><p>s_t ∈ {1, . . . , 10} is a discrete-valued random indicator of the mixture component</p></li>
+<li><p><span class="math inline">\(\mu_m,\sigma^2_m\)</span> ,Pr(st = m) are predetermined</p></li>
+</ul>
+<p>Therefore, we could rewrite <span class="math inline">\(\tilde{\epsilon}\)</span> in a <strong>Normal distribution</strong>:</p>
+<span class="math display">\[\begin{align}
+
+\tilde{\epsilon}|s \sim\mathcal{N}(\mu_s,diag(\sigma^2_s))
+
+\end{align}\]</span>
+</section>
+<section id="priors-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="priors-distribution">Priors distribution</h3>
+<p>Hierarchical prior structure is given by:</p>
+<span class="math display">\[\begin{align}
+
+P(h,s,h_0,\sigma^2_v)=P(h|h_0,\sigma^2_v)P(h_0)P(\sigma^2_v)P(s)
+
+\end{align}\]</span>
+<p>Therefore, conditional prior distribution for <span class="math inline">\(h\)</span> is:</p>
+<span class="math display">\[\begin{align}
+
+P(h|h_0,\sigma^2_v)\sim\mathcal{N}(h_0H^{-1}e_{1.T},\sigma^2_v(H'H)^{-1})
+
+\end{align}\]</span>
+<p>with kernel given by:</p>
+<span class="math display">\[\begin{align}
+
+\propto det(\sigma^2_v\textbf{I}_T)^{-\frac{1}{2}}exp\left( -\frac{1}{2}\sigma^{-2}_v\left( Hh-h_0e_{1.T} \right)'\left( Hh-h_0e_{1.T} \right) \right)
+
+\end{align}\]</span>
+<p>Prior distribution for <span class="math inline">\(h_0\)</span> is:</p>
+<span class="math display">\[\begin{align}
+
+P(h_0)\sim\mathcal{N}(0,\underline{\sigma}^2_h)
+
+\end{align}\]</span>
+<p>with kernel given by:</p>
+<span class="math display">\[\begin{align}
+
+\propto \left( \underline{\sigma}^2_h \right)^{-\frac{1}{2}}exp\left( -\frac{1}{2}\underline{\sigma}^{-2}_hh_0h_0 \right)
+
+\end{align}\]</span>
+<p>Prior distribution for <span class="math inline">\(\sigma^2_v\)</span> is:</p>
+<span class="math display">\[\begin{align}
+
+P(\sigma^2_v)\sim\mathcal{IG2}(\underline{s},\underline{\nu})
+
+\end{align}\]</span>
+<p>with kernel given by:</p>
+<span class="math display">\[\begin{align}
+
+\propto \left( \underline{\sigma}^2_v \right)^{-\frac{\underline{\nu}+2}{2}}exp\left( -\frac{1}{2}\frac{\underline{s}}{\underline{\sigma}^{2}_v} \right)
+
+\end{align}\]</span>
+<p>Prior distribution for <span class="math inline">\(s\)</span> is:</p>
+<span class="math display">\[\begin{align}
+
+P(s_t)\sim\mathcal{Multinomial}(\mathrm{\left\{ m \right\}}_{m=1}^{10},\mathrm{\left\{Pr(s_t=m) \right\}}_{m=1}^{10})
+
+\end{align}\]</span>
+</section>
+<section id="bayesian-estimations-2" class="level3">
+<h3 class="anchored" data-anchor-id="bayesian-estimations-2">Bayesian Estimations</h3>
+<p>For joint posteriors distribution, <span class="math inline">\(A\)</span>, <span class="math inline">\(\Sigma\)</span> can then be derived using the likelihood and the prior distributions as follows:</p>
+<span class="math display">\[\begin{align}
+
+P(A,\Sigma|Y,X,\Omega) &amp;\propto L(A,\Sigma,\Omega|Y,X) \ P(A,\Sigma) \\
+\\
+&amp;= \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2} \textbf{tr}[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\} \\
+&amp;\times \det(\Sigma)^{-\frac{N+k+\underline{\nu}+1}{2}} exp\{-\frac{1}{2}\textbf{tr}[\Sigma^{-1}(A-\underline{A})'(\underline{V})^{-1}(A-\underline{A})]\} \\
+&amp;\times exp\{-\frac{1}{2}\textbf{tr}[\Sigma^{-1}\underline{S}]\} \\
+
+&amp;= \det(\Sigma)^{-\frac{T+N+K+\underline{\nu}+1}{2}} \det(\Omega)^{-\frac{N}{2}} \\
+&amp;\times exp\{-\frac{1}{2} \textbf{tr}[\Sigma^{-1}(Y'\Omega^{-1}Y - 2A'X'\Omega^{-1}Y + A'X'\Omega^{-1}XA \\
+&amp;+ A'\underline{V}^{-1}A -2A'\underline{V}^{-1}\underline{A} + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S})]\}
+
+\end{align}\]</span>
+<p>Then, we have same kernel presentation as <strong>Laplace Distribution</strong> and could be rearranged in the form of the <strong>Normal-inverse Wishart distribution</strong> and given by:</p>
+<span class="math display">\[\begin{align}
+
+P(A,\Sigma|Y,X,\Omega) &amp;\sim \mathcal{NIW}(\bar{A},\bar{V},\bar{S},\bar{\nu}) \\
+&amp;\\
+\bar{V} &amp;= (X'\Omega^{-1}X + \underline{V}^{-1})^{-1} \\
+\bar{A} &amp;= \bar{V}(X'\Omega^{-1}Y + \underline{V}^{-1}\underline{A}) \\
+\bar{\nu} &amp;= T + \underline{\nu}\\
+\bar{S} &amp;= \underline{S} + Y'\Omega^{-1}Y + \underline{A}'\underline{V}^{-1}\underline{A} - \bar{A}'\bar{V}^{-1}\bar{A}
+
+\end{align}\]</span>
+<p>The kernel of the fully conditional posterior distribution of <span class="math inline">\(h\)</span> is then derived as follows:</p>
+<span class="math display">\[\begin{align}
+
+P(h|h_0,\sigma^2_v,s,\tilde{y}) &amp;\propto L(h,h_0,\sigma^2_v,s|\tilde{y})P(h) \\
+&amp;\propto exp\left( -\frac{1}{2}\left( h-(\tilde{y}-\mu_s) \right)'diag\left(\sigma^2_s  \right)^{-1}\left( h-(\tilde{y}-\mu_s) \right) \right)\\
+&amp;\times exp\left( -\frac{1}{2}\sigma^{-2}_v\left( Hh-h_0e_{1.T} \right)'\left( Hh-h_0e_{1.T} \right) \right)\\
+
+\end{align}\]</span>
+<p>The above expression can be rearranged in the form of a Normal distribution kernel as follows:</p>
+<span class="math display">\[\begin{align}
+
+P(h|h_0,\sigma^2_v,s,\tilde{y}) &amp;\sim \mathcal{N}(\overline{h},\overline{V}_h)\\
+\overline{V}_h&amp;=\left[ diag\left(\sigma^2_s \right)^{-1}+ \sigma^{-2}_vH'H\right]^{-1}\\
+\overline{h}&amp;=\overline{V}_h\left[ diag\left(\sigma^2_s \right)^{-1}(\tilde{y}-\mu_s)+ \sigma^{-2}_vh_0e_{1.T}\right]\\
+
+\end{align}\]</span>
+<p>The kernel of the fully conditional posterior distribution of <span class="math inline">\(h_0\)</span> is then derived as follows:</p>
+<span class="math display">\[\begin{align}
+
+P(h_0|h,\sigma^2_v,s,\tilde{y}) &amp;\propto L(h_0,\sigma^2_v|h)P(h_0) \\
+&amp;\propto exp\left( -\frac{1}{2}\sigma^{-2}_v\left( Hh-h_0e_{1.T} \right)'\left( Hh-h_0e_{1.T} \right) \right)\\
+&amp;\times exp\left( -\frac{1}{2}\underline{\sigma}^{-2}_hh_0h_0 \right)
+
+\end{align}\]</span>
+<p>The above expression can be rearranged in the form of a Normal distribution kernel as follows:</p>
+<span class="math display">\[\begin{align}
+
+P(h_0|h,\sigma^2_v,s,\tilde{y}) &amp;\sim \mathcal{N}(\overline{h}_0,\overline{\sigma}^2_h)\\
+\overline{\sigma}^2_h&amp;=\left(\underline{\sigma}^{-2}_h+ \sigma^{-2}_v\right)^{-1}\\
+\overline{h}_0&amp;=\overline{\sigma}^2_h\left(\sigma^{-2}_ve_{1.T}'Hh\right)^{-1}\\
+
+\end{align}\]</span>
+<p>The kernel of the fully conditional posterior distribution of <span class="math inline">\(\sigma^2_v\)</span> is then derived as follows:</p>
+<span class="math display">\[\begin{align}
+
+P(\sigma^2_v|h,h_0,s,\tilde{y}) &amp;\propto L(h_0,\sigma^2_v|h)P(\sigma^2_v) \\
+&amp;\propto exp\left( -\frac{1}{2}\sigma^{-2}_v\left( Hh-h_0e_{1.T} \right)'\left( Hh-h_0e_{1.T} \right) \right)\\
+&amp;\times \left( \underline{\sigma}^2_v \right)^{-\frac{\underline{\nu}+2}{2}}exp\left( -\frac{1}{2}\frac{\underline{s}}{\underline{\sigma}^{2}_v} \right)
+
+\end{align}\]</span>
+<p>The above expression can be rearranged in the form of a Inverse-Gamma 2 distribution kernel as follows:</p>
+<span class="math display">\[\begin{align}
+
+P(\sigma^2_v|h,h_0,s,\tilde{y}) &amp;\sim \mathcal{IG2}(\overline{s},\overline{\nu})\\
+\overline{\nu}&amp;=\underline{\nu}+ T\\
+\overline{s}&amp;=\underline{s}+\left( Hh-h_0e_{1.T} \right)'\left( Hh-h_0e_{1.T} \right)\\
+
+\end{align}\]</span>
+<p>The fully conditional posterior distribution of <span class="math inline">\(s\)</span> is a multinomial distribution with the probabilities proportional to:</p>
+<span class="math display">\[\begin{align}
+
+\omega_{m.t} = Pr[s_t=m]p(\tilde{y}|h_t,s_t=m),\text{for} \ m=1,...,10
+
+\end{align}\]</span>
+<p>For each <span class="math inline">\(t\)</span> and <span class="math inline">\(m\)</span> obtain <span class="math inline">\(\omega_{m.t}\)</span> using parallel computations and compute the probabilities of the multinomial full conditional posterior distribution by:</p>
+<span class="math display">\[\begin{align}
+
+Pr[s_t=m|\tilde{y},h_t]=\frac{\omega_{m.t}}{\sum_{i=1}^{10}\omega_{m.t}}
+
+\end{align}\]</span>
+</section>
+<section id="gibbs-sampler" class="level3">
+<h3 class="anchored" data-anchor-id="gibbs-sampler">Gibbs Sampler</h3>
+<p>Considering draws from this posterior involves a Gibbs sampler, which follows the following algorithm:</p>
+<ol type="1">
+<li><p>Initialize <span class="math inline">\(h^{(0)}\)</span>, <span class="math inline">\(s^{(0)}\)</span>, and <span class="math inline">\(\sigma^{2(0)}_v\)</span></p></li>
+<li><p>Draw <span class="math inline">\(h_0^{(s)}\sim\mathcal{N}(\bar{h}_0,\bar{\sigma}^2_h)\)</span></p></li>
+<li><p>Draw <span class="math inline">\(\sigma_v^{2(s)}\sim\mathcal{IG2}(\bar{s},\bar{\nu})\)</span></p></li>
+<li><p>Draw <span class="math inline">\(s_t^{(s)}\sim\mathcal{Multiomial}(\{m\}^{10}_{m=1},\{Pr[s_t=m|\tilde{y},h_t^{(s)}]\}^{10}_{m=1})\)</span> for all <span class="math inline">\(s_t\)</span> in <span class="math inline">\(s\)</span>.</p></li>
+<li><p>Draw <span class="math inline">\(h^{(s)}\sim\mathcal{N}_T(\bar{h},\bar{V}_h)\)</span></p></li>
+<li><p>Draw <span class="math inline">\((A,\Sigma)\sim\mathcal{MNIW}(\bar{A},\bar{V},\bar{S},\bar{\nu})\)</span></p></li>
+</ol>
+<p>Steps 2 to 7 are repeated for <span class="math inline">\(S=S_1+S_2\)</span> draws, where <span class="math inline">\(S_1\)</span> draws are discarded as burn-in and the latter <span class="math inline">\(S_2\)</span> draws are kept as posterior draws.</p>
+</section>
+</section>
+<section id="combinations-of-extension" class="level2">
+<h2 class="anchored" data-anchor-id="combinations-of-extension">Combinations of Extension</h2>
 </section>
 </section>
 <section id="empirical-analysis---model-applying-and-forecasing" class="level1">
@@ -833,46 +1256,26 @@ p &amp;= -\frac{TN}{2}+1
 <p>Figure 6 presents a 3D visualization of the density intervals for the log Gold Future Prices and Log Nasdaq Index points. From past trends we could clearly see that negative correlations between those two. When the market suffered from dot-com and global financial crisis during 2000 to 2012, Gold futures increase sharply as expectation of risks, market returns fluctuations a lot. For next 24 months forecasting based on benchmark model, we could see Log gold future price more sharply increase then Log Nasdaq Index points. The varying heights of the intervals reflect the level of prediction certainty; as we project further into the future, the intervals become wider and more dispersed due to increased uncertainty.</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Figure 6 3D forecasting graph on basic model</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-26-2.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-25-2.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>Figure 7 Basic Model Key Data Plot</p>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <section id="extension-model" class="level3">
 <h3 class="anchored" data-anchor-id="extension-model">Extension Model</h3>
-<p>Figure 8 presents a 3D visualization of the density intervals for the log gold future price and Log Nasdaq Index points calculated by the extension model. The results are generally similar to those of the basic model, with the only difference being that the intervels are much smaller then basic ones.</p>
-<div class="cell">
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<p>Figure 8 3d forecasting graph on extension model</p>
-<div class="cell">
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-33-2.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="cell">
-<div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
 </section>
 </section>
 </section>
