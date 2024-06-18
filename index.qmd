@@ -1,7 +1,12 @@
 ---
 title: "An Evidence-based Forecast: Gold as a Traditional Safe-Haven Investment"
 author: "Yuqiao Yang"
-
+format:
+  html:
+    toc: true
+    toc-location: left
+    number-sections: true
+    
 execute:
   echo: false
   
@@ -43,7 +48,9 @@ To enhance the accuracy of gold price predictions, a total selection of 12 varia
         -   $Tbill(5Year)_{t}$ : Considering as mid-term risk free assets return.
         -   $Tbill(10Year)_{t}$ : Considering as long-term risk free assets return.
 
--   Market returns as opposed to safe-haven investments： - $NasdaqIndex_{t}$ ：Index that include all stocks available in NASDAQ to present the market returns.
+-   Market returns as opposed to safe-haven investments：
+
+    -   $NasdaqIndex_{t}$ ：Index that include all stocks available in NASDAQ to present the market returns.
 
 -   Macro environment：
 
@@ -86,7 +93,32 @@ library(plot3D)
 library(HDInterval)   # hdi plot
 library(grDevices)
 library(gridExtra)
+library(mgcv)
 set.seed(123)#set random seed for test
+```
+
+```{r}
+
+blue1 = "deepskyblue"            # #0000FF
+blue2 = "lightblue"       # #ADD8E6
+blue3 = "royalblue"       # #4169E1
+blue4 = "blue"     # #00BFFF
+blue5 = "dodgerblue"      # #1E90FF
+blue6 = "steelblue"       # #4682B4
+
+blue1.rgb   = col2rgb(blue1)
+blue1.shade1= rgb(blue1.rgb[1],blue1.rgb[2],blue1.rgb[3], alpha=120, maxColorValue=255)
+
+
+green1  = "#05386B"
+green2  = "#379683"
+green3  = "#5CDB95"
+green4  = "#8EE4AF"
+green5  = "#EDF5E1"
+green6  = "darkgreen"
+
+green3.rgb   = col2rgb(green3)
+green3.shade1= rgb(green3.rgb[1],green3.rgb[2],green3.rgb[3], alpha=120, maxColorValue=255)
 ```
 
 ```{r}
@@ -242,6 +274,8 @@ After download all variables as designed, merge all data sets into a new frame a
 
 # Plots of all variables
 
+First plot all 12 variables we have:
+
 ```{r}
 data1 <- subset(all_data)
 
@@ -353,7 +387,7 @@ legend("bottom", legend=colnames(selected_data), col=colors1, lty=1, lwd=2, cex=
 
 # Modeling and Hypothesis
 
-This research project based on **Bayesian VARs(p) model** to forecast the Gold price in next two years. For time $t$ = {1,2,3,...,$T-1$,$T$} :
+This research project based on **Bayesian VARs(p) model** [@wozniakBsvarsBayesianEstimation2022]to forecast the Gold price in next two years. For time $t$ = {1,2,3,...,$T-1$,$T$} :
 
 ```{=tex}
 \begin{aligned}
@@ -504,7 +538,7 @@ Given that the trace:
 
 ## Prior Distribution
 
-For the given model, we assume that unknown parameters have following distributions:
+For the given model, we assume that unknown parameters have following distributions[@stock2001]:
 
 ```{=tex}
 \begin{aligned}
@@ -679,7 +713,7 @@ P(A,\Sigma|Y,X) &\propto L(A,\Sigma | Y,X) \ P(A,\Sigma)\\
 
 \end{aligned}
 ```
-Then, the kernel could be represent as the normal-inverse Wishart distribution:
+Then, the kernel could be represent as the normal-inverse Wishart distribution[@wozniakBsvarsBayesianEstimation2022]:
 
 ```{=tex}
 \begin{aligned}
@@ -772,19 +806,13 @@ I.matrix            = diag(1,nrow(Y),nrow(Y))
 ```{r}
 df <- data.frame(Time = 1:nrow(Y), e1 = Y[,1], e2 = Y[,2])
 
-p1 <- ggplot(df, aes(x = Time, y = e1)) + 
-  geom_line(color = "blue") + 
-  ggtitle("Time Series e1") + 
+plot_b <- ggplot(df, aes(x = Time)) + 
+  geom_line(aes(y = e1, color = "e1")) + 
+  geom_line(aes(y = e2, color = "e2")) + 
+  ggtitle("Time Series e1 and e2") + 
   xlab("Time") + 
-  ylab("e1")
-
-p2 <- ggplot(df, aes(x = Time, y = e2)) + 
-  geom_line(color = "red") + 
-  ggtitle("Time Series e2") + 
-  xlab("Time") + 
-  ylab("e2")
-
-grid.arrange(p1, p2, ncol = 1)
+  ylab("Value") + 
+  scale_color_manual(name = "Series", values = c("e1" = "blue", "e2" = "red"))
 ```
 
 Function below is `posterior.draws`:
@@ -925,8 +953,7 @@ P(\lambda_t|\alpha) &= \frac{1}{\alpha}exp\{ -\frac{1}{\alpha}\lambda_t \}\\
 
 \end{align} 
 ```
-
->>Following graphs describe the difference between alpha values, we could see that as the mean, alpha, increase. The rates of exponetial function decrease.
+> > Following graphs describe the difference between alpha values, we could see that as the mean, alpha, increase. The rates of exponetial function decrease.
 
 ```{r}
 
@@ -1081,9 +1108,11 @@ lambda.posterior  = matrix(NA, S1+S2, 1)
 ```
 
 ```{r}
+#| echo: True
 posterior.draws.extended <- function(total_S,Y, X){
   S=total_S
   T <- nrow(Y)
+  N = ncol(Y) 
   K = 1 + (p*N)
   alpha <- 2
   lambda.0 <- rexp(T, rate = 1/alpha)
@@ -1120,7 +1149,7 @@ posterior.draws.extended <- function(total_S,Y, X){
     
     u.t = Y-X%*%A.posterior.draws[,,s]
     #    ---- loop lambda posterior ----   #
-    c                      = -N/2 + 1          # N=13
+    c                      = -N/2 + 1          # N=12
     a                      = 2 / lambda.priors$alpha
     for (x in 1:T){
       b                  = sum(diag(t((u.t)[x,])%*%Sigma.inv.draw%*%(u.t)[x,]))
@@ -1157,9 +1186,19 @@ rownames(Sigma_df) <- c("Y1-Lag", "Y2-Lag")
 knitr::kable(Sigma_df, caption = "Posterior mean of the covariance matrix Sigma")
 ```
 
+```{r}
+
+lambda_mean <- mean(posterior.extended$lambda.posterior.exten)
+
+lambda_df <- data.frame(Mean = lambda_mean)
+rownames(lambda_df) <- "Lambda"
+
+kable(lambda_df, caption = "Posterior Mean of Lambda")
+```
+
 ## Stochastic Volatility Heteroskedasticity
 
-Therefore, for the same general serial covariance structure:
+However, in the real world, the shocks are often passing to next few periods. Therefore, for the same general serial covariance structure:
 
 ```{=tex}
 \begin{align}
@@ -1168,7 +1207,7 @@ vec(U) \ \sim N(0 \ , \ \Sigma \ \otimes \  \Omega)\\
 
 \end{align}
 ```
-However, this time we have $h_t$ follows a simple stochastic volatility process:
+This time we have $h_t$ follows a simple stochastic volatility process:
 
 ```{=tex}
 \begin{align}
@@ -1200,7 +1239,7 @@ Recall the matrix notation:
 Y&=XA \  +  \ E\\
 E|X &\sim MN(0,\Sigma,\Omega) \\
 \Omega \ &=\ diag\left[ exp\left\{ h_1 \right\},exp\left\{ h_2 \right\},...,exp\left\{h_T \right\}  \right]\\
-h_t &= h_{t-1}+v_t\\
+h_t &= h_{t-1}+\sigma_{v}v_t\\
 
 \end{align}
 ```
@@ -1325,6 +1364,7 @@ where:
 -   $\mu_m,\sigma^2_m$ ,Pr(st = m) are predetermined
 
 Therefore, we could rewrite $\tilde{\epsilon}$ in a **Normal distribution**:
+
 ```{=tex}
 \begin{align}
 
@@ -1332,11 +1372,10 @@ Therefore, we could rewrite $\tilde{\epsilon}$ in a **Normal distribution**:
 
 \end{align}
 ```
-
-
 ### Priors distribution
 
 Hierarchical prior structure is given by:
+
 ```{=tex}
 \begin{align}
 
@@ -1344,8 +1383,8 @@ P(h,s,h_0,\sigma^2_v)=P(h|h_0,\sigma^2_v)P(h_0)P(\sigma^2_v)P(s)
 
 \end{align}
 ```
-
 Therefore, conditional prior distribution for $h$ is:
+
 ```{=tex}
 \begin{align}
 
@@ -1354,6 +1393,7 @@ P(h|h_0,\sigma^2_v)\sim\mathcal{N}(h_0H^{-1}e_{1.T},\sigma^2_v(H'H)^{-1})
 \end{align}
 ```
 with kernel given by:
+
 ```{=tex}
 \begin{align}
 
@@ -1362,6 +1402,7 @@ with kernel given by:
 \end{align}
 ```
 Prior distribution for $h_0$ is:
+
 ```{=tex}
 \begin{align}
 
@@ -1370,6 +1411,7 @@ P(h_0)\sim\mathcal{N}(0,\underline{\sigma}^2_h)
 \end{align}
 ```
 with kernel given by:
+
 ```{=tex}
 \begin{align}
 
@@ -1378,6 +1420,7 @@ with kernel given by:
 \end{align}
 ```
 Prior distribution for $\sigma^2_v$ is:
+
 ```{=tex}
 \begin{align}
 
@@ -1386,6 +1429,7 @@ P(\sigma^2_v)\sim\mathcal{IG2}(\underline{s},\underline{\nu})
 \end{align}
 ```
 with kernel given by:
+
 ```{=tex}
 \begin{align}
 
@@ -1394,6 +1438,7 @@ with kernel given by:
 \end{align}
 ```
 Prior distribution for $s$ is:
+
 ```{=tex}
 \begin{align}
 
@@ -1401,7 +1446,6 @@ P(s_t)\sim\mathcal{Multinomial}(\mathrm{\left\{ m \right\}}_{m=1}^{10},\mathrm{\
 
 \end{align}
 ```
-
 ### Bayesian Estimations
 
 For joint posteriors distribution, $A$, $\Sigma$ can then be derived using the likelihood and the prior distributions as follows:
@@ -1435,7 +1479,6 @@ P(A,\Sigma|Y,X,\Omega) &\sim \mathcal{NIW}(\bar{A},\bar{V},\bar{S},\bar{\nu}) \\
 
 \end{align}
 ```
-
 The kernel of the fully conditional posterior distribution of $h$ is then derived as follows:
 
 ```{=tex}
@@ -1526,26 +1569,576 @@ Considering draws from this posterior involves a Gibbs sampler, which follows th
 
 1.  Initialize $h^{(0)}$, $s^{(0)}$, and $\sigma^{2(0)}_v$
 
-2.  Draw $h_0^{(s)}\sim\mathcal{N}(\bar{h}_0,\bar{\sigma}^2_h)$ 
+2.  Draw $h_0^{(s)}\sim\mathcal{N}(\bar{h}_0,\bar{\sigma}^2_h)$
 
 3.  Draw $\sigma_v^{2(s)}\sim\mathcal{IG2}(\bar{s},\bar{\nu})$
 
-4.  Draw $s_t^{(s)}\sim\mathcal{Multiomial}(\{m\}^{10}_{m=1},\{Pr[s_t=m|\tilde{y},h_t^{(s)}]\}^{10}_{m=1})$ for all $s_t$ in $s$. 
+4.  Draw $s_t^{(s)}\sim\mathcal{Multiomial}(\{m\}^{10}_{m=1},\{Pr[s_t=m|\tilde{y},h_t^{(s)}]\}^{10}_{m=1})$ for all $s_t$ in $s$.
 
-5.  Draw $h^{(s)}\sim\mathcal{N}_T(\bar{h},\bar{V}_h)$ 
+5.  Draw $h^{(s)}\sim\mathcal{N}_T(\bar{h},\bar{V}_h)$
 
-6.  Draw $(A,\Sigma)\sim\mathcal{MNIW}(\bar{A},\bar{V},\bar{S},\bar{\nu})$ 
+6.  Draw $(A,\Sigma)\sim\mathcal{MNIW}(\bar{A},\bar{V},\bar{S},\bar{\nu})$
 
 Steps 2 to 7 are repeated for $S=S_1+S_2$ draws, where $S_1$ draws are discarded as burn-in and the latter $S_2$ draws are kept as posterior draws.
 
+First Hierarchical draws based on following function `SVcommon.Gibbs.iteration`:
+
+```{r}
+#| echo: true
+SVcommon.Gibbs.iteration <- function(aux, priors){
+  # A single iteration of the Gibbs sampler for the SV component
+
+  # aux is a list containing:
+  #   Y         - a TxN matrix
+  #   X         - a TxK matrix
+  #   H         - a Tx1 matrix                 
+  #   h0        - a scalar
+  #   sigma.v2  - a scalar
+  #   s         - a Tx1 matrix
+  #   A         - a KxN matrix
+  #   Sigma     - an NxN matrix
+  #   sigma2    - a Tx1 matrix
+  
+  # priors is a list containing:
+  #   h0.v      - a positive scalar
+  #   h0.m      - a scalar
+  #   sigmav.s  - a positive scalar
+  #   sigmav.nu - a positive scalar
+  #   HH        - a TxT matrix
+
+  T             = dim(aux$Y)[1]
+  N             = dim(aux$Y)[2]
+  alpha.st      = c(1.92677,1.34744,0.73504,0.02266,0-0.85173,-1.97278,-3.46788,-5.55246,-8.68384,-14.65000)
+  sigma.st      = c(0.11265,0.17788,0.26768,0.40611,0.62699,0.98583,1.57469,2.54498,4.16591,7.33342)
+  pi.st         = c(0.00609,0.04775,0.13057,0.20674,0.22715,0.18842,0.12047,0.05591,0.01575,0.00115)
+
+  Lambda        = solve(chol(aux$Sigma))
+  Z             = rowSums( ( aux$Y - aux$X %*% aux$A ) %*% Lambda ) / sqrt(N)
+  Y.tilde       = as.vector(log((Z + 0.0000001)^2))
+  Ytilde.alpha  = as.matrix(Y.tilde - alpha.st[as.vector(aux$s)])
+
+  # sampling initial condition
+  V.h0.bar      = 1/((1 / priors$h0.v) + (1 / aux$sigma.v2))
+  m.h0.bar      = V.h0.bar*((priors$h0.m / priors$h0.v) + (aux$H[1] / aux$sigma.v2))
+  h0.draw       = rnorm(1, mean = m.h0.bar, sd = sqrt(V.h0.bar))
+  aux$h0        = h0.draw    
+
+  # sampling sigma.v2
+  sigma.v2.s    = priors$sigmav.s + sum(c(aux$H[1] - aux$h0, diff(aux$H))^2)
+  sigma.v2.draw = sigma.v2.s / rchisq(1, priors$sigmav.nu + T)
+  aux$sigma.v2  = sigma.v2.draw    
+
+  # sampling auxiliary states
+  Pr.tmp        = simplify2array(lapply(1:10,function(x){
+    dnorm(Y.tilde, mean = as.vector(aux$H + alpha.st[x]), sd = sqrt(sigma.st[x]), log = TRUE) + log(pi.st[x])
+  }))
+  Pr            = t(apply(Pr.tmp, 1, function(x){exp(x - max(x)) / sum(exp(x - max(x)))}))
+  s.cum         = t(apply(Pr, 1, cumsum))
+  r             = matrix(rep(runif(T), 10), ncol = 10)
+  ss            = apply(s.cum < r, 1, sum) + 1
+  aux$s         = as.matrix(ss)       
+
+
+  # sampling log-volatilities using functions for tridiagonal precision matrix
+  Sigma.s.inv   = diag(1 / sigma.st[as.vector(aux$s)])
+  D.inv         = Sigma.s.inv + (1 / aux$sigma.v2) * priors$HH
+  b             = as.matrix(Ytilde.alpha / sigma.st[as.vector(aux$s)] + (aux$h0/aux$sigma.v2)*diag(T)[,1])
+  lead.diag     = diag(D.inv)
+  sub.diag      = mgcv::sdiag(D.inv, -1)
+  D.chol        = mgcv::trichol(ld = lead.diag, sd = sub.diag)
+  D.L           = diag(D.chol$ld)
+  mgcv::sdiag(D.L,-1) = D.chol$sd
+  x             = as.matrix(rnorm(T))
+  a             = forwardsolve(D.L, b)
+  draw          = backsolve(t(D.L), a + x)
+  aux$H         = as.matrix(draw)         
+  aux$sigma2    = as.matrix(exp(draw))     
+
+  return(aux)
+}
+```
+
+Therefore, we could have the function `DrawPosterior.sv` to draw $A$ and $\Sigma$:
+
+```{r}
+#| echo: true
+DrawPosterior.sv <- function (Y,X,S1,S2){
+  
+  N <- ncol(Y)
+  K <- ncol(X)
+  T <- nrow(Y)
+  
+  A.posterior     <- array(NA,c(K,N,(S1+S2)))
+  Sigma.posterior <- array(NA,c(N,N,(S1+S2))) 
+  H.posterior     <- array(NA,c(nrow(Y),(S1+S2+1)))  
+  B.posterior     <- array(NA,c(N,N,(S1+S2)))
+  B1.tilde.s      <- array(NA,c(N,K,(S1+S2)))
+  
+  # Initialize h^{0}, which is  T by 1 matrix 
+  H.posterior[,1]       <- matrix(1,T,1) 
+  
+  nu.bar                <- nrow(Y) + nu.prior
+  
+  HH                    <-  2*diag(T)
+  mgcv::sdiag(HH,-1)    <-  -1
+  mgcv::sdiag(HH,1)     <-  -1
+  
+  priors = list(HH       = HH,
+                h0.m     = 0,
+                h0.v     = 1,
+                sigmav.s = 1,
+                sigmav.nu= 1
+              )
+  
+  for (s in 1:(S1+S2)){
+    # STEP 1: draw (A Sigma).s from MNIW(A.bar,V.bar,S.bar,nu.bar)
+    # setting up parameters 
+    
+    V.bar.inv       <- t(X)%*%diag(1/H.posterior[,s])%*%X + diag(1/diag(V.prior))
+    V.bar           <- solve(V.bar.inv)
+    A.bar           <- V.bar%*%(t(X)%*%diag(1/H.posterior[,s])%*%Y + diag(1/diag(V.prior))%*%A.prior)
+    S.bar           <- S.prior+t(Y)%*%diag(1/H.posterior[,s])%*%Y+t(A.prior)%*%diag(1/diag(V.prior))%*%A.prior - t(A.bar)%*%V.bar.inv%*%A.bar
+    
+    draw.sigma.inv  <- solve(rWishart(1, df=nu.bar, Sigma=solve(S.bar))[,,1])
+    Sigma.posterior[,,s] = draw.sigma.inv
+      
+      # start drawing 
+    cholSigma.s      <- chol(Sigma.posterior[,,s])
+    A.posterior[,,s] <- matrix(MASS::mvrnorm(1,as.vector(A.bar),Sigma.posterior[,,s]%x%V.bar),ncol=N)      
+    
+    # STEP 2: draw H from SVcommon.Gibbs.iteration
+    if (s == 1){ # initializing input arguments 
+        aux = list( 
+              Y             = Y,
+              X             = X,
+              H             = matrix(1,T,1),
+              h0            = 0,
+              sigma.v2      = 1,
+              s             = matrix(1,T,1),
+              Sigma         = Sigma.posterior[,,s],
+              A             = A.posterior[,,s],
+              sigma2        = matrix(1,T,1)
+              )
+    }else{ # updating input arguments  
+      aux = list(
+                Y           = Y,
+                X           = X,
+                H           = tmp$H,
+                h0          = tmp$h0,
+                sigma.v2    = tmp$sigma.v2,
+                s           = tmp$s,
+                Sigma       = Sigma.posterior[,,s],
+                A           = A.posterior[,,s],
+                sigma2      = tmp$sigma2
+              )
+    }
+
+    # H                     <- diag(T)
+    # sdiag(H,-1)           <- -1     
+    tmp                     <- SVcommon.Gibbs.iteration(aux,priors)
+    H.posterior[,s+1]      <- as.matrix(tmp$sigma2)
+  }
+  
+  return(list(Sigma.posterior = Sigma.posterior[,,(S1+1):(S1+S2)],
+              A.posterior     = A.posterior[,,(S1+1):(S1+S2)],
+              H.sv            = H.posterior[,(S1+2):(S1+S2+1)]))
+  }
+```
+
+```{r}
+results.h <-DrawPosterior.sv(Y,X,S1,S2)
+```
+
+The below posterior mean provides a time series plot of posterior draws mean of $\sigma^2$ at each time spot. From where we can observe the $\sigma^2$ oscillating around 2100.
+
+```{r}
+sigma2.mean.vec <- apply(results.h$H.sv,1,mean) 
+plot.ts(sigma2.mean.vec,main=expression(paste("Posterior Mean of ",sigma^2)),
+        ylab="",type='l',lwd=2,col="#9E9AC8",xlab="T")
+abline(h=mean(sigma2.mean.vec),lty=2)
+```
+
+Following plots the draws of Gibbs Sampler of the Stochastic Volatility model, and it shown to be stationary for A and $\Sigma$.From where, we can observe the mean of $A_{21},A_{32}$ varying around value of 1, $\Sigma_{21},\Sigma_{22}$ oscillating around 0.0018-0.0020.
+
+```{r}
+#| label: fig-Gibbs-Sampler-SV 
+#| fig-cap: "Gibbs Sampler draws of A and Sigma-SV model"
+par(mfrow=c(2,2),mar=c(2,2,2,2))
+plot(results.h$A.posterior[2,1,],type='l',col="#662099",ylab="",xlab="",main=expression(A[21]), lwd = 0.1)
+plot(results.h$A.posterior[3,2,],type='l',col="#CC16CC",ylab="",xlab="",main=expression(A[32]), lwd = 0.1)
+plot(results.h$Sigma.posterior[1,1,],type='l',col="#6229CC",ylab="",xlab="",main=expression(Sigma[21]), lwd = 0.1)
+plot(results.h$Sigma.posterior[2,2,],type='l',col="#0079CC",ylab="",xlab="",main=expression(Sigma[22]), lwd = 0.1)
+```
+
 ## Combinations of Extension
 
-# Empirical Analysis - Model Applying and Forecasing
+Due to complications in the real world, some of common shocks to the market are deep influenced and some are disappeared in a decided time period. For example, the GFC, Covid-19 and Russian-Ukraine war influence for a long time, even right now, we are underlying a quantitative easing scenario and suffering a common inflation risk. That reflects that the effects to serial covariance some are independently and some part are autoregressive on the other hand. Therefore, we could combine the Laplace model and Stochastic Volatility model to present, estimate and forecast under this complicated scenario.
+
+Therefore, we could have the model present as:
+
+```{=tex}
+\begin{align}
+
+Y &= X A +U 
+\\
+\\
+U|X &\sim \mathcal{MN}_{T\times N}(\textbf{0},\Sigma,\Omega)\\
+vec(U) \ &\sim N(0 \ , \ \Sigma \ \otimes \  \Omega)\\
+\Omega \ &= diag\left[\lambda_{1} \sigma^2_1, \lambda_{2}\sigma^2_2..., \lambda_{t}\sigma^2_T\right]\\ 
+&=\ diag\left[ \lambda_{1}exp\left\{ h_1 \right\},\lambda_{2}exp\left\{ h_2 \right\},...,\lambda_{T}exp\left\{ h_T \right\}  \right]\\
+\lambda \ &\sim \ Exp \ (\alpha)\\
+h_t &= h_{t-1}+\sigma_{v}v_t\\
+v_t&\sim N(0,1)\\
+
+\end{align}
+```
+Still have that:
+
+```{=tex}
+\begin{align}
+
+\epsilon_t &\sim N(0,1)\\
+
+\end{align}
+```
+Now we could rewrite the equation into:
+
+```{=tex}
+\begin{align}
+
+y_t &= y_{t-1}A_1 \ \ + ...+y_{t-p}A_p+\ \ \sqrt{\lambda_t}exp\left\{ \frac{1}{2} h_t\right\}\epsilon_t\\
+\frac{y_t - y_{t-1}A_1 \ \ + ...+y_{t-p}A_p}{\sqrt{\lambda_t}} &= exp\left\{ \frac{1}{2} h_t\right\}\epsilon_t\\
+y_{\lambda.t}&=exp\left\{ \frac{1}{2} h_t\right\}\epsilon_t\\
+\\
+y_{\lambda.t}&=exp\left\{ \frac{1}{2} h_t\right\}\epsilon_t\\
+log \ y_{\lambda.t}^2&=h_t + log \ \epsilon_t^2\\
+\tilde{y}_{\lambda.t}&=h_t+\tilde{\epsilon}_t
+
+\end{align}
+```
+Same to the standard Stochastic Volatility model, and the Hierarchical prior structure are same:
+
+```{=tex}
+\begin{align}
+
+\tilde{y}_{\lambda}=h+\tilde{\varepsilon}\\
+Hh=h_0e_{1.T}+\sigma_vv\\
+\tilde{\epsilon}\sim \log \chi^2_1\\
+v\sim\mathcal{N}_T(0_T,I_T)\\ 
+
+P(h,s,h_0,\sigma^2_v)=P(h|h_0,\sigma^2_v)P(h_0)P(\sigma^2_v)P(s)
+
+\end{align}
+```
+### Likelihood Function
+
+The general likelihood function remain unchanged due to continues of serial covariance symbol $\Omega$ is used:
+
+```{=tex}
+\begin{align}
+
+L(A,\Sigma,\Omega |Y,X) &\propto \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2}\textbf{tr}[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\}\\
+
+\end{align}
+```
+After simplify we could have:
+
+```{=tex}
+\begin{align}
+
+L(A,\Sigma,\Omega |Y,X) &\propto \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2}\textbf{tr}[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\}\\
+&=\det(\Sigma)^{-\frac{T}{2}}\left( \prod^{T}_{t = 1} \lambda_t\prod^{T}_{t = 1} exp\left\{ h_t \right\} \right)^{-\frac{N}{2}} exp\left\{{-\frac{1}{2}}\sum^{T}_{t =1}\lambda_texp\left\{ h_t \right\}^{-1} \textbf{tr}[\epsilon_t' \Sigma^{-1}\epsilon_t)]\right\}\\
+&=\det(\Sigma)^{-\frac{T}{2}}\prod^{T}_{t = 1} \lambda_t^{-\frac{N}{2}} exp\left\{{-\frac{N}{2}}\sum^{T}_{t =1}h_t{-\frac{1}{2}}\sum^{T}_{t =1}\lambda_texp\left\{ h_t \right\}^{-1} \textbf{tr}[\epsilon_t' \Sigma^{-1}\epsilon_t)]\right\}\\
+
+\end{align}
+```
+### Bayesian Estimations
+
+As the unchanged likelihood function, we still have:
+
+```{=tex}
+\begin{align}
+
+P(A,\Sigma|Y,X,\Omega) &\propto L(A,\Sigma,\Omega|Y,X) \ P(A,\Sigma) \\
+\\
+&= \det(\Sigma)^{-\frac{T}{2}} \det(\Omega)^{-\frac{N}{2}} exp\{-\frac{1}{2} \textbf{tr}[\Sigma^{-1} (Y-XA)' \Omega^{-1} (Y-XA) ]\} \\
+&\times \det(\Sigma)^{-\frac{N+k+\underline{\nu}+1}{2}} exp\{-\frac{1}{2}\textbf{tr}[\Sigma^{-1}(A-\underline{A})'(\underline{V})^{-1}(A-\underline{A})]\} \\
+&\times exp\{-\frac{1}{2}\textbf{tr}[\Sigma^{-1}\underline{S}]\} \\
+
+&= \det(\Sigma)^{-\frac{T+N+K+\underline{\nu}+1}{2}} \det(\Omega)^{-\frac{N}{2}} \\
+&\times exp\{-\frac{1}{2} \textbf{tr}[\Sigma^{-1}(Y'\Omega^{-1}Y - 2A'X'\Omega^{-1}Y + A'X'\Omega^{-1}XA \\
+&+ A'\underline{V}^{-1}A -2A'\underline{V}^{-1}\underline{A} + \underline{A}'\underline{V}^{-1}\underline{A} + \underline{S})]\}
+
+\end{align}
+```
+Which is the kernel represent as **Normal-inverse Wishart distribution** and given by:
+
+```{=tex}
+\begin{align}
+
+P(A,\Sigma|Y,X,\Omega) &\sim \mathcal{NIW}(\bar{A},\bar{V},\bar{S},\bar{\nu}) \\
+&\\
+\bar{V} &= (X'\Omega^{-1}X + \underline{V}^{-1})^{-1} \\
+\bar{A} &= \bar{V}(X'\Omega^{-1}Y + \underline{V}^{-1}\underline{A}) \\
+\bar{\nu} &= T + \underline{\nu}\\
+\bar{S} &= \underline{S} + Y'\Omega^{-1}Y + \underline{A}'\underline{V}^{-1}\underline{A} - \bar{A}'\bar{V}^{-1}\bar{A}
+
+\end{align}
+```
+The posterior of $\lambda_t$ could be precent in the form of $\sigma^2$ which is:
+
+```{=tex}
+\begin{align}
+
+P(\lambda_t|Y,X,A,\Sigma,h,h_0,\sigma^2_v) &\propto L(A,\Sigma,\lambda_t,h,h_0,\sigma^2_v|Y,X)P(\lambda_t) \\
+\\
+&\propto \lambda_t^{-\frac{N}{2}}exp({-\frac{1}{2}}{\frac{1}{\lambda_t}}\textbf{tr}[\Sigma^{-1}\epsilon_t' diag(\sigma^2)\epsilon_t]) \\
+&\times \frac{1}{\alpha}exp\{ -\frac{1}{\alpha}\lambda_t \}\\
+&\propto \lambda_t^{-\frac{N}{2}+1-1} exp\{-\frac{1}{2}[\frac{\textbf{tr}[\Sigma^{-1}
+\epsilon_t'diag(\sigma^2)\epsilon_t]} {\lambda_t} +\frac{2}{\alpha}\lambda_t]\} 
+
+\end{align}
+```
+The above expression can be rearranged in the form of a Generalized inverse Gaussian distribution kernel as follows:
+
+```{=tex}
+\begin{align}
+
+\lambda_t|Y,A,\Sigma &\sim \mathcal{GIG}(a,b,p) \\
+\\
+a &=\frac{2}{\alpha} \\
+b &= \textbf{tr}[\Sigma^{-1}\epsilon_t'diag(\sigma^2)\epsilon_t] \\
+p &= -\frac{N}{2}+1
+
+\end{align}
+```
+The posterior for Hierarchical structure $h,h_0,s,\sigma^2_v$ remain unchanged:
+
+```{=tex}
+\begin{align}
+
+P(h|h_0,\sigma^2_v,s,\tilde{y}) &\sim \mathcal{N}(\overline{h},\overline{V}_h)\\
+\overline{V}_h&=\left[ diag\left(\sigma^2_s \right)^{-1}+ \sigma^{-2}_vH'H\right]^{-1}\\
+\overline{h}&=\overline{V}_h\left[ diag\left(\sigma^2_s \right)^{-1}(\tilde{y}-\mu_s)+ \sigma^{-2}_vh_0e_{1.T}\right]\\
+\\
+P(h_0|h,\sigma^2_v,s,\tilde{y}) &\sim \mathcal{N}(\overline{h}_0,\overline{\sigma}^2_h)\\
+\overline{\sigma}^2_h&=\left(\underline{\sigma}^{-2}_h+ \sigma^{-2}_v\right)^{-1}\\
+\overline{h}_0&=\overline{\sigma}^2_h\left(\sigma^{-2}_ve_{1.T}'Hh\right)^{-1}\\
+\\
+P(\sigma^2_v|h,h_0,s,\tilde{y}) &\sim \mathcal{IG2}(\overline{s},\overline{\nu})\\
+\overline{\nu}&=\underline{\nu}+ T\\
+\overline{s}&=\underline{s}+\left( Hh-h_0e_{1.T} \right)'\left( Hh-h_0e_{1.T} \right)\\
+\\
+Pr[s_t=m|\tilde{y},h_t]&=\frac{\omega_{m.t}}{\sum_{i=1}^{10}\omega_{m.t}}
+
+\end{align}
+```
+### Gibbs Sampler
+
+```{r}
+invfunc = function(inv){
+eigen_decomp <- eigen(inv, symmetric = TRUE)
+      eigen_decomp$values[eigen_decomp$values <= 0] <- 1
+      inv <- eigen_decomp$vectors %*% diag(eigen_decomp$values) %*% t(eigen_decomp$vectors)
+}
+```
+
+Given the hyper-parameters $h_0,s,\sigma^{2}_v$, we could use same Hierarchical draws based on function `SVcommon.Gibbs.iteration` and then follow 3 steps:
+
+1.  Draw $(h^{(s)}, s^{(s)}, \sigma^{2(s)}_v,h^{(s)}$
+
+2.  Draw $\lambda^{(s)}$
+
+3.  Draw $(A,\Sigma)\sim\mathcal{MNIW}(\bar{A},\bar{V},\bar{S},\bar{\nu})$
+
+Therefore, we could have the function `posterior.draws.exten.hetero` to draw $A$ and $\Sigma$:
+
+```{r Extend Heteroskedasticity Model, fig.align='center',fig.pos='H'}
+#| echo: true
+posterior.draws.exten.hetero = function (total_S, Y, X){
+  
+  ## Pre-setup 
+     
+  N             = ncol(Y) 
+  t             = N + 1
+  p             = frequency(Y)                      
+  A.hat         = solve(t(X)%*%X)%*%t(X)%*%Y
+  Sigma.hat     = t(Y-X%*%A.hat)%*%(Y-X%*%A.hat)/nrow(Y)
+  T             = dim(Y)[1] 
+  K             = dim(X)[2] 
+  H             = diag(T)
+  sdiag(H,-1)   = -1
+  HH            = 2*diag(T)
+  sdiag(HH,-1)  = -1
+  sdiag(HH,1)   = -1
+  
+  # Prior distribution (with Minnesota prior)
+
+  A.prior           = matrix(0,nrow(A.hat),ncol(A.hat))
+  A.prior[2:t,]     = diag(N)
+  V.prior           = diag(c(kappa.2,kappa.1*((1:p)^(-2))%x%rep(1,N)))
+  S.prior           = diag(diag(Sigma.hat))
+  nu.prior          = N + 2
+  lambda.priors     = list(alpha=2)
+  # 
+  HH                = HH
+  h0.m              = 0
+  h0.v              = 1
+  sigmav.s          = 1
+  sigmav.nu         = 1
+
+
+  # Define posterior
+  posteriors    = list(                        
+    H           = matrix(NA, T, total_S),
+    sigma2      = matrix(NA, T, total_S),
+    s           = matrix(NA, T, total_S),
+    h0          = rep(NA, total_S),
+    sigma.v2    = rep(NA, total_S),
+    A           = array(NA, c((1 + N * p), N, total_S)),
+    Sigma       = array(NA, c(N, N, total_S)),
+    lambda      = rep(NA, total_S)  
+)
+  
+  # Define auxiliary
+  aux        = list(
+    Y        = Y,
+    X        = X,
+    H        = matrix(1, T, 1),
+    h0       = 0,
+    sigma.v2 = 1,
+    s        = matrix(1, T, 1),
+    A        = matrix(0, K, N),
+    Sigma    = matrix(0, N, N),             
+    sigma2   = matrix(1, T, 1),
+    lambda   = 2
+  )
+
+   # ----------------------posterior.draws.exten.hetero------------------------------
+
+ for (s in 1:total_S){ 
+
+  # normal-inverse Wishard posterior 
+      V.bar.inv              = t(aux$X)%*%(aux$lambda*diag(1/as.vector(aux$sigma2)))%*%aux$X + solve(V.prior)
+      V.bar.inv              = invfunc(V.bar.inv)
+      V.bar                  = solve(V.bar.inv)
+      A.bar                  = V.bar%*%(t(aux$X)%*%(aux$lambda*diag(1/as.vector(aux$sigma2)))%*%aux$Y + solve(V.prior)%*%A.prior) 
+      nu.bar                 = T + nu.prior
+      S.bar                  = S.prior + t(aux$Y)%*%(aux$lambda*diag(1/as.vector(aux$sigma2)))%*%aux$Y + t(A.prior)%*%solve(V.prior)%*%A.prior - t(A.bar)%*%V.bar.inv%*%A.bar 
+      S.bar                  = invfunc(S.bar)
+      S.bar.inv              = solve(S.bar)
+      
+    # posterior draws for A and Sigma
+      Sigma.posterior.IW     = rWishart(1, df=nu.bar, Sigma=S.bar.inv)
+      Sigma.posterior.draw   = apply(Sigma.posterior.IW, 3 ,solve)
+      aux$Sigma              = array(Sigma.posterior.draw,c(N,N,1))
+      
+      for (i in 1:dim(aux$Sigma)[3]) {
+          eigen_decomp <- eigen(aux$Sigma[, , i], symmetric = TRUE)
+          eigen_decomp$values[eigen_decomp$values <= 0] <- 1
+          aux$Sigma[, , i] <- eigen_decomp$vectors %*% diag(eigen_decomp$values) %*% t(eigen_decomp$vectors)
+      }
+      A.norm                 = array(rnorm(prod(c(K,N,1))),c(K,N,1))
+      L                      = t(chol(V.bar))      
+      aux$A                  = A.bar + L%*%A.norm[,,1]%*%chol(aux$Sigma[,,1])
+      
+      u.t = Y-X%*%aux$A
+      
+      matrix_2x2 <- matrix(aux$Sigma, nrow = 2, ncol = 2)
+    # posterior draws for lambda
+      lambda.p = -N/2 + 1 
+      chi.b    = sum(diag(solve(matrix_2x2)%*%t(u.t)%*%diag(1/as.vector(aux$sigma2))%*%u.t))
+      psi.a    =  2 / lambda.priors$alpha
+      
+      lambda.draw = GIGrvg::rgig(n = 1, lambda = lambda.p, chi = chi.b, psi = psi.a)
+      aux$lambda = lambda.draw
+  
+      # posterior draw for sigma2   
+      N             = dim(aux$Y)[2] 
+      alpha.st      = c(1.92677,1.34744,0.73504,0.02266,0-0.85173,-1.97278,-3.46788,-5.55246,-8.68384,-14.65000)
+      sigma.st      = c(0.11265,0.17788,0.26768,0.40611,0.62699,0.98583,1.57469,2.54498,4.16591,7.33342)
+      pi.st         = c(0.00609,0.04775,0.13057,0.20674,0.22715,0.18842,0.12047,0.05591,0.01575,0.00115)
+      
+      Lambda        = solve(chol(aux$Sigma[,,1]))
+      Z             = rowSums( ( aux$Y - aux$X %*% aux$A ) %*% Lambda ) / sqrt(N)
+      Y.tilde       = as.vector(log((Z + 0.0000001)^2))
+      Ytilde.alpha  = as.matrix(Y.tilde - alpha.st[as.vector(aux$s)])
+        
+      # sampling initial condition
+      V.h0.bar      = 1/((1 / h0.v) + (1 / aux$sigma.v2))
+      m.h0.bar      = V.h0.bar*((h0.m / h0.v) + (aux$H[1] / aux$sigma.v2))
+      h0.draw       = rnorm(1, mean = m.h0.bar, sd = sqrt(V.h0.bar))
+      aux$h0        = h0.draw
+      
+      # sampling sigma.v2
+      sigma.v2.s    = sigmav.s + sum(c(aux$H[1] - aux$h0, diff(aux$H))^2)
+      sigma.v2.draw = sigma.v2.s / rchisq(1, sigmav.nu + T)
+      aux$sigma.v2  = sigma.v2.draw
+      
+      # sampling auxiliary states
+      Pr.tmp        = simplify2array(lapply(1:10,function(x){
+        dnorm(Y.tilde, mean = as.vector(aux$H + alpha.st[x]), sd = sqrt(sigma.st[x]), log = TRUE) + log(pi.st[x])
+      }))
+      Pr            = t(apply(Pr.tmp, 1, function(x){exp(x - max(x)) / sum(exp(x - max(x)))}))
+      s.cum         = t(apply(Pr, 1, cumsum))
+      r             = matrix(rep(runif(T), 10), ncol = 10)
+      ss            = apply(s.cum < r, 1, sum) + 1
+      aux$s         = as.matrix(ss)
+      
+      # sampling log-volatilities using functions for tridiagonal precision matrix
+      Sigma.s.inv   = diag(1 / sigma.st[as.vector(aux$s)])
+      D.inv         = Sigma.s.inv + (1 / aux$sigma.v2) * HH
+      b             = as.matrix(Ytilde.alpha / sigma.st[as.vector(aux$s)] + (aux$h0/aux$sigma.v2)*diag(T)[,1])
+      lead.diag     = diag(D.inv)
+      sub.diag      = mgcv::sdiag(D.inv, -1)
+      D.chol        = mgcv::trichol(ld = lead.diag, sd = sub.diag)
+      D.L           = diag(D.chol$ld)
+      mgcv::sdiag(D.L,-1) = D.chol$sd
+      x             = as.matrix(rnorm(T))
+      a             = forwardsolve(D.L, b)
+      draw          = backsolve(t(D.L), a + x)
+      aux$H         = as.matrix(draw)
+      aux$sigma2    = as.matrix(exp(draw))
+        
+      # output list
+      posteriors$H[,s]             = aux$H
+      posteriors$sigma2[,s]        = aux$sigma2
+      posteriors$s[,s]             = aux$s
+      posteriors$h0[s]             = aux$h0
+      posteriors$sigma.v2[s]       = aux$sigma.v2
+      posteriors$A[,,s]            = aux$A
+      posteriors$Sigma[,,s]        = aux$Sigma
+      posteriors$lambda[s]         = aux$lambda
+      
+  }
+        
+  return(posteriors)
+  
+}
+```
+
+```{r}
+results.hh <-posterior.draws.exten.hetero(total_S,Y,X)
+```
+
+Then we also could have A and $\Sigma$. From where, we can observe the mean of $A_{21},A_{32}$ varying around value of 1.
+
+```{r}
+par(mfrow=c(2,2),mar=c(2,2,2,2))
+plot(results.hh$A[2,1,],type='l',col="#662099",ylab="",xlab="",main=expression(A[21]), lwd = 0.1)
+plot(results.hh$A[3,2,],type='l',col="#CC16CC",ylab="",xlab="",main=expression(A[32]), lwd = 0.1)
+plot(results.hh$Sigma[1,1,],type='l',col="#6229CC",ylab="",xlab="",main=expression(Sigma[21]), lwd = 0.1)
+plot(results.hh$Sigma[2,2,],type='l',col="#0079CC",ylab="",xlab="",main=expression(Sigma[22]), lwd = 0.1)
+```
+
+# Empirical Analysis: Model Applying and Forecasing
 
 ## Basic Model
 
-```{r}
+First, set up and read our data:
 
+```{r}
+#| echo: true
 ## Create Y and X
 y             = ts(all_data[,1:ncol(all_data)])     # 10col, 135row
 Y             = ts(y[13:nrow(y),], frequency=12)      # 10col, 131row
@@ -1561,8 +2154,8 @@ A.hat         = solve(t(X)%*%X)%*%t(X)%*%Y
 Sigma.hat     = t(Y-X%*%A.hat)%*%(Y-X%*%A.hat)/nrow(Y)
 
 # Prior distribution (with Minnesota prior)
-kappa.1       = 0.01                                     # shrinkage for A1 to Ap
-kappa.2       = 100                                   # shrinkage for constant 
+kappa.1       = 0.02^2                                # shrinkage for A1 to Ap
+kappa.2       = 200                                   # shrinkage for constant 
 A.prior       = matrix(0,nrow(A.hat),ncol(A.hat))
 # A.prior[2,1]  = 1
 # A.prior[7,6]  = 1  
@@ -1574,20 +2167,79 @@ I.matrix            = diag(1,nrow(Y),nrow(Y))
 ```
 
 ```{r}
-
 ## Function Applying
-posterior.sample.draws = posterior.draws(S=10000, Y=Y, X=X) # sample use S=10000
+posterior.sample.draws = posterior.draws(S=50000, Y=Y, X=X) 
 A.posterior.simu       = posterior.sample.draws$A.posterior
 Sigma.posterior.simu   = posterior.sample.draws$Sigma.posterior
+```
+
+```{r}
+A.posterior.simu.mean = head(round(apply(A.posterior.simu, 1:2, mean), 6),12)
+Sigma.posterior.simu.mean = round(apply(Sigma.posterior.simu, 1:2, mean),6)      
+```
+
+Then, we could have the mean of A:
+
+```{r }
+kable(A.posterior.simu.mean, align = "c") %>% 
+  kable_styling(font_size = 8, 
+                fixed_thead = TRUE, 
+                full_width = FALSE, 
+                position = "center",
+                latex_options = c("HOLD_position"),
+                bootstrap_options = c("striped", "hover", "bordered", "responsive", "dark"))
+```
+
+And, we could have the mean of $\Sigma$:
+
+```{r}
+kable(Sigma.posterior.simu.mean, align = "c") %>% 
+  kable_styling(font_size = 8, 
+                fixed_thead = TRUE, 
+                full_width = FALSE, 
+                position = "center",
+                latex_options = c("HOLD_position"),
+                bootstrap_options = c("striped", "hover", "bordered", "responsive", "dark"))
+```
+
+Therefore, we could have histogram and time series of A for Gibbs sampler:
+
+```{r}
+#| fig-cap: "Figure 6 Histograms and trace plots on key variables using basic model"
+
+par(mfrow=c(2,2), mar=c(4,4,2,2))
+plot.ts(A.posterior.simu[2,1,], xlab = "Simulation times S", ylab = "lgold", col = blue1) 
+hist(A.posterior.simu[2,1,], xlab = "lgold", col = blue1, main = '')
+plot.ts(A.posterior.simu[2,5,], xlab = "Simulation times S", ylab = "lNesdaq", col = green1) 
+hist(A.posterior.simu[2,5,], xlab = "lNesdaq", col = green1, main = '')
 
 ```
 
 ```{r}
+par(mfrow=c(2,2), mar=c(4,4,2,2))
+plot.ts(A.posterior.simu[2,3,], xlab = "Simulation times S", ylab = "TreasuryBill5Years", col = blue2) 
+hist(A.posterior.simu[2,3,], xlab = "TreasuryBill5Years", col = blue2, main = '')
+plot.ts(A.posterior.simu[2,6,], xlab = "Simulation times S", ylab = "M2 Rates", col = green3) 
+hist(A.posterior.simu[2,6,], xlab = "M2 Rates", col = green3, main = '')
 
+```
+
+```{r}
+par(mfrow=c(2,2), mar=c(4,4,2,2))
+plot.ts(A.posterior.simu[6,1,], xlab = "Simulation times S", ylab = "lgold", col = blue1) 
+hist(A.posterior.simu[6,1,], xlab = "lgold", col = blue1, main = '')
+plot.ts(A.posterior.simu[6,5,], xlab = "Simulation times S", ylab = "lNesdaq", col = green1) 
+hist(A.posterior.simu[6,5,], xlab = "lNesdaq", col = green1, main = '')
+
+```
+
+we could clearly see that underling our Minnesota prior assumption, a high level of shrinkage of random walk process, Gold have its first lag coefficient really close to 1, and other variables close to 0. This support our basic understanding of Gold nature, a safe assets.
+
+```{r}
 ## Two-year ahead forecasting h=24
 # set up
 h                      = 24
-S                      = 10000
+S                      = 50000
 Y.h                    = array(NA,c(h,N,S))
 
 # sampling predictive density
@@ -1606,37 +2258,9 @@ for (s in 1:S){
 
 ```
 
-Figure 6 presents a 3D visualization of the density intervals for the log Gold Future Prices and Log Nasdaq Index points. From past trends we could clearly see that negative correlations between those two. When the market suffered from dot-com and global financial crisis during 2000 to 2012, Gold futures increase sharply as expectation of risks, market returns fluctuations a lot. For next 24 months forecasting based on benchmark model, we could see Log gold future price more sharply increase then Log Nasdaq Index points. The varying heights of the intervals reflect the level of prediction certainty; as we project further into the future, the intervals become wider and more dispersed due to increased uncertainty.
+Following presents a 3D visualization of the density intervals for the log Gold Future Prices and Log Nasdaq Index points. From past trends we could clearly see that negative correlations between those two. When the market suffered from dot-com and global financial crisis during 2000 to 2012, Gold futures increase sharply as expectation of risks, market returns fluctuations a lot. For next 24 months forecasting based on benchmark model, we could see Log gold future price more sharply increase then Log Nasdaq Index points. The varying heights of the intervals reflect the level of prediction certainty; as we project further into the future, the intervals become wider and more dispersed due to increased uncertainty.
 
 ```{r}
-
-blue1 = "deepskyblue"            # #0000FF
-blue2 = "lightblue"       # #ADD8E6
-blue3 = "royalblue"       # #4169E1
-blue4 = "blue"     # #00BFFF
-blue5 = "dodgerblue"      # #1E90FF
-blue6 = "steelblue"       # #4682B4
-
-blue1.rgb   = col2rgb(blue1)
-blue1.shade1= rgb(blue1.rgb[1],blue1.rgb[2],blue1.rgb[3], alpha=120, maxColorValue=255)
-
-
-green1  = "#05386B"
-green2  = "#379683"
-green3  = "#5CDB95"
-green4  = "#8EE4AF"
-green5  = "#EDF5E1"
-green6  = "darkgreen"
-
-green3.rgb   = col2rgb(green3)
-green3.shade1= rgb(green3.rgb[1],green3.rgb[2],green3.rgb[3], alpha=120, maxColorValue=255)
-```
-
-```{r}
-#| echo: false
-#| message: false
-#| warning: false
-
 par(mfcol = c(1, 2), mar=c(2,2,2,2)-0.1)
 
 # Log gold forecasting 
@@ -1713,11 +2337,9 @@ lines(f4.l1, lwd=1.5, col=blue4)
 
 ```
 
-Figure 6 3D forecasting graph on basic model
-
 ```{r}
 lgold.point.f    = apply(Y.h[,1,],1,mean)
-lgold.interval.f = apply(Y.h[,1,],1,hdi,credMass=0.99)
+lgold.interval.f = apply(Y.h[,1,],1,hdi,credMass=0.90)
 lgold.range      = range(y[,1],lgold.interval.f)
 
 par(mfrow=c(1,1), mar=rep(3,4),cex.axis=1.5)
@@ -1730,7 +2352,7 @@ polygon(c(length(y[,1]):(length(y[,1])+h),(length(y[,1]):(length(y[,1])+h))[21:1
         col=blue1.shade1, border=blue1.shade1)
 
 LNasIndex.point.f    = apply(Y.h[,5,],1,mean)
-LNasIndex.interval.f = apply(Y.h[,5,],1,hdi,credMass=0.99)
+LNasIndex.interval.f = apply(Y.h[,5,],1,hdi,credMass=0.90)
 LNasIndex.range      = range(y[,5],LNasIndex.interval.f)
 
 par(mfrow=c(1,1), mar=rep(3,4),cex.axis=1.5)
@@ -1743,8 +2365,6 @@ polygon(c(length(y[,5]):(length(y[,5])+h),(length(y[,5]):(length(y[,5])+h))[21:1
         col=blue1.shade1, border=blue1.shade1)
 
 ```
-
-Figure 7 Basic Model Key Data Plot
 
 ```{r}
 
@@ -1765,8 +2385,266 @@ abline(v=284, col=green6)
 
 ```
 
-### Extension Model
+Above graphs we conducted a time series forecast analysis on the gold price (lgold) and the Nasdaq index (LNasIndex) and plotted a comparison chart between the actual data and the forecast results.
 
+Gold price (lgold) From 2000 to 2024, the gold price showed an overall upward trend. The blue shaded area represents the 90% of confidence interval of the forecast value, which gradually widens over time, indicating an increase in forecast uncertainty. The forecast trend line (solid blue line) indicates that the gold price may continue to rise, but the dispersion of the forecast values indicates that future price fluctuations are large.
 
+Nasdaq index (LNasIndex) Same as lgold, the Nasdaq index also showed an upward trend, although it fluctuated greatly during the period. The red shaded area represents the 90% of confidence interval of the forecast value, which indicating an increase in forecast uncertainty. The forecast trend line (solid red line) shows that the Nasdaq index may continue to rise in long run, but there is also great uncertainty.
+
+The width of the confidence interval shows that the range of future changes will increase as the forecast period increases. Investors should take these uncertainties into account when making decisions and conduct corresponding risk management.
+
+## Extension Model
+
+Due to the tediousness of computer calculations, we simplified the number of iterations to extend the predictions of the basic model. Although the results are not satisfactory, they also assist and strengthen the views we have obtained in the basic model.
+
+### Laplace Ditribution of errors
+
+```{r}
+## Function Applying
+S1=1
+posterior.extend.draws     = posterior.draws.extended(total_S = 100, Y=Y, X=X)
+A.posterior.ext.simu       = posterior.extend.draws[["A.posterior.exten"]]
+Sigma.posterior.ext.simu   = posterior.extend.draws[["Sigma.posterior.exten"]]
+
+```
+
+```{r}
+A.posterior.simu.mean = head(round(apply(A.posterior.ext.simu, 1:2, mean), 6),12)
+Sigma.posterior.simu.mean = round(apply(Sigma.posterior.ext.simu, 1:2, mean),6)      
+```
+
+```{r }
+kable(A.posterior.simu.mean, align = "c") %>% 
+  kable_styling(font_size = 8, 
+                fixed_thead = TRUE, 
+                full_width = FALSE, 
+                position = "center",
+                latex_options = c("HOLD_position"),
+                bootstrap_options = c("striped", "hover", "bordered", "responsive", "dark"))
+```
+
+```{r}
+kable(Sigma.posterior.simu.mean, align = "c") %>% 
+  kable_styling(font_size = 8, 
+                fixed_thead = TRUE, 
+                full_width = FALSE, 
+                position = "center",
+                latex_options = c("HOLD_position"),
+                bootstrap_options = c("striped", "hover", "bordered", "responsive", "dark"))
+```
+
+```{r }
+
+par(mfrow=c(2,2), mar=c(4,4,2,2))
+plot.ts(A.posterior.ext.simu [2,1,], xlab = "Simulation times S", ylab = "lgold", col = "blue") 
+hist(A.posterior.ext.simu [2,1,], xlab = "lgold", col = "blue", main = '')
+plot.ts(A.posterior.ext.simu [2,5,], xlab = "Simulation times S", ylab = "lNesdaq", col = "green") 
+hist(A.posterior.ext.simu [2,5,], xlab = "lNesdaq", col = "green", main = '')
+
+```
+
+```{r}
+## two-year ahead forecasting h=24
+# set up
+h                 = 24
+S                 = 100
+Y.h.ext           = array(NA,c(h,N,S))
+
+rate <- 1/2  
+
+# sampling predictive density
+for (s in 1:S){
+  A.posterior.draw         = A.posterior.ext.simu[,,s]
+  Sigma.posterior.draw     = Sigma.posterior.ext.simu[,,s]
+    x.Ti                   = Y[(nrow(Y)-p+1):nrow(Y),]
+    x.Ti                   = x.Ti[p:1,]
+  for (i in 1:h){
+    x.T                    = c(1,as.vector(t(x.Ti)))
+    random_number <- rexp(1, rate = rate)
+    Y.f                    = rmvnorm(1, mean = x.T%*%A.posterior.draw, sigma=random_number*Sigma.posterior.draw)
+      x.Ti                 = rbind(Y.f,x.Ti[1:(p-1),])
+    Y.h.ext[i,,s]          = Y.f[1:N]
+  }
+}
+```
+
+```{r}
+lgold.point.f    = apply(Y.h.ext[,1,],1,mean)
+lgold.interval.f = apply(Y.h.ext[,1,],1,hdi,credMass=0.90)
+lgold.range      = range(y[,1],lgold.interval.f)
+
+par(mfrow=c(1,1), mar=rep(3,4),cex.axis=1.5)
+plot(1:(length(y[,1])+h),c(y[,1],lgold.point.f), type="l", ylim=lgold.range, axes=FALSE, xlab="", ylab="", lwd=2, col=blue1)
+axis(1,c(3,51,111,171,231,267,nrow(y),nrow(y)+h),c("2000","2005","2010","2015","2020","2023","",""), col=blue1)
+axis(2,c(lgold.range[1],mean(lgold.range),lgold.range[2]),c("","lgold",""), col=blue1)
+abline(v=284, col=blue1)
+polygon(c(length(y[,1]):(length(y[,1])+h),(length(y[,1]):(length(y[,1])+h))[21:1]),
+        c(y[284,1],lgold.interval.f[1,],lgold.interval.f[2,20:1],y[284,1]),
+        col=blue1.shade1, border=blue1.shade1)
+
+LNasIndex.point.f    = apply(Y.h.ext[,5,],1,mean)
+LNasIndex.interval.f = apply(Y.h.ext[,5,],1,hdi,credMass=0.90)
+LNasIndex.range      = range(y[,5],LNasIndex.interval.f)
+
+par(mfrow=c(1,1), mar=rep(3,4),cex.axis=1.5)
+plot(1:(length(y[,5])+h),c(y[,5],LNasIndex.point.f), type="l", ylim=LNasIndex.range, axes=FALSE, xlab="", ylab="", lwd=2, col=blue1)
+axis(1,c(3,51,111,171,231,267,nrow(y),nrow(y)+h),c("2000","2005","2010","2015","2020","2023","",""), col=blue1)
+axis(2,c(LNasIndex.range[1],mean(LNasIndex.range),LNasIndex.range[2]),c("","LNasIndex",""), col=blue1)
+abline(v=284, col=blue1)
+polygon(c(length(y[,5]):(length(y[,5])+h),(length(y[,5]):(length(y[,5])+h))[21:1]),
+        c(y[284,1],LNasIndex.interval.f[1,],LNasIndex.interval.f[2,20:1],y[284,1]),
+        col=blue1.shade1, border=blue1.shade1)
+```
+
+```{r}
+combined_range = range(c(y[,1], y[,5], lgold.interval.f, LNasIndex.interval.f))
+
+par(mfrow=c(1,1), mar=rep(3,4), cex.axis=1.5)
+
+plot(1:(length(y[,1])+h), c(y[,1], lgold.point.f), type="l", ylim=combined_range, col="blue", lwd=2, xlab="", ylab="")
+polygon(c(length(y[,1]):(length(y[,1])+h), (length(y[,1]):(length(y[,1])+h))[21:1]),
+        c(y[284,1], lgold.interval.f[1,], lgold.interval.f[2,20:1], y[284,1]),
+        col=rgb(0, 0, 255, 100, max=255), border=rgb(0, 0, 255, 100, max=255))
+
+lines(1:(length(y[,5])+h), c(y[,5], LNasIndex.point.f), type="l", ylim=combined_range, col="red", lwd=2, xlab="", ylab="")
+polygon(c(length(y[,5]):(length(y[,5])+h), (length(y[,5]):(length(y[,5])+h))[21:1]),
+        c(y[284,5], LNasIndex.interval.f[1,], LNasIndex.interval.f[2,20:1], y[284,5]),
+        col=rgb(255, 0, 0, 100, max=255), border=rgb(255, 0, 0, 100, max=255))
+abline(v=284, col=green6)
+
+```
+
+### Stochastic Volatility
+
+```{r}
+## Function Applying
+S1 = 1
+S2 = 100
+posterior.sample.draws = DrawPosterior.sv(Y,X,S1,S2)
+A.posterior.simu       = posterior.sample.draws$A.posterior
+Sigma.posterior.simu   = posterior.sample.draws$Sigma.posterior
+```
+
+```{r}
+A.posterior.simu.mean = head(round(apply(A.posterior.simu, 1:2, mean), 6),12)
+Sigma.posterior.simu.mean = round(apply(Sigma.posterior.simu, 1:2, mean),6)      
+```
+
+```{r }
+kable(A.posterior.simu.mean, align = "c") %>% 
+  kable_styling(font_size = 8, 
+                fixed_thead = TRUE, 
+                full_width = FALSE, 
+                position = "center",
+                latex_options = c("HOLD_position"),
+                bootstrap_options = c("striped", "hover", "bordered", "responsive", "dark"))
+```
+
+```{r}
+kable(Sigma.posterior.simu.mean, align = "c") %>% 
+  kable_styling(font_size = 8, 
+                fixed_thead = TRUE, 
+                full_width = FALSE, 
+                position = "center",
+                latex_options = c("HOLD_position"),
+                bootstrap_options = c("striped", "hover", "bordered", "responsive", "dark"))
+```
+
+```{r}
+par(mfrow=c(2,2), mar=c(4,4,2,2))
+plot.ts(A.posterior.simu[2,1,], xlab = "Simulation times S", ylab = "lgold", col = blue1) 
+hist(A.posterior.simu[2,1,], xlab = "lgold", col = blue1, main = '')
+plot.ts(A.posterior.simu[2,5,], xlab = "Simulation times S", ylab = "lNesdaq", col = green1) 
+hist(A.posterior.simu[2,5,], xlab = "lNesdaq", col = green1, main = '')
+
+```
+
+```{r}
+par(mfrow=c(2,2), mar=c(4,4,2,2))
+plot.ts(A.posterior.simu[2,3,], xlab = "Simulation times S", ylab = "TreasuryBill5Years", col = blue2) 
+hist(A.posterior.simu[2,3,], xlab = "TreasuryBill5Years", col = blue2, main = '')
+plot.ts(A.posterior.simu[2,6,], xlab = "Simulation times S", ylab = "M2 Rates", col = green3) 
+hist(A.posterior.simu[2,6,], xlab = "M2 Rates", col = green3, main = '')
+```
+
+```{r}
+## Two-year ahead forecasting h=24
+# set up
+h                      = 24
+S                      = 100
+Y.h                    = array(NA,c(h,N,S))
+
+# sampling predictive density
+for (s in 1:S){
+  A.posterior.draw     = A.posterior.simu[,,s]
+  Sigma.posterior.draw = Sigma.posterior.simu[,,s]
+    x.Ti               = Y[(nrow(Y)-p+1):nrow(Y),]
+    x.Ti               = x.Ti[p:1,]
+  for (i in 1:h){
+    x.T                = c(1,as.vector(t(x.Ti)))
+    Y.f                = rmvnorm(1, mean = x.T%*%A.posterior.draw, sigma=Sigma.posterior.draw)
+    x.Ti               = rbind(Y.f,x.Ti[1:(p-1),])
+    Y.h[i,,s]          = Y.f[1:N]
+  }
+}
+```
+
+```{r}
+lgold.point.f    = apply(Y.h[,1,],1,mean)
+lgold.interval.f = apply(Y.h[,1,],1,hdi,credMass=0.90)
+lgold.range      = range(y[,1],lgold.interval.f)
+
+par(mfrow=c(1,1), mar=rep(3,4),cex.axis=1.5)
+plot(1:(length(y[,1])+h),c(y[,1],lgold.point.f), type="l", ylim=lgold.range, axes=FALSE, xlab="", ylab="", lwd=2, col=blue1)
+axis(1,c(3,51,111,171,231,267,nrow(y),nrow(y)+h),c("2000","2005","2010","2015","2020","2023","",""), col=blue1)
+axis(2,c(lgold.range[1],mean(lgold.range),lgold.range[2]),c("","lgold",""), col=blue1)
+abline(v=284, col=blue1)
+polygon(c(length(y[,1]):(length(y[,1])+h),(length(y[,1]):(length(y[,1])+h))[21:1]),
+        c(y[284,1],lgold.interval.f[1,],lgold.interval.f[2,20:1],y[284,1]),
+        col=blue1.shade1, border=blue1.shade1)
+
+LNasIndex.point.f    = apply(Y.h[,5,],1,mean)
+LNasIndex.interval.f = apply(Y.h[,5,],1,hdi,credMass=0.90)
+LNasIndex.range      = range(y[,5],LNasIndex.interval.f)
+
+par(mfrow=c(1,1), mar=rep(3,4),cex.axis=1.5)
+plot(1:(length(y[,5])+h),c(y[,5],LNasIndex.point.f), type="l", ylim=LNasIndex.range, axes=FALSE, xlab="", ylab="", lwd=2, col=blue1)
+axis(1,c(3,51,111,171,231,267,nrow(y),nrow(y)+h),c("2000","2005","2010","2015","2020","2023","",""), col=blue1)
+axis(2,c(LNasIndex.range[1],mean(LNasIndex.range),LNasIndex.range[2]),c("","LNasIndex",""), col=blue1)
+abline(v=284, col=blue1)
+polygon(c(length(y[,5]):(length(y[,5])+h),(length(y[,5]):(length(y[,5])+h))[21:1]),
+        c(y[284,1],LNasIndex.interval.f[1,],LNasIndex.interval.f[2,20:1],y[284,1]),
+        col=blue1.shade1, border=blue1.shade1)
+
+```
+
+```{r}
+
+combined_range = range(c(y[,1], y[,5], lgold.interval.f, LNasIndex.interval.f))
+
+par(mfrow=c(1,1), mar=rep(3,4), cex.axis=1.5)
+
+plot(1:(length(y[,1])+h), c(y[,1], lgold.point.f), type="l", ylim=combined_range, col="blue", lwd=2, xlab="", ylab="")
+polygon(c(length(y[,1]):(length(y[,1])+h), (length(y[,1]):(length(y[,1])+h))[21:1]),
+        c(y[284,1], lgold.interval.f[1,], lgold.interval.f[2,20:1], y[284,1]),
+        col=rgb(0, 0, 255, 100, max=255), border=rgb(0, 0, 255, 100, max=255))
+
+lines(1:(length(y[,5])+h), c(y[,5], LNasIndex.point.f), type="l", ylim=combined_range, col="red", lwd=2, xlab="", ylab="")
+polygon(c(length(y[,5]):(length(y[,5])+h), (length(y[,5]):(length(y[,5])+h))[21:1]),
+        c(y[284,5], LNasIndex.interval.f[1,], LNasIndex.interval.f[2,20:1], y[284,5]),
+        col=rgb(255, 0, 0, 100, max=255), border=rgb(255, 0, 0, 100, max=255))
+abline(v=284, col=green6)
+
+```
+
+Both models percent not enough smooth in A and $\Sigma$, but support our results in base models. Under extension models, the serial variance become variate over time and then the lNasdaq performance is much worse than the lgold. This provide a basic understanding of our current society, a high level of uncertainty and worse economies environment.
+
+# Conclusion:
+
+In Conclusion, we could clearly see that there is a significant rising in log gold price in our BVARs models under different scenario. For next 24 periods, gold futures as a safe haven increase much more then Nasdaq Index, which treated as market returns in this research, and became flat (decrease in rate) in log price. Even the log Nasdaq Index in short run does not have a good performance, there still a strong increase in long run within 90% of confidence intervals. This quite reflects to the real world at this time, a boom of uncertainty and turn down of global economies.
+
+However, due to lack of data sources and update, our predictions and forecasting are much behind of real world. Our theories still proved by results of real world and prove our reliable and robustness of our BVARs model.
+
+In our models underling different scenarios assumptions, Gold still provide a strong safe-haven assets' nature. That's suggest the topic that Gold still is a good safe assets with evidence base. Those forecasting with 90% of confidence intervals provide a nature of current global economies: a high level of uncertainty and risk. This provide a sight for global investors for risk management.
 
 # References {.unnumbered}
